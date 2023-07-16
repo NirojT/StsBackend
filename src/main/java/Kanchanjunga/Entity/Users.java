@@ -1,18 +1,21 @@
 package Kanchanjunga.Entity;
 
+import java.util.UUID;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document
+@Document(collation = "User")
 @Data
 public class Users {
 	
-	
+	private UUID id;
 	private String name;
 	private String role;
-	private String contact;
-	
+	private String contactNo;
+	private String address;
+	private String password;
 
 	
 }

@@ -11,12 +11,7 @@ public class KanchanjungaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(KanchanjungaApplication.class, args);
 		
-//		String name ;		
-//		Scanner scanner=new Scanner(System.in);
-//		System.out.println("what is your name ?");
-//	
-//		String responseString=	scanner.next(name);
-//	
+
 		
 	}
 
