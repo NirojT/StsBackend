@@ -1,6 +1,5 @@
 package Kanchanjunga.Entity;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -9,18 +8,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document(collation = "User")
 @Data
-public class Users {
-	
+@Document
+public class Payment {
+
 	@Id
 	private UUID id;
-	private String name;
-	private String role;
-	private String contactNo;
-	private String address;
-	private String password;
-
+	
+	private double totalPrice;
+	private double recievedPrice;
+	private String netPrice;
+	
 	@DBRef
-	private List<Orders>  orders;
+	private Orders orders;
 }

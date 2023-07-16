@@ -9,18 +9,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document(collation = "User")
-@Data
-public class Users {
-	
+@Data	
+@Document
+public class DrinkMenu {
+
 	@Id
 	private UUID id;
 	private String name;
-	private String role;
-	private String contactNo;
-	private String address;
-	private String password;
-
+	private String price;
+	private String category;
+	private String description;
+	private String image;
+	
 	@DBRef
 	private List<Orders>  orders;
 }

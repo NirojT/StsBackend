@@ -2,12 +2,10 @@ package Kanchanjunga.Reposioteries;
 
 import java.util.UUID;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import Kanchanjunga.Entity.Users;
+import Kanchanjunga.Entity.Orders;
 
-
-public interface UserRepo extends MongoRepository<Users, UUID>  {
+public interface OrdersRepo extends MongoRepository<Orders, UUID>{
 
 }
