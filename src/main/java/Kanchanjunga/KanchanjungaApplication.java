@@ -6,10 +6,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringSecurityDurgesh1Application {
+public class KanchanjungaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringSecurityDurgesh1Application.class, args);
+		SpringApplication.run(KanchanjungaApplication.class, args);
 		
 //		String name ;		
 //		Scanner scanner=new Scanner(System.in);
