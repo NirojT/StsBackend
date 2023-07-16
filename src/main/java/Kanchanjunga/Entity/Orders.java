@@ -1,6 +1,4 @@
 package Kanchanjunga.Entity;
-
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -11,16 +9,27 @@ import lombok.Data;
 
 @Data
 @Document
-public class FoodMenu {
+public class Orders {
 
 	@Id
 	private UUID id;
-	private String name;
+	private String tableNo;
 	private String price;
-	private String category;
-	private String description;
-	private String image;
+	private String quantity;
+	private String item;
+	private String date;
+
+	@DBRef
+	private Users users;
 	
 	@DBRef
-	private List<Orders>  orders;
+	private Payment payment;
+	
+	@DBRef
+	private FoodMenu foodMenu;
+	
+	@DBRef
+	private DrinkMenu drinkMenu;
+	
+	
 }

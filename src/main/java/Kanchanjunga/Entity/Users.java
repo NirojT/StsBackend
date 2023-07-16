@@ -1,7 +1,10 @@
 package Kanchanjunga.Entity;
 
+import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
@@ -10,6 +13,7 @@ import lombok.Data;
 @Data
 public class Users {
 	
+	@Id
 	private UUID id;
 	private String name;
 	private String role;
@@ -17,5 +21,6 @@ public class Users {
 	private String address;
 	private String password;
 
-	
+	@DBRef
+	private List<Orders>  orders;
 }

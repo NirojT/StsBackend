@@ -1,17 +1,13 @@
-package Kanchanjunga.Entity;
+package Kanchanjunga.Dto;
 
 import java.util.UUID;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 
 @Data
-@Document
-public class DrinkStock {
-
-	@Id
+public class FoodStockDto {
 	private UUID id;
 	private String name;
 	private String price;
@@ -21,5 +17,5 @@ public class DrinkStock {
 
 	private String category;
 	private String description;
-	private String image;
+	private MultipartFile image;
 }
