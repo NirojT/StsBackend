@@ -18,28 +18,6 @@ public class UsersServiceImpl implements UsersService {
     @Autowired
     private UserRepo userRepo;
 
-    @Override
-    public String createUser(Users users) {
-        // Users userExist = userRepo.findByName(users.getName())
-        // .orElseThrow(() -> new ResourceNotFound("users", null, null));
-        // if (userExist != null) {
-        // return "exist";
-        // }
-        try {
-            if (checkData(users)) {
-                users.setId(UUID.randomUUID());
-
-                Users savedUser = userRepo.save(users);
-                if (savedUser != null) {
-                    return "saved";
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "fail";
-    }
-
     // checks for empty data -> Users data
     public static boolean checkData(Users users) {
         if (users.getAddress().isEmpty())
@@ -53,6 +31,27 @@ public class UsersServiceImpl implements UsersService {
         if (users.getRole().isEmpty())
             return false;
         return true;
+    }
+
+    @Override
+    public String createUser(Users users) {
+        // Users userExist = userRepo.findByName(users.getName())
+        // .orElseThrow(() -> new ResourceNotFound("users", null, null));
+        // if (userExist != null) {
+        // return "exist";
+        // }
+        try {
+            if (checkData(users)) {
+                users.setId(UUID.randomUUID());
+                Users savedUser = userRepo.save(users);
+                if (savedUser != null) {
+                    return "saved";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "fail";
     }
 
     @Override

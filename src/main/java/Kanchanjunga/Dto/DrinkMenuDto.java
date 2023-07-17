@@ -1,5 +1,6 @@
 package Kanchanjunga.Dto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,8 @@ public class DrinkMenuDto {
 	private String category;
 	private String description;
 	private MultipartFile image;
-	
-	private List<Orders>  orders;
+
+	private List<Orders> orders;
+	private Date createdDate;
+	private Date lastModifiedDate;
 }

@@ -1,5 +1,17 @@
 package Kanchanjunga.Services;
 
-public interface DrinkMenuService {
+import java.util.UUID;
 
+import Kanchanjunga.Dto.DrinkMenuDto;
+
+public interface DrinkMenuService {
+    Boolean createMenuDrinks(DrinkMenuDto data);
+
+    void updateMenuDrinks(DrinkMenuDto data, UUID id);
+
+    void deleteMenuDrinks(UUID id);
+
+    void getAllDrinksMenu();
+
+    void getDrinkMenuByID(UUID id);
 }
