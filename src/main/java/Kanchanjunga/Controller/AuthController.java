@@ -1,5 +1,7 @@
 package Kanchanjunga.Controller;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,7 +74,20 @@ public class AuthController {
 	private ResponseEntity<?> createUser(@RequestBody Users user) {
 		user.setPassword(encoder.encode(user.getPassword()));
 		String createUser = usersService.createUser(user);
-		return ResponseEntity.status(200).body(createUser);
+		HashMap<String, Object> response = new HashMap<>();
+		if (createUser.equalsIgnoreCase("exist")) {
+			response.put("status", 200);
+			response.put("message", "user already exist");
+			return ResponseEntity.status(200).body(response);
+		}
+		if (createUser.equalsIgnoreCase("saved")) {
+			response.put("status", 200);
+			response.put("message", "user created successfully");
+			return ResponseEntity.status(200).body(response);
+		}
+		response.put("status", 400);
+		response.put("message", "user creation failed");
+		return ResponseEntity.status(200).body(response);
 	}
 
 }

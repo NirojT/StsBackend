@@ -26,7 +26,6 @@ public class UsersServiceImpl implements UsersService {
         // return "exist";
         // }
         try {
-
             if (checkData(users)) {
                 users.setId(UUID.randomUUID());
 

@@ -19,8 +19,6 @@ import Kanchanjunga.JWT.JwtAuthenticationEntryPoint;
 import Kanchanjunga.JWT.JwtAuthentictionFilter;
 
 import Kanchanjunga.ServiceImpl.UserDetailServiceImpl;
-import Kanchanjunga.Services.UsersService;
-import jakarta.websocket.Session;
 
 @Configuration
 @EnableWebSecurity
