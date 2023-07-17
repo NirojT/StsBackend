@@ -44,7 +44,6 @@
 			<scope>test</scope>
 		</dependency>
 
-
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -67,7 +66,6 @@
 			<version>0.11.5</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -75,14 +73,10 @@
 			<scope>runtime</scope>
 		</dependency>
 
-
-			<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		
-	
-
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency> -->
 
 	</dependencies>
 
@@ -103,6 +97,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 
 </project>

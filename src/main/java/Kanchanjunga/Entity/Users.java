@@ -9,10 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document(collation = "User")
+@Document(collection = "User")
 @Data
 public class Users {
-	
+
 	@Id
 	private UUID id;
 	private String name;
@@ -22,5 +22,5 @@ public class Users {
 	private String password;
 
 	@DBRef
-	private List<Orders>  orders;
+	private List<Orders> orders;
 }
