@@ -8,15 +8,19 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import Kanchanjunga.Entity.Users;
 import Kanchanjunga.JWT.JwtHelper;
 import Kanchanjunga.JWT.JwtRequest;
 import Kanchanjunga.JWT.JwtResponse;
+import Kanchanjunga.Services.UsersService;
+
 
 @RestController
 @RequestMapping("/api/user/")
@@ -26,11 +30,16 @@ public class AuthController {
 	private UserDetailsService userDetailsService;
 	
 	@Autowired
-	private AuthenticationManager authenticationManager;
+ private AuthenticationManager authenticationManager;
 	
 	@Autowired
 	private JwtHelper jwtHelper;
 	
+    @Autowired
+    private UsersService usersService;
+    
+    @Autowired
+    private PasswordEncoder encoder;
 	
 
 	@PostMapping("login")
@@ -59,6 +68,16 @@ public class AuthController {
 		return("credential invalid");
 		
 	}
+	 @PostMapping("register")
+	    private ResponseEntity<?> createUser(@RequestBody Users user){
+		user.setPassword( encoder.encode(user.getPassword()));
+	     String createUser = usersService.createUser(user);
+	    	return ResponseEntity.status(200).body(createUser);
+	    	
+	    	
+	    } 
+	
+	
 	
 	
 }

@@ -4,13 +4,18 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;import org.springframework.objenesis.instantiator.basic.NewInstanceInstantiator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.objenesis.instantiator.basic.NewInstanceInstantiator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -36,10 +41,17 @@ public class JwtAuthentictionFilter extends OncePerRequestFilter{
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String requestHeader = request.getHeader("Authorization");
-		logger.info("Header :{}", requestHeader);
+	
 		
 		 String username = null;
 	        String token = null;
+	        
+	        
+	        if (skipAuthenticationRequestMatcher.matches(request)) {
+				filterChain.doFilter(request, response);
+				return;
+			}
+	        logger.info("Header :{}", requestHeader);
 	        
 	        if (requestHeader !=null &&requestHeader.startsWith("Bearer")) {
 				token=requestHeader.substring(7);
@@ -61,7 +73,7 @@ public class JwtAuthentictionFilter extends OncePerRequestFilter{
 
 
 	        } else {
-	            logger.info("Invalid Header Value !! ");
+//	            logger.info("Invalid Header Value !! ");
 	        }
 	        
 	        if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
@@ -74,7 +86,7 @@ public class JwtAuthentictionFilter extends OncePerRequestFilter{
 					
 				}
 	        	else {
-	                logger.info("Validation fails !!");
+//	                logger.info("Validation fails !!");
 	            }
 
 
@@ -84,6 +96,8 @@ public class JwtAuthentictionFilter extends OncePerRequestFilter{
 
 
 	    }
+	
+	private RequestMatcher skipAuthenticationRequestMatcher = new OrRequestMatcher(new AntPathRequestMatcher("/api/user/register", HttpMethod.POST.name()));
 
 }
 
