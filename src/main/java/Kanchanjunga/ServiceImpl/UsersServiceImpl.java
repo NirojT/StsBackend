@@ -20,14 +20,16 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public String createUser(Users users) {
-        Users userExist = userRepo.findByName(users.getName());
-        if (userExist != null) {
-            return "exist";
-        }
+        // Users userExist = userRepo.findByName(users.getName())
+        // .orElseThrow(() -> new ResourceNotFound("users", null, null));
+        // if (userExist != null) {
+        // return "exist";
+        // }
         try {
 
             if (checkData(users)) {
                 users.setId(UUID.randomUUID());
+
                 Users savedUser = userRepo.save(users);
                 if (savedUser != null) {
                     return "saved";

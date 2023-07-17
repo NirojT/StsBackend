@@ -16,13 +16,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
 	@Autowired
 	private UserRepo userRepo;
+
 	@Override
 	public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-	
-		Users user =userRepo.findByName(name).orElseThrow(()->new RuntimeException("user not found.."));
+		Users user = userRepo.findByName(name).orElseThrow(() -> new RuntimeException("user not found.."));
 		return user;
-		
-		
 	}
 
 }
