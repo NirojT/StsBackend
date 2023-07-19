@@ -13,7 +13,7 @@ public interface DrinkMenuService {
 	Boolean createMenuDrinks(DrinkMenuDto data);
 
 	Boolean updateMenuDrinks(UUID id, String name, Double price, String category, String description,
-			MultipartFile image,String imageName);
+			MultipartFile image);
 
 	Boolean deleteMenuDrinks(UUID id);
 
