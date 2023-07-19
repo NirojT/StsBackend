@@ -1,5 +1,6 @@
 package Kanchanjunga.Dto;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -11,12 +12,13 @@ public class DrinkStockDto {
 
 	private UUID id;
 	private String name;
-	private String price;
-	private String quantity;
+	private Double price;
+	private int quantity;
 	private String supplier;
-	private String expireDate;
+	private Date expireDate;
 
 	private String category;
 	private String description;
 	private MultipartFile image;
+	private String imageName;
 }

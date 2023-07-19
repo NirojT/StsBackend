@@ -14,8 +14,8 @@ import lombok.Data;
 
 @Document
 @Data
-public class Users implements UserDetails{
-	
+public class Users implements UserDetails {
+
 	@Id
 	private UUID id;
 	private String name;
@@ -25,7 +25,7 @@ public class Users implements UserDetails{
 	private String password;
 
 	@DBRef
-	private List<Orders>  orders;
+	private List<Orders> orders;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

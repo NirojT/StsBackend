@@ -1,5 +1,6 @@
 package Kanchanjunga.Dto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,10 +13,13 @@ import lombok.Data;
 public class DrinkMenuDto {
 	private UUID id;
 	private String name;
-	private String price;
+	private Double price;
 	private String category;
 	private String description;
 	private MultipartFile image;
-	
-	private List<Orders>  orders;
+	private String imageName;
+
+	private List<Orders> orders;
+	private Date createdDate;
+	private Date lastModifiedDate;
 }

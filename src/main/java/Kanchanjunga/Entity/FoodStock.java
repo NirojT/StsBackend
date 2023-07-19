@@ -1,5 +1,6 @@
 package Kanchanjunga.Entity;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -14,10 +15,10 @@ public class FoodStock {
 	@Id
 	private UUID id;
 	private String name;
-	private String price;
-	private String quantity;
+	private Double price;
+	private int quantity;
 	private String supplier;
-	private String expireDate;
+	private Date expireDate;
 
 	private String category;
 	private String description;
