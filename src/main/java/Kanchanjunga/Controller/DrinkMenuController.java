@@ -52,9 +52,13 @@ public class DrinkMenuController {
 	}
 
 	@PutMapping("update/{id}")
-	public ResponseEntity<?> updateDrinksMenu(@PathVariable UUID id, @RequestParam String name,
-			@RequestParam Double price, @RequestParam String category, @RequestParam String description,
-			@RequestParam(required = false) MultipartFile image, @RequestParam(required = false) String imageName
+	public ResponseEntity<?> updateDrinksMenu(@PathVariable UUID id, 
+			@RequestParam(required = false)  String name,
+			@RequestParam (required = false) Double price, 
+			@RequestParam (required = false) String category,
+			@RequestParam (required = false) String description,
+			@RequestParam(required = false) MultipartFile image,
+			@RequestParam(required = false) String imageName
 
 	) {
 		try {

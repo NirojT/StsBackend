@@ -19,4 +19,6 @@ public class FoodStockDto {
 	private String category;
 	private String description;
 	private MultipartFile image;
+	private Date createdDate;
+	private Date lastModifiedDate;
 }

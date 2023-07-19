@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.rmi.server.UID;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,7 +57,9 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 			} catch (IOException e) {
 				throw new RuntimeException("Fail to save file " + filename, e);
 			}
+			
 			drinkMenu.setImage(KanchanjungaApplication.SERVERURL + filename);
+			drinkMenu.setCreatedDate(new Date());
 			drinkMenuRepo.save(drinkMenu);
 			return true;
 		} catch (Exception e) {

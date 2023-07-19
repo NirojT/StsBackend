@@ -3,7 +3,9 @@ package Kanchanjunga.Entity;
 import java.util.Date;
 import java.util.UUID;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
@@ -23,5 +25,10 @@ public class FoodStock {
 	private String category;
 	private String description;
 	private String image;
+	@CreatedDate
+	private Date createdDate;
+
+	@LastModifiedDate
+	private Date lastModifiedDate;
 
 }

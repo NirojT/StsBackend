@@ -1,5 +1,6 @@
 package Kanchanjunga.Dto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,4 +20,6 @@ public class FoodMenuDto {
 	private String imageName;
 	
 	private List<Orders>  orders;
+	private Date createdDate;
+	private Date lastModifiedDate;
 }
