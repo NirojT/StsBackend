@@ -51,7 +51,7 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 			} catch (IOException e) {
 				throw new RuntimeException("Fail to save file " + filename, e);
 			}
-
+			
 			drinkMenu.setImage(KanchanjungaApplication.SERVERURL + filename);
 			drinkMenu.setCreatedDate(new Date());
 			drinkMenuRepo.save(drinkMenu);
