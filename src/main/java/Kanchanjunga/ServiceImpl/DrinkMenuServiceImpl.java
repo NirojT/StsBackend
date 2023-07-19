@@ -1,17 +1,17 @@
 package Kanchanjunga.ServiceImpl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import Kanchanjunga.KanchanjungaApplication;
@@ -25,9 +25,6 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 
     @Autowired
     private DrinkMenuRepo drinkMenuRepo;
-
-    // @Autowired
-    // private DrinkMenu drinkMenu;
 
     @Autowired
     private ModelMapper mapper;
@@ -58,33 +55,6 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
         return false;
     }
 
-    // @Override
-    // public void addMenuDrinks(DrinkMenuDto data) {
-    // try {
-    // // Create a new DrinkMenu entity
-    // DrinkMenu drinkMenu = new DrinkMenu();
-    // drinkMenu.setId(UUID.randomUUID());
-    // drinkMenu.setName(data.getName());
-    // drinkMenu.setPrice(data.getPrice());
-    // drinkMenu.setCategory(data.getCategory());
-    // drinkMenu.setDescription(data.getDescription());
-
-    // // Save the uploaded image file to a folder
-    // MultipartFile image = data.getImage();
-    // String filename = image.getOriginalFilename();
-    // File newFile = new File("src/uploads/" + filename);
-    // image.transferTo(newFile);
-
-    // // Set the image filename in the DrinkMenu entity
-    // drinkMenu.setImage(filename);
-
-    // // Save the DrinkMenu entity to the database
-    // drinkMenuRepo.save(drinkMenu);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // }
-
     @Override
     public void updateMenuDrinks(DrinkMenuDto data, UUID id) {
         throw new UnsupportedOperationException("Unimplemented method 'updateMenuDrinks'");
@@ -96,8 +66,21 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
     }
 
     @Override
-    public void getAllDrinksMenu() {
-        throw new UnsupportedOperationException("Unimplemented method 'getAllDrinksMenu'");
+    public List<DrinkMenuDto> getAllDrinksMenu() {
+        try {
+            List<DrinkMenu> allDrinks = this.drinkMenuRepo.findAll();
+            // List<DrinkMenuDto> drinks = allDrinks.stream().map((drink) ->
+            // this.mapper.map(drink, DrinkMenuDto.class))
+            // .collect(Collectors.toList());
+            List<DrinkMenuDto> drinks = allDrinks.stream().map(drink -> {
+                DrinkMenuDto drinkMenuDTO = this.mapper.map(drink, DrinkMenuDto.class);
+                drinkMenuDTO.setImageName(drink.getImage());
+                return drinkMenuDTO;
+            }).collect(Collectors.toList());
+            return drinks;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override

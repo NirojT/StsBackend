@@ -1,5 +1,6 @@
 package Kanchanjunga.Services;
 
+import java.util.List;
 import java.util.UUID;
 
 import Kanchanjunga.Dto.DrinkMenuDto;
@@ -11,7 +12,7 @@ public interface DrinkMenuService {
 
     void deleteMenuDrinks(UUID id);
 
-    void getAllDrinksMenu();
+    List<DrinkMenuDto> getAllDrinksMenu();
 
     void getDrinkMenuByID(UUID id);
 }
