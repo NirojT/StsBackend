@@ -39,7 +39,8 @@ public class JwtAuthentictionFilter extends OncePerRequestFilter {
 			new AntPathRequestMatcher("/api/user/register", HttpMethod.POST.name()));
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+			FilterChain filterChain)
 			throws ServletException, IOException {
 		String requestHeader = request.getHeader("Authorization");
 
@@ -75,9 +76,11 @@ public class JwtAuthentictionFilter extends OncePerRequestFilter {
 			UserDetails userDetail = this.userDetailsService.loadUserByUsername(username);
 			Boolean validateToken = this.jwtHelper.validateToken(token, userDetail);
 			if (validateToken) {
-				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetail,
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+						userDetail,
 						null, userDetail.getAuthorities());
-				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				authentication.setDetails(
+						new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 
 			} else {

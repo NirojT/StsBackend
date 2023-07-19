@@ -12,5 +12,5 @@ public interface UserRepo extends MongoRepository<Users, UUID> {
     @Query("{name:'?0'}")
     Optional<Users> findByName(String name);
 
-	// Optional<Users> findByName(String name);
+    // Optional<Users> findByName(String name);
 }

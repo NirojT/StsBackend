@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import Kanchanjunga.JWT.JwtAuthenticationEntryPoint;
 import Kanchanjunga.JWT.JwtAuthentictionFilter;
-
 import Kanchanjunga.ServiceImpl.UserDetailServiceImpl;
 
 @Configuration
@@ -37,8 +36,8 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain chain(HttpSecurity http) throws Exception {
 
-		http.csrf(csrf -> csrf.disable())
-				.cors(cors -> cors.disable())
+		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
+
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll())
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -56,12 +55,13 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
+		return builder.getAuthenticationManager();
+	}
+
+	@Bean
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
-		return builder.getAuthenticationManager();
-	}
 }

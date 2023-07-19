@@ -3,16 +3,21 @@ package Kanchanjunga.Services;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import Kanchanjunga.Dto.DrinkMenuDto;
+import Kanchanjunga.Entity.DrinkMenu;
+import Kanchanjunga.Entity.Users;
 
 public interface DrinkMenuService {
-    Boolean createMenuDrinks(DrinkMenuDto data);
+	Boolean createMenuDrinks(DrinkMenuDto data);
 
-    void updateMenuDrinks(DrinkMenuDto data, UUID id);
+	Boolean updateMenuDrinks(UUID id, String name, Double price, String category, String description,
+			MultipartFile image,String imageName);
 
-    void deleteMenuDrinks(UUID id);
+	Boolean deleteMenuDrinks(UUID id);
 
-    List<DrinkMenuDto> getAllDrinksMenu();
+	List<DrinkMenuDto> getAllDrinksMenu();
 
-    void getDrinkMenuByID(UUID id);
+	DrinkMenuDto getDrinkMenuByID(UUID id);
 }

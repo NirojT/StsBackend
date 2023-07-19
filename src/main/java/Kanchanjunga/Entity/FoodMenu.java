@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 
@@ -16,7 +17,7 @@ public class FoodMenu {
 	@Id
 	private UUID id;
 	private String name;
-	private String price;
+	private Double price;
 	private String category;
 	private String description;
 	private String image;
@@ -24,3 +25,4 @@ public class FoodMenu {
 	@DBRef
 	private List<Orders>  orders;
 }
+

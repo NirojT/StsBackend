@@ -13,7 +13,7 @@ import lombok.Data;
 public class DrinkMenuDto {
 	private UUID id;
 	private String name;
-	private String price;
+	private Double price;
 	private String category;
 	private String description;
 	private MultipartFile image;

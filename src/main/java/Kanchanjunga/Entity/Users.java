@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Data;
 
-@Document(collection = "User")
+@Document
 @Data
 public class Users implements UserDetails {
 

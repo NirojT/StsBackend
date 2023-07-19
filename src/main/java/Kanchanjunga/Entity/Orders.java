@@ -1,4 +1,5 @@
 package Kanchanjunga.Entity;
+import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -14,10 +15,10 @@ public class Orders {
 	@Id
 	private UUID id;
 	private String tableNo;
-	private String price;
-	private String quantity;
+	private Double price;
+	private int quantity;
 	private String item;
-	private String date;
+	private Date date;
 
 	@DBRef
 	private Users users;

@@ -6,38 +6,37 @@ import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import Kanchanjunga.Dto.DrinkStockDto;
-import Kanchanjunga.Services.DrinkStockService;
+import Kanchanjunga.Dto.FoodStockDto;
 
-public class DrinkStockServiceImpl implements DrinkStockService {
+public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockService {
 
 	@Override
-	public Boolean createStockDrinks(DrinkStockDto drinkStockDto) {
-		
+	public Boolean createStockFood(FoodStockDto foodStockDto) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean updateStockDrinks(UUID id, String name, Double price, int quantity, String supplier, Date expireDate,
+	public Boolean updateStockFood(UUID id, String name, Double price, int quantity, String supplier, Date expireDate,
 			String category, String description, MultipartFile image, String imageName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean deleteStockDrinks(UUID id) {
+	public Boolean deleteStockFood(UUID id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<DrinkStockDto> getAllDrinksStock() {
+	public List<FoodStockDto> getAllFoodStock() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public DrinkStockDto getDrinkStockByID(UUID id) {
+	public FoodStockDto getFoodStockByID(UUID id) {
 		// TODO Auto-generated method stub
 		return null;
 	}

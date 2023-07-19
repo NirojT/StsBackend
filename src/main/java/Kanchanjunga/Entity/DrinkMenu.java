@@ -19,7 +19,7 @@ public class DrinkMenu {
 	@Id
 	private UUID id;
 	private String name;
-	private String price;
+	private Double price;
 	private String category;
 	private String description;
 	private String image;
