@@ -26,6 +26,7 @@ import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.FoodMenuRepo;
+import Kanchanjunga.Utility.FilesHelper;
 
 @Service
 public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuService {
@@ -36,25 +37,18 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 	@Autowired
 	private ModelMapper mapper;
 
+	@Autowired
+	private FilesHelper filesHelper;
+
 	@Override
 	public Boolean createFoodMenu(FoodMenuDto foodMenuDto) {
 		try {
 			foodMenuDto.setId(UUID.randomUUID());
 			FoodMenu createFoodMenu = this.mapper.map(foodMenuDto, FoodMenu.class);
 
-			String filename = foodMenuDto.getImage().getOriginalFilename();
-			String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static";
-			Path paths = Paths.get(uploadDir);
-			if (!Files.exists(paths)) {
-				Files.createDirectories(paths);
-			}
-			Path imagePath = paths.resolve(filename);
-			try (InputStream inputStream = foodMenuDto.getImage().getInputStream()) {
-				Files.copy(inputStream, imagePath, StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
-				throw new RuntimeException("Fail to save file " + filename, e);
-			}
-			createFoodMenu.setImage(KanchanjungaApplication.SERVERURL + filename);
+			String filename = filesHelper.saveFile(foodMenuDto.getImage());
+
+			createFoodMenu.setImage(filename);
 			createFoodMenu.setCreatedDate(new Date());
 			this.foodMenuRepo.save(createFoodMenu);
 			return true;
@@ -66,78 +60,47 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 	@Override
 	public Boolean updateFoodMenu(UUID id, String name, Double price, String category, String description,
-			MultipartFile image, String imageName) {
+			MultipartFile image) {
 		try {
+			FoodMenu foodMenu = this.foodMenuRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
 			// if user wants to update image
 			if (image != null) {
-				String filename = image.getOriginalFilename();
-				// uuid for unique name of image
-				UID uid = new UID();
-				String uidString = uid.toString().replace(':', '_');
-
-				String extension = "";
-				int dotIndex = image.getOriginalFilename().lastIndexOf('.');
-				if (dotIndex > 0) {
-					extension = filename.substring(dotIndex);
-					filename = filename.substring(0, dotIndex);
-
-				}
-				// for multipart
-				String filenames = filename + "_" + uidString + extension;
-
-				String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static";
-
-				Path paths = Paths.get(uploadDir);
-
-				if (!Files.exists(paths)) {
-					Files.createDirectories(paths);
-				}
-
-				Path imagePath = paths.resolve(filename);
-				try (InputStream inputStream = image.getInputStream()) {
-					Files.copy(inputStream, imagePath, StandardCopyOption.REPLACE_EXISTING);
-				} catch (IOException e) {
-					throw new RuntimeException("Fail to save file " + filename, e);
-				}
+				String filename = filesHelper.saveFile(image);
 
 				// deleting file in project folder too after updating
-				FoodMenu foodMenu = this.foodMenuRepo.findById(id)
-						.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
+				
+				Boolean isDeleted = this.filesHelper.deleteExistingFile(foodMenu.getImage());
 
-				String deletePhoto = foodMenu.getImage().replace(KanchanjungaApplication.SERVERURL, "");
-				System.out.println(deletePhoto);
-				Path filePath = Paths.get(uploadDir, deletePhoto);
-				Files.deleteIfExists(filePath);
+				if (isDeleted) {
+					foodMenu.setName(name);
+					foodMenu.setPrice(price);
+					foodMenu.setImage(filename);
+					foodMenu.setCategory(category);
+					foodMenu.setDescription(description);
 
-				foodMenu.setName(name);
-				foodMenu.setPrice(price);
-				foodMenu.setImage(KanchanjungaApplication.SERVERURL + filenames);
-				foodMenu.setCategory(category);
-				foodMenu.setDescription(description);
+					this.foodMenuRepo.save(foodMenu);
 
-				this.foodMenuRepo.save(foodMenu);
-
-				return true;
+					return true;
+				}
 
 			}
 
 			// if user dont want to update image
-			else {
 
-				FoodMenu foodMenu = this.foodMenuRepo.findById(id)
-						.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
-				foodMenu.setName(name);
-				foodMenu.setPrice(price);
-				foodMenu.setImage(KanchanjungaApplication.SERVERURL + imageName);
-				foodMenu.setCategory(category);
-				foodMenu.setDescription(description);
+		
+			foodMenu.setName(name);
+			foodMenu.setPrice(price);
+			foodMenu.setImage(foodMenu.getImage());
+			foodMenu.setCategory(category);
+			foodMenu.setDescription(description);
 
-				this.foodMenuRepo.save(foodMenu);
+			this.foodMenuRepo.save(foodMenu);
 
-				return true;
-			}
+			return true;
+		}
 
-		} catch (Exception e) {
+		catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -166,26 +129,23 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 	@Override
 	public List<FoodMenuDto> getAllFoodMenu() {
-	    try {
-	        List<FoodMenu> allFoodMenu = foodMenuRepo.findAll();
+		try {
+			List<FoodMenu> allFoodMenu = foodMenuRepo.findAll();
 
-	        List<FoodMenuDto> foodMenuDtos = allFoodMenu.stream()
-	                .map(food -> {
-	                    FoodMenuDto foodMenuDto = mapper.map(food, FoodMenuDto.class);
-	                    foodMenuDto.setImageName(food.getImage()); // Set the image from FoodMenu to FoodMenuDto
-	                    return foodMenuDto;
-	                })
-	                .collect(Collectors.toList());
+			List<FoodMenuDto> foodMenuDtos = allFoodMenu.stream().map(food -> {
+				FoodMenuDto foodMenuDto = mapper.map(food, FoodMenuDto.class);
+				foodMenuDto.setImageName(food.getImage()); // Set the image from FoodMenu to FoodMenuDto
+				return foodMenuDto;
+			}).collect(Collectors.toList());
 
-	        if (!foodMenuDtos.isEmpty()) {
-	            return foodMenuDtos;
-	        }
-	    } catch (Exception e) {
-	        // Handle the exception appropriately (e.g., log it)
-	    }
-	    return Collections.emptyList();
+			if (!foodMenuDtos.isEmpty()) {
+				return foodMenuDtos;
+			}
+		} catch (Exception e) {
+			// Handle the exception appropriately (e.g., log it)
+		}
+		return Collections.emptyList();
 	}
-
 
 	@Override
 	public FoodMenuDto getFoodMenuByID(UUID id) {
@@ -196,16 +156,17 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 			FoodMenuDto foodMenuDto = this.mapper.map(foodMenu, FoodMenuDto.class);
 			foodMenuDto.setImageName(foodMenu.getImage());
-			
+
 			if (foodMenuDto != null) {
 				return foodMenuDto;
 			}
-			return null;
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			
 		}
+		return null;
 	}
 
 }

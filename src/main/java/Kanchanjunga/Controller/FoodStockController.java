@@ -1,7 +1,6 @@
 package Kanchanjunga.Controller;
 
-
-
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,29 +20,31 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.Dto.FoodMenuDto;
+import Kanchanjunga.Dto.FoodStockDto;
 import Kanchanjunga.Services.FoodMenuService;
+import Kanchanjunga.Services.FoodStockService;
 
 @RestController
-@RequestMapping("/api/foods/menu/")
-public class FoodMenuController {
+@RequestMapping("/api/foods/stock/")
+public class FoodStockController {
 
 	@Autowired
-	private FoodMenuService foodMenuService;
+	private FoodStockService foodStockService;
 
 	@PostMapping("create")
-	public ResponseEntity<?> createFoodMenu(@ModelAttribute FoodMenuDto foodMenuDto) {
+	public ResponseEntity<?> createFoodStock(@ModelAttribute FoodStockDto foodStockDto) {
 
 		try {
 
-			Boolean isSaved = foodMenuService.createFoodMenu(foodMenuDto);
+			Boolean isSaved = foodStockService.createStockFood(foodStockDto);
 			HashMap<String, Object> response = new HashMap<>();
 			if (isSaved) {
 				response.put("status", 200);
-				response.put("message", "food added successfully");
+				response.put("message", "food  added successfully to stock");
 				return ResponseEntity.status(200).body(response);
 			}
 			response.put("status", 400);
-			response.put("message", "food not added");
+			response.put("message", "food not added to stock ");
 			return ResponseEntity.status(200).body(response);
 
 		} catch (Exception e) {
@@ -53,28 +54,31 @@ public class FoodMenuController {
 	}
 
 	@PutMapping("update/{id}")
-	public ResponseEntity<?> updateFoodMenu(
-			@PathVariable UUID id,
-			@RequestParam (required = false) String name,
-			@RequestParam (required = false) Double price,
-			@RequestParam (required = false) String category,
-			@RequestParam (required = false) String description,
+	public ResponseEntity<?> updateFoodStock(
+			@PathVariable(required = false) UUID id,
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) Double price,
+			@RequestParam(required = false) int quantity, 
+			@RequestParam(required = false) String supplier, 
+			@RequestParam(required = false) Date expireDate,
+			@RequestParam(required = false) String category,
+			@RequestParam(required = false) String description,
 			@RequestParam(required = false) MultipartFile image
 
 	) {
 		try {
 
-			Boolean updateFoodMenu = this.foodMenuService.updateFoodMenu(id, name, price, category, description,
-					image);
+			Boolean updateFoodMenu = this.foodStockService.updateStockFood(id, name, price, quantity, supplier, expireDate
+					, category, description, image);
 			Map<String, Object> response = new HashMap<>();
 
 			if (updateFoodMenu) {
 				response.put("status", 200);
-				response.put("message", "foodMenu updated successfully");
+				response.put("message", "foodStock updated successfully");
 				return ResponseEntity.status(200).body(response);
 			}
 			response.put("status", 400);
-			response.put("message", "foodMenu updatation failed");
+			response.put("message", "foodStock update failed");
 			return ResponseEntity.status(200).body(response);
 
 		} catch (Exception e) {
@@ -85,15 +89,15 @@ public class FoodMenuController {
 	}
 
 	@GetMapping("get-all")
-	public ResponseEntity<?> getAllFoodsMenu() {
+	public ResponseEntity<?> getAllFoodsStock() {
 
 		try {
 
-			List<FoodMenuDto> foodMenus = this.foodMenuService.getAllFoodMenu();
+			 List<FoodStockDto> allFoodStock = this.foodStockService.getAllFoodStock();
 			Map<String, Object> response = new HashMap<>();
-			if (foodMenus != null) {
+			if (allFoodStock != null) {
 				response.put("status", 200);
-				response.put("FoodMenus", foodMenus);
+				response.put("Foods", allFoodStock);
 				return ResponseEntity.status(200).body(response);
 			}
 			response.put("status", 400);
@@ -107,18 +111,18 @@ public class FoodMenuController {
 	}
 
 	@GetMapping("get/{id}")
-	public ResponseEntity<?> getFoodMenuById(@PathVariable("id") UUID ids) {
+	public ResponseEntity<?> getFoodStockById(@PathVariable("id") UUID ids) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			 FoodMenuDto foodMenuByID = this.foodMenuService.getFoodMenuByID(ids);
-			if (foodMenuByID != null) {
+			 FoodStockDto foodStockByID = this.foodStockService.getFoodStockByID(ids);
+			if (foodStockByID != null) {
 				response.put("status", 200);
-				response.put("FoodMenu", foodMenuByID);
+				response.put("Foods", foodStockByID);
 				return ResponseEntity.status(200).body(response);
 
 			}
 			response.put("status", 400);
-			response.put("message", "FoodMenu  not found");
+			response.put("message", "FoodStock is empty 🤢🤢");
 			return ResponseEntity.status(200).body(response);
 
 		} catch (Exception e) {
@@ -128,18 +132,18 @@ public class FoodMenuController {
 	}
 
 	@DeleteMapping("delete/{id}")
-	public ResponseEntity<?> deleteFoodMenu(@PathVariable("id") UUID ids) {
+	public ResponseEntity<?> deleteFoodStock(@PathVariable("id") UUID ids) {
 		Map<String, Object> response = new HashMap<>();
 
 		try {
-			Boolean deleteFoodMenu  = this.foodMenuService.deleteFoodMenu(ids);
-			if (deleteFoodMenu) {
+			Boolean deleteFoodStock  = this.foodStockService.deleteStockFood(ids);
+			if (deleteFoodStock) {
 				response.put("status", 200);
-				response.put("message", "FoodMenus Deleted Succesfully");
+				response.put("message", "Food Deleted Succesfully from stock");
 				return ResponseEntity.status(200).body(response);
 			}
 			response.put("status", 400);
-			response.put("message", "FoodMenus not deleted (:");
+			response.put("message", "Food not deleted from stock(:");
 			return ResponseEntity.status(200).body(response);
 
 		} catch (Exception e) {

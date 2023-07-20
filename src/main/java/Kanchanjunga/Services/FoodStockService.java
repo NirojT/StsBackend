@@ -13,7 +13,7 @@ public interface FoodStockService {
 	Boolean createStockFood(FoodStockDto foodStockDto);
 
 	Boolean updateStockFood(UUID id, String name, Double price, int quantity, String supplier, Date expireDate,
-			String category, String description, MultipartFile image, String imageName);
+			String category, String description, MultipartFile image);
 
 	Boolean deleteStockFood(UUID id);
 

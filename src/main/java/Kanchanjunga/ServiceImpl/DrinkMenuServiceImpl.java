@@ -1,5 +1,13 @@
 package Kanchanjunga.ServiceImpl;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.rmi.server.UID;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -48,35 +56,55 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 
 	@Override
 	public Boolean updateMenuDrinks(UUID id, String name, Double price, String category, String description,
-			MultipartFile image) {
+			MultipartFile image, String imageName) {
 		try {
+			
+			DrinkMenu drinkFromDb = this.drinkMenuRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
+			
 			// if user wants to update image
 			DrinkMenu drinkFromDb = this.drinkMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
 			if (image != null) {
 				String filename = fileHelper.saveFile(image);
 				// deleting file in project folder too after updating
-				Boolean isDeleted = fileHelper.deleteExistingFile(drinkFromDb.getImage());
-				if (isDeleted) {
-					drinkFromDb.setName(name);
-					drinkFromDb.setPrice(price);
-					drinkFromDb.setImage(filename);
-					drinkFromDb.setCategory(category);
-					drinkFromDb.setDescription(description);
-					this.drinkMenuRepo.save(drinkFromDb);
-					return true;
-				}
-				return false;
+				DrinkMenu drinkFromDb = this.drinkMenuRepo.findById(id)
+						.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
+				
+				String deletePhoto = drinkFromDb.getImage().replace(KanchanjungaApplication.SERVERURL, "");
+				
+				Path filePath = Paths.get(uploadDir, deletePhoto);
+				Files.deleteIfExists(filePath);
+				
+
+				
+				drinkFromDb.setName(name);
+				drinkFromDb.setPrice(price);
+				drinkFromDb.setImage(KanchanjungaApplication.SERVERURL + filenames);
+				drinkFromDb.setCategory(category);
+				drinkFromDb.setDescription(description);
+
+				this.drinkMenuRepo.save(drinkFromDb);
+
+				return true;
 
 			}
-			// if user don't want to update image
-			drinkFromDb.setName(name);
-			drinkFromDb.setPrice(price);
-			drinkFromDb.setImage(drinkFromDb.getImage());
-			drinkFromDb.setCategory(category);
-			drinkFromDb.setDescription(description);
-			this.drinkMenuRepo.save(drinkFromDb);
-			return true;
+
+			// if user dont want to update image
+			else {
+
+				DrinkMenu drinkFromDb = this.drinkMenuRepo.findById(id)
+						.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
+				drinkFromDb.setName(name);
+				drinkFromDb.setPrice(price);
+				drinkFromDb.setImage(KanchanjungaApplication.SERVERURL + imageName);
+				drinkFromDb.setCategory(category);
+				drinkFromDb.setDescription(description);
+
+				this.drinkMenuRepo.save(drinkFromDb);
+
+				return true;
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,14 +137,16 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 	@Override
 	public List<DrinkMenuDto> getAllDrinksMenu() {
 		try {
+		
 			List<DrinkMenu> allDrinkMenu = drinkMenuRepo.findAll();
+			
 			List<DrinkMenuDto> drinkMenuDtos = allDrinkMenu.stream()
-					.map((drink) -> {
-						DrinkMenuDto drinkMenuDto = this.mapper.map(drink, DrinkMenuDto.class);
-						drinkMenuDto.setImageName(drink.getImage());
-						return drinkMenuDto;
-					}).collect(Collectors.toList());
-
+			.map(drink->{
+				DrinkMenuDto drinkMenuDto = this.mapper.map(drink, DrinkMenuDto.class);
+				drinkMenuDto.setImageName(drink.getImage());
+				return drinkMenuDto;
+			}).collect(Collectors.toList());
+			
 			if (drinkMenuDtos.size() > 0) {
 				return drinkMenuDtos;
 			}
@@ -132,9 +162,14 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 		try {
 			DrinkMenu drinkFromDb = this.drinkMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
+			
 			DrinkMenuDto drinkMenuDto = this.mapper.map(drinkFromDb, DrinkMenuDto.class);
 			drinkMenuDto.setImageName(drinkFromDb.getImage());
-			return drinkMenuDto;
+			if (drinkMenuDto != null) {
+				return drinkMenuDto;
+			}
+			return null;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
