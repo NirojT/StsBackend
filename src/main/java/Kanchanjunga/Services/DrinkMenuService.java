@@ -6,14 +6,12 @@ import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.Dto.DrinkMenuDto;
-import Kanchanjunga.Entity.DrinkMenu;
-import Kanchanjunga.Entity.Users;
 
 public interface DrinkMenuService {
 	Boolean createMenuDrinks(DrinkMenuDto data);
 
 	Boolean updateMenuDrinks(UUID id, String name, Double price, String category, String description,
-			MultipartFile image,String imageName);
+			MultipartFile image);
 
 	Boolean deleteMenuDrinks(UUID id);
 

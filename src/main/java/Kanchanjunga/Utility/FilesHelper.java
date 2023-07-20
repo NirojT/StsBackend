@@ -15,17 +15,18 @@ import Kanchanjunga.KanchanjungaApplication;
 
 @Component
 public class FilesHelper {
-	
 	public String saveFile(MultipartFile file) throws IOException {
 		// uuid for unique name of image
 		UID uid = new UID();
 		String uidString = uid.toString().replace(':', '_');
 		String originalFilename = file.getOriginalFilename();
 		String extension = "";
-		int dotIndex = originalFilename.lastIndexOf('.');
-		if (dotIndex >= 0) {
-			extension = originalFilename.substring(dotIndex);
-			originalFilename = originalFilename.substring(0, dotIndex);
+		if (originalFilename != null) {
+			int dotIndex = originalFilename.lastIndexOf('.');
+			if (dotIndex >= 0) {
+				extension = originalFilename.substring(dotIndex);
+				originalFilename = originalFilename.substring(0, dotIndex);
+			}
 		}
 		String filename = originalFilename + "_" + uidString + extension;
 		String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static";
@@ -49,12 +50,9 @@ public class FilesHelper {
 		try {
 			Files.deleteIfExists(filePath);
 			return true;
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
-			
 		}
 		return false;
-		
 	}
 }
