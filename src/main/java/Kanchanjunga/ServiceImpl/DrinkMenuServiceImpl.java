@@ -115,7 +115,6 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 						drinkMenuDto.setImageName(drink.getImage());
 						return drinkMenuDto;
 					}).collect(Collectors.toList());
-
 			if (drinkMenuDtos.size() > 0) {
 				return drinkMenuDtos;
 			}

@@ -30,9 +30,10 @@ public class DrinkMenuController {
 
 	@PostMapping("create")
 	public ResponseEntity<?> createDrinksMenu(@ModelAttribute DrinkMenuDto request) {
+		HashMap<String, Object> response = new HashMap<>();
 		try {
 			Boolean isSaved = drinkMenuService.createMenuDrinks(request);
-			HashMap<String, Object> response = new HashMap<>();
+
 			if (isSaved) {
 				response.put("status", 200);
 				response.put("message", "drinks added successfully");
@@ -41,10 +42,11 @@ public class DrinkMenuController {
 			response.put("status", 400);
 			response.put("message", "drinks not added");
 			return ResponseEntity.status(200).body(response);
-
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			response.put("status", 500);
+			response.put("message", "something went wrong");
+			return ResponseEntity.status(500).body(response);
 		}
 	}
 
@@ -55,11 +57,10 @@ public class DrinkMenuController {
 			@RequestParam(required = false) String category,
 			@RequestParam(required = false) String description,
 			@RequestParam(required = false) MultipartFile image) {
+		Map<String, Object> response = new HashMap<>();
 		try {
-
 			Boolean updateMenuDrinks = this.drinkMenuService.updateMenuDrinks(id, name, price, category, description,
 					image);
-			Map<String, Object> response = new HashMap<>();
 
 			if (updateMenuDrinks) {
 				response.put("status", 200);
@@ -72,16 +73,18 @@ public class DrinkMenuController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			response.put("status", 500);
+			response.put("message", "something went wrong");
+			return ResponseEntity.status(500).body(response);
 		}
 
 	}
 
 	@GetMapping("get-all")
 	public ResponseEntity<?> getAllDrinksMenu() {
+		Map<String, Object> response = new HashMap<>();
 		try {
 			List<DrinkMenuDto> allDrinksMenu = this.drinkMenuService.getAllDrinksMenu();
-			Map<String, Object> response = new HashMap<>();
 			if (allDrinksMenu != null) {
 				response.put("status", 200);
 				response.put("drinks", allDrinksMenu);
@@ -93,7 +96,9 @@ public class DrinkMenuController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			response.put("status", 500);
+			response.put("message", "something went wrong");
+			return ResponseEntity.status(500).body(response);
 		}
 	}
 
@@ -102,19 +107,15 @@ public class DrinkMenuController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			DrinkMenuDto drinkMenuByID = this.drinkMenuService.getDrinkMenuByID(id);
-			if (drinkMenuByID != null) {
-				response.put("status", 200);
-				response.put("drink", drinkMenuByID);
-				return ResponseEntity.status(200).body(response);
-
-			}
-			response.put("status", 400);
-			response.put("message", "drinkMenu not found");
+			response.put("status", drinkMenuByID != null ? 200 : 400);
+			response.put(drinkMenuByID != null ? "data" : "message",
+					drinkMenuByID != null ? drinkMenuByID : "drinkMenu not found");
 			return ResponseEntity.status(200).body(response);
-
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			response.put("status", 500);
+			response.put("message", "something went wrong");
+			return ResponseEntity.status(500).body(response);
 		}
 	}
 
@@ -123,18 +124,15 @@ public class DrinkMenuController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Boolean deleteMenuDrinks = this.drinkMenuService.deleteMenuDrinks(ids);
-			if (deleteMenuDrinks) {
-				response.put("status", 200);
-				response.put("message", "drinkMenu Deleted Successfully");
-				return ResponseEntity.status(200).body(response);
-			}
-			response.put("status", 400);
-			response.put("message", "drinkMenu not deleted (:");
+			response.put("status", deleteMenuDrinks ? 200 : 400);
+			response.put("message", deleteMenuDrinks ? "drink menu deleted successfully" : "drink menu not deleted (:");
 			return ResponseEntity.status(200).body(response);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			response.put("status", 500);
+			response.put("message", "something went wrong");
+			return ResponseEntity.status(500).body(response);
 		}
 
 	}
