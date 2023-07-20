@@ -21,10 +21,12 @@ public class FilesHelper {
 		String uidString = uid.toString().replace(':', '_');
 		String originalFilename = file.getOriginalFilename();
 		String extension = "";
-		int dotIndex = originalFilename.lastIndexOf('.');
-		if (dotIndex >= 0) {
-			extension = originalFilename.substring(dotIndex);
-			originalFilename = originalFilename.substring(0, dotIndex);
+		if (originalFilename != null) {
+			int dotIndex = originalFilename.lastIndexOf('.');
+			if (dotIndex >= 0) {
+				extension = originalFilename.substring(dotIndex);
+				originalFilename = originalFilename.substring(0, dotIndex);
+			}
 		}
 		String filename = originalFilename + "_" + uidString + extension;
 		String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static";
