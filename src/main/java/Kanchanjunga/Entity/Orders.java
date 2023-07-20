@@ -20,7 +20,7 @@ public class Orders {
 	private Double price;
 	private int quantity;
 	private String item;
-	private Date date;
+	
 
 	@DBRef
 	private Users users;
