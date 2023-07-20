@@ -134,14 +134,11 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
 			DrinkMenuDto drinkMenuDto = this.mapper.map(drinkFromDb, DrinkMenuDto.class);
 			drinkMenuDto.setImageName(drinkFromDb.getImage());
-			if (drinkMenuDto != null) {
-				return drinkMenuDto;
-			}
+			return drinkMenuDto;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		return null;
 	}
 
 }

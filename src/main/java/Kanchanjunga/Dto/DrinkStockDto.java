@@ -21,7 +21,7 @@ public class DrinkStockDto {
 	private String description;
 	private MultipartFile image;
 	private String imageName;
-	
+
 	private Date createdDate;
 	private Date lastModifiedDate;
 }

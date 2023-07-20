@@ -6,8 +6,6 @@ import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.Dto.DrinkMenuDto;
-import Kanchanjunga.Entity.DrinkMenu;
-import Kanchanjunga.Entity.Users;
 
 public interface DrinkMenuService {
 	Boolean createMenuDrinks(DrinkMenuDto data);

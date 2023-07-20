@@ -131,14 +131,11 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
 			DrinkStockDto drinkStockDTO = this.mapper.map(dbStockDrink, DrinkStockDto.class);
 			drinkStockDTO.setImageName(dbStockDrink.getImage());
-			if (drinkStockDTO != null) {
-				return drinkStockDTO;
-			}
+			return drinkStockDTO;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		return null;
 	}
 
 }

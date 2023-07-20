@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.Dto.FoodMenuDto;
-import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.Services.FoodMenuService;
 
 @RestController

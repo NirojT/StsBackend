@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.Dto.FoodMenuDto;
-import Kanchanjunga.Entity.FoodMenu;
 
 public interface FoodMenuService {
 
