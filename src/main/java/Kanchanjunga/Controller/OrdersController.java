@@ -32,7 +32,6 @@ public class OrdersController {
 	public ResponseEntity<?> createOrders(
 			@RequestBody OrdersDto ordersDto,
 			@RequestParam UUID userId,
-			@RequestParam UUID paymentId,
 			@RequestParam UUID foodMenuId,
 			@RequestParam UUID drinkMenuId
 			
@@ -40,7 +39,7 @@ public class OrdersController {
 	
 		try {
 
-			Boolean isSaved = ordersService.createOrders(ordersDto, userId, paymentId, foodMenuId, drinkMenuId);
+			Boolean isSaved = ordersService.createOrders(ordersDto, userId, foodMenuId, drinkMenuId);
 			HashMap<String, Object> response = new HashMap<>();
 			if (isSaved) {
 				response.put("status", 200);
