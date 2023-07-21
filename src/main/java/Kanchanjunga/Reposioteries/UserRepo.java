@@ -1,11 +1,16 @@
 package Kanchanjunga.Reposioteries;
 
-import org.bson.types.ObjectId;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import Kanchanjunga.Entity.Users;
 
+public interface UserRepo extends MongoRepository<Users, UUID> {
+    @Query("{name:'?0'}")
+    Optional<Users> findByName(String name);
 
-public interface UserRepo extends MongoRepository<Users, ObjectId>  {
-
+    // Optional<Users> findByName(String name);
 }
