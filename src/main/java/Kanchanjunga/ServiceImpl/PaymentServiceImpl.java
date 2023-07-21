@@ -1,14 +1,14 @@
 package Kanchanjunga.ServiceImpl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.Dto.PaymentDTO;
 import Kanchanjunga.Entity.Orders;
 import Kanchanjunga.Entity.Payment;
@@ -34,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
             request.setId(UUID.randomUUID());
             Orders order = this.ordersRepo.findById(UUID.fromString(request.getOrderID()))
                     .orElseThrow(
-                            () -> new ResourceNotFound("payment", "order id", UUID.fromString(request.getOrderID())));
+                            () -> new ResourceNotFound("payment", "payment id", UUID.fromString(request.getOrderID())));
             request.setOrder(order);
             Payment payment = mapper.map(request, Payment.class);
             paymentRepo.save(payment);
@@ -46,17 +46,70 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<Payment> getAllPayments() {
+    public List<PaymentDTO> getAllPayments() {
         try {
             List<Payment> payments = paymentRepo.findAll();
-            for (Payment payment : payments) {
-                Orders orders = payment.getOrders();
-                OrdersDto ordersDto = mapper.map(orders, OrdersDto.class);
-            }
+            List<PaymentDTO> paymentsDTO = payments.stream().map(order -> {
+                PaymentDTO paymentDTO = this.mapper.map(order, PaymentDTO.class);
+                paymentDTO.setOrder(order.getOrders());
+                return paymentDTO;
+            }).collect(Collectors.toList());
+            return paymentsDTO.size() > 0 ? paymentsDTO : null;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public PaymentDTO getPaymentByID(UUID id) {
+        try {
+            Payment payment = this.paymentRepo.findById(id)
+                    .orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
+            PaymentDTO paymentDTO = this.mapper.map(payment, PaymentDTO.class);
+            paymentDTO.setOrder(payment.getOrders());
+            return paymentDTO != null ? paymentDTO : null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean deletePayment(UUID id) {
+        try {
+            Payment payment = this.paymentRepo.findById(id)
+                    .orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
+            this.paymentRepo.delete(payment);
+            Optional<Payment> deletedPayment = this.paymentRepo.findById(id);
+            return deletedPayment.isPresent() ? false : true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    @Override
+    public Boolean updatePayment(UUID id, PaymentDTO request) {
+        try {
+            Payment payment = this.paymentRepo.findById(id)
+                    .orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
+            Orders order = this.ordersRepo.findById(UUID.fromString(request.getOrderID()))
+                    .orElseThrow(
+                            () -> new ResourceNotFound("payment", "payment id", UUID.fromString(request.getOrderID())));
+            payment.setNetPrice(request.getNetPrice());
+            payment.setRecievedPrice(request.getReceivedPrice());
+            payment.setTotalPrice(request.getTotalPrice());
+            payment.setOrders(order);
+
+            Payment updatedPayment = this.paymentRepo.save(payment);
+            return updatedPayment != null ? true : false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
 }
