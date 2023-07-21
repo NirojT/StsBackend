@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.Dto.PaymentDTO;
 import Kanchanjunga.Entity.Orders;
 import Kanchanjunga.Entity.Payment;
@@ -50,7 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
             List<Payment> payments = paymentRepo.findAll();
             for (Payment payment : payments) {
                 Orders orders = payment.getOrders();
-                // Do something with the orders
+                OrdersDto ordersDto = mapper.map(orders, OrdersDto.class);
             }
         } catch (Exception e) {
             e.printStackTrace();
