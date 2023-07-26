@@ -1,22 +1,34 @@
 package Kanchanjunga.ServiceImpl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import Kanchanjunga.Dto.UserDTO;
 import Kanchanjunga.Entity.Users;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.UserRepo;
 import Kanchanjunga.Services.UsersService;
+import Kanchanjunga.Utility.FilesHelper;
 
 @Service
 public class UsersServiceImpl implements UsersService {
 
 	@Autowired
 	private UserRepo userRepo;
+
+	@Autowired
+	ModelMapper mapper;
+
+	@Autowired
+	FilesHelper filesHelper;
 
 	// checks for empty data -> Users data
 	public static boolean checkData(Users users) {
@@ -34,16 +46,15 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public String createUser(Users users) {
-		// Users userExist = userRepo.findByName(users.getName())
-		// .orElseThrow(() -> new ResourceNotFound("users", null, null));
-		// if (userExist != null) {
-		// return "exist";
-		// }
+	public String createUser(UserDTO users) {
 		try {
-			if (checkData(users)) {
-				users.setId(UUID.randomUUID());
-				Users savedUser = userRepo.save(users);
+			Users user = this.mapper.map(users, Users.class);
+			if (checkData(user)) {
+				user.setId(UUID.randomUUID());
+				user.setCreatedDate(new Date());
+				String filename = this.filesHelper.saveFile(users.getImage());
+				user.setImage(filename);
+				Users savedUser = userRepo.save(user);
 				if (savedUser != null) {
 					return "saved";
 				}
@@ -71,22 +82,34 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public boolean updateUser(Users users, UUID id) {
+	public boolean updateUser(UUID id, String name, String role, String contactNo, String address, MultipartFile image,
+			String password) {
 		Users user = this.userRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFound("users", "userId", id));
 		try {
-			if (checkData(users)) {
-				// update the user object
-				user.setName(users.getName());
-				user.setAddress(users.getAddress());
-				user.setRole(users.getRole());
-				user.setContactNo(users.getContactNo());
-				// save the updated user object
+			user.setName(name);
+			user.setAddress(address);
+			user.setRole(role);
+			user.setContactNo(contactNo);
+			user.setPassword(password);
+
+			if (image == null) {
+				user.setImage(user.getImage());
 				Users updatedUser = this.userRepo.save(user);
 				if (updatedUser != null) {
 					return true;
 				}
 			}
+			String filename = this.filesHelper.saveFile(image);
+			Boolean isDeleted = this.filesHelper.deleteExistingFile(user.getImage());
+			if (isDeleted) {
+				user.setImage(filename);
+				Users updatedUser = this.userRepo.save(user);
+				if (updatedUser != null) {
+					return true;
+				}
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -95,31 +118,38 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public List<Users> getAllUsers() {
+	public List<UserDTO> getAllUsers() {
 		try {
 			List<Users> users = this.userRepo.findAll();
-			if (users.size() > 0) {
-				return users;
-			}
+			// if (users.size() > 0) {
+
+			List<UserDTO> usersDto = users.stream().map((user) -> {
+				UserDTO userDTO = this.mapper.map(user, UserDTO.class);
+				userDTO.setImageName(user.getImage());
+				userDTO.setOrders(user.getOrders());
+				return userDTO;
+			}).collect(Collectors.toList());
+			return usersDto;
+			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		return null;
-
 	}
 
-
-
 	@Override
-	public Users getUserByID(UUID id) {
+	public UserDTO getUserByID(UUID id) {
 		try {
 			Users user = this.userRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("users", "userId", id));
-			return user;
+			UserDTO userDTO = this.mapper.map(user, UserDTO.class);
+			userDTO.setImageName(user.getImage());
+			userDTO.setOrders(user.getOrders());
+			return userDTO;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+
 }

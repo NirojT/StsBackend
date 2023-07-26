@@ -26,14 +26,14 @@ public class Users implements UserDetails {
 	private String role;
 	private String contactNo;
 	private String address;
+	private String image;
 	private String password;
-	
+
 	@CreatedDate
 	private Date createdDate;
 
 	@LastModifiedDate
 	private Date lastModifiedDate;
-
 
 	@DBRef
 	private List<Orders> orders;
