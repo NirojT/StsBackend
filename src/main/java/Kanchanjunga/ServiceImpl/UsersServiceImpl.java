@@ -127,6 +127,7 @@ public class UsersServiceImpl implements UsersService {
 				UserDTO userDTO = this.mapper.map(user, UserDTO.class);
 				userDTO.setImageName(user.getImage());
 				userDTO.setOrders(user.getOrders());
+				userDTO.setPassword(null);
 				return userDTO;
 			}).collect(Collectors.toList());
 			return usersDto;
@@ -145,6 +146,7 @@ public class UsersServiceImpl implements UsersService {
 			UserDTO userDTO = this.mapper.map(user, UserDTO.class);
 			userDTO.setImageName(user.getImage());
 			userDTO.setOrders(user.getOrders());
+			userDTO.setPassword(null);
 			return userDTO;
 		} catch (Exception e) {
 			e.printStackTrace();

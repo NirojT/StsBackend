@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.Dto.UserDTO;
 import Kanchanjunga.Services.UsersService;
@@ -83,6 +85,16 @@ public class UsersController {
         }
         response.put("status", 400);
         response.put("message", "user not found");
+        return ResponseEntity.status(200).body(response);
+    }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, String name, String role, String contactNo,
+            String address, MultipartFile image) {
+        HashMap<String, Object> response = new HashMap<>();
+        Boolean isUpdated = this.usersService.updateUser(id, name, role, contactNo, address, image, address);
+        response.put("status", isUpdated ? 200 : 400);
+        response.put("message", isUpdated ? "user updated successfully" : "user details update fail");
         return ResponseEntity.status(200).body(response);
     }
 }
