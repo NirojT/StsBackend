@@ -16,6 +16,8 @@ public class FoodMenuDto {
 	private Double price;
 	private String category;
 	private String description;
+	private String type;
+	
 	private MultipartFile image;
 	private String imageName;
 	

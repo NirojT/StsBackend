@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,9 @@ import Kanchanjunga.Services.UsersService;
 
 @RestController
 @RequestMapping("/api/user/")
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
+		"http://192.168.0.102:5173/" }, allowCredentials = "true")
+
 public class AuthController {
 
 	@Autowired

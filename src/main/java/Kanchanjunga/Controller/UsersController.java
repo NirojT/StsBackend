@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import Kanchanjunga.Services.UsersService;
 
 @RestController
 @RequestMapping("/api/user/")
+@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class UsersController {
 
     @Autowired
@@ -30,7 +32,7 @@ public class UsersController {
         HashMap<String, Object> response = new HashMap<>();
         if (result.equalsIgnoreCase("exist")) {
             response.put("status", 200);
-            response.put("message", "user already exist");
+            response.put("mesages", "user already exist");
             return ResponseEntity.status(200).body(response);
         }
         if (result.equalsIgnoreCase("saved")) {

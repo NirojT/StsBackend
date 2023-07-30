@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,6 +26,7 @@ import Kanchanjunga.Services.FoodMenuService;
 
 @RestController
 @RequestMapping("/api/foods/menu/")
+@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class FoodMenuController {
 
 	@Autowired
@@ -58,13 +60,14 @@ public class FoodMenuController {
 			@RequestParam (required = false) String name,
 			@RequestParam (required = false) Double price,
 			@RequestParam (required = false) String category,
+			@RequestParam (required = false) String type,
 			@RequestParam (required = false) String description,
 			@RequestParam(required = false) MultipartFile image
 
 	) {
 		try {
 
-			Boolean updateFoodMenu = this.foodMenuService.updateFoodMenu(id, name, price, category, description,
+			Boolean updateFoodMenu = this.foodMenuService.updateFoodMenu(id, name, price, category, description,type,
 					image);
 			Map<String, Object> response = new HashMap<>();
 

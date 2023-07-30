@@ -1,28 +1,18 @@
 package Kanchanjunga.ServiceImpl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.rmi.server.UID;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import Kanchanjunga.KanchanjungaApplication;
 import Kanchanjunga.Dto.FoodMenuDto;
-import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.FoodMenuRepo;
@@ -59,7 +49,7 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 	}
 
 	@Override
-	public Boolean updateFoodMenu(UUID id, String name, Double price, String category, String description,
+	public Boolean updateFoodMenu(UUID id, String name, Double price, String category, String description, String type,
 			MultipartFile image) {
 		try {
 			FoodMenu foodMenu = this.foodMenuRepo.findById(id)
@@ -75,6 +65,7 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 				if (isDeleted) {
 					foodMenu.setName(name);
 					foodMenu.setPrice(price);
+					foodMenu.setType(type);
 					foodMenu.setImage(filename);
 					foodMenu.setCategory(category);
 					foodMenu.setDescription(description);
@@ -91,6 +82,7 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 		
 			foodMenu.setName(name);
 			foodMenu.setPrice(price);
+			foodMenu.setType(type);
 			foodMenu.setImage(foodMenu.getImage());
 			foodMenu.setCategory(category);
 			foodMenu.setDescription(description);
