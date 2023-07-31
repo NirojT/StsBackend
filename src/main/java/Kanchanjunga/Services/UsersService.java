@@ -3,16 +3,23 @@ package Kanchanjunga.Services;
 import java.util.List;
 import java.util.UUID;
 
-import Kanchanjunga.Entity.Users;
+import org.springframework.web.multipart.MultipartFile;
+
+import Kanchanjunga.Dto.UserDTO;
 
 public interface UsersService {
-    String createUser(Users users);
+    String createUser(UserDTO users);
 
     boolean deleteUser(UUID id);
 
-    boolean updateUser(Users users, UUID id);
+    boolean updateUser(UUID id, String name,
+            String role,
+            String contactNo,
+            String address,
+            MultipartFile image,
+            String password);
 
-    List<Users> getAllUsers();
+    List<UserDTO> getAllUsers();
 
-    Users getUserByID(UUID id);
+    UserDTO getUserByID(UUID id);
 }

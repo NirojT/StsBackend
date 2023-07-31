@@ -21,6 +21,7 @@ public class DrinkMenu {
 	private String name;
 	private Double price;
 	private String category;
+	private String remarks;
 	private String description;
 	private String image;
 

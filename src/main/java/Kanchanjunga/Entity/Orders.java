@@ -19,7 +19,10 @@ public class Orders {
 	private String tableNo;
 	private Double price;
 	private int quantity;
+	
+	
 	private String item;
+	private String status = "pending";
 	
 
 	@DBRef

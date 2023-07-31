@@ -10,7 +10,7 @@ import Kanchanjunga.Dto.DrinkMenuDto;
 public interface DrinkMenuService {
 	Boolean createMenuDrinks(DrinkMenuDto data);
 
-	Boolean updateMenuDrinks(UUID id, String name, Double price, String category, String description,
+	Boolean updateMenuDrinks(UUID id, String name, Double price, String category, String description, String remarks,
 			MultipartFile image);
 
 	Boolean deleteMenuDrinks(UUID id);

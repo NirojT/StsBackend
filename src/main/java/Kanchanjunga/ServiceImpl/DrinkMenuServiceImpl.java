@@ -48,6 +48,7 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 
 	@Override
 	public Boolean updateMenuDrinks(UUID id, String name, Double price, String category, String description,
+			String remarks,
 			MultipartFile image) {
 		try {
 			// if user wants to update image
@@ -63,6 +64,7 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 					drinkFromDb.setImage(filename);
 					drinkFromDb.setCategory(category);
 					drinkFromDb.setDescription(description);
+					drinkFromDb.setRemarks(remarks);
 					this.drinkMenuRepo.save(drinkFromDb);
 					return true;
 				}

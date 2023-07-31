@@ -17,23 +17,17 @@ public class OrdersDto {
 	private Double price;
 	private int quantity;
 	private String item;
+	private String status = "pending";
 
-
-	
 	private Users users;
-	
-	
+
 	private Payment payment;
-	
-	
+
 	private FoodMenu foodMenu;
-	
 
 	private DrinkMenu drinkMenu;
-	
-	
+
 	private Date createdDate;
 
-	
 	private Date lastModifiedDate;
 }
