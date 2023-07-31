@@ -38,14 +38,13 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	@Autowired
 	private DrinkMenuRepo drinkMenuRepo;
 
-	@Autowired
-	private PaymentRepo paymentRepo;
+
 
 	@Autowired
 	private ModelMapper mapper;
 
 	@Override
-	public Boolean createOrders(OrdersDto orderDto, UUID userId, UUID paymentId, UUID foodMenuId, UUID drinkMenuId) {
+	public Boolean createOrders(OrdersDto orderDto, UUID userId, UUID foodMenuId, UUID drinkMenuId) {
 		try {
 			Users userFromDb = this.userRepo.findById(userId)
 					.orElseThrow(() -> new ResourceNotFound("User", "user id", userId));
@@ -56,16 +55,14 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 			DrinkMenu drinkMenuFromDb = this.drinkMenuRepo.findById(userId)
 					.orElseThrow(() -> new ResourceNotFound("drinkMenu", "drinkMenu id", drinkMenuId));
 
-			Payment payment = this.paymentRepo.findById(userId)
-					.orElseThrow(() -> new ResourceNotFound("payment", "payment id", paymentId));
-
+			
 			Orders orders = this.mapper.map(orderDto, Orders.class);
 			orders.setId(UUID.randomUUID());
 			orderDto.setCreatedDate(new Date());
 			orders.setUsers(userFromDb);
 			orders.setFoodMenu(foodMenuFromDb);
 			orders.setDrinkMenu(drinkMenuFromDb);
-			orders.setPayment(payment);
+	
 
 			Orders savedOrder = this.ordersRepo.save(orders);
 

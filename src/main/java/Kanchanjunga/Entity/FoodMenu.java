@@ -9,8 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Data;
 
 @Data
@@ -21,6 +19,7 @@ public class FoodMenu {
 	private UUID id;
 	private String name;
 	private Double price;
+	private String type;
 	private String category;
 	private String description;
 	private String image;

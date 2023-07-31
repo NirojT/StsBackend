@@ -16,7 +16,7 @@ import Kanchanjunga.KanchanjungaApplication;
 @Component
 public class FilesHelper {
 	public String saveFile(MultipartFile file) throws IOException {
-		// uuid for unique name of image
+		// uid for unique name of image
 		UID uid = new UID();
 		String uidString = uid.toString().replace(':', '_');
 		String originalFilename = file.getOriginalFilename();
@@ -30,7 +30,7 @@ public class FilesHelper {
 		}
 		String filename = originalFilename + "_" + uidString + extension;
 		String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static";
-		Path paths = Paths.get(uploadDir);
+                Path paths = Paths.get(uploadDir);
 		if (!Files.exists(paths)) {
 			Files.createDirectories(paths);
 		}

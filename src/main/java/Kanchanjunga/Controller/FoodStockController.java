@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,6 +25,7 @@ import Kanchanjunga.Services.FoodStockService;
 
 @RestController
 @RequestMapping("/api/foods/stock/")
+@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class FoodStockController {
 
 	@Autowired
@@ -115,7 +117,7 @@ public class FoodStockController {
 			 FoodStockDto foodStockByID = this.foodStockService.getFoodStockByID(ids);
 			if (foodStockByID != null) {
 				response.put("status", 200);
-				response.put("Foods", foodStockByID);
+				response.put("Food", foodStockByID);
 				return ResponseEntity.status(200).body(response);
 
 			}
