@@ -1,30 +1,17 @@
 package Kanchanjunga.ServiceImpl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.rmi.server.UID;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
-import Kanchanjunga.KanchanjungaApplication;
 import Kanchanjunga.Dto.FoodStockDto;
-import Kanchanjunga.Entity.DrinkMenu;
-import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.Entity.FoodStock;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.FoodStockRepo;
@@ -140,10 +127,9 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 				return foodStockDto;
 			}).collect(Collectors.toList());
 
-			if (allFoodStockDto.size()>0) {
+			if (allFoodStockDto.size() > 0) {
 				return allFoodStockDto;
 			}
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,10 +144,10 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 		try {
 			FoodStock foodStock = this.foodStockRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
-			
-			FoodStockDto foodStockDto  = this.mapper.map(foodStock, FoodStockDto.class);
+
+			FoodStockDto foodStockDto = this.mapper.map(foodStock, FoodStockDto.class);
 			foodStockDto.setImageName(foodStock.getImage());
-			if(foodStockDto!=null) {
+			if (foodStockDto != null) {
 				return foodStockDto;
 			}
 
