@@ -23,9 +23,9 @@ public class FoodMenu {
 	private String category;
 	private String description;
 	private String image;
-	
+
 	@DBRef
-	private List<Orders>  orders;
+	private List<Orders> orders;
 	@CreatedDate
 	private Date createdDate;
 
@@ -33,4 +33,3 @@ public class FoodMenu {
 	private Date lastModifiedDate;
 
 }
-
