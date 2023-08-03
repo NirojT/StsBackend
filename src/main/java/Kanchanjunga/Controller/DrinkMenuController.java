@@ -24,8 +24,10 @@ import Kanchanjunga.Services.DrinkMenuService;
 
 @RestController
 @RequestMapping("/api/drinks/menu/")
+
 @CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }
 , allowCredentials = "true")
+
 public class DrinkMenuController {
 
 	@Autowired
@@ -59,10 +61,12 @@ public class DrinkMenuController {
 			@RequestParam(required = false) Double price,
 			@RequestParam(required = false) String category,
 			@RequestParam(required = false) String description,
+			@RequestParam(required = false) String remarks,
 			@RequestParam(required = false) MultipartFile image) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Boolean updateMenuDrinks = this.drinkMenuService.updateMenuDrinks(id, name, price, category, description,
+					remarks,
 					image);
 
 			if (updateMenuDrinks) {
@@ -111,7 +115,12 @@ public class DrinkMenuController {
 		try {
 			DrinkMenuDto drinkMenuByID = this.drinkMenuService.getDrinkMenuByID(id);
 			response.put("status", drinkMenuByID != null ? 200 : 400);
-			response.put(drinkMenuByID != null ? "drink" : "message", drinkMenuByID != null ? drinkMenuByID : "drinkMenu not found");
+
+			response.put(drinkMenuByID != null ? "drink" : "message",
+					drinkMenuByID != null ? drinkMenuByID : "drinkMenu not found");
+
+			
+
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -126,7 +126,8 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 			List<FoodMenuDto> foodMenuDtos = allFoodMenu.stream().map(food -> {
 				FoodMenuDto foodMenuDto = mapper.map(food, FoodMenuDto.class);
-				foodMenuDto.setImageName(food.getImage()); // Set the image from FoodMenu to FoodMenuDto
+				foodMenuDto.setImageName(food.getImage());
+				foodMenuDto.setOrders(food.getOrders());// Set the image from FoodMenu to FoodMenuDto
 				return foodMenuDto;
 			}).collect(Collectors.toList());
 

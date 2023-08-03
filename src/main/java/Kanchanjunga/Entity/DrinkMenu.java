@@ -1,7 +1,6 @@
 package Kanchanjunga.Entity;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -21,11 +20,14 @@ public class DrinkMenu {
 	private String name;
 	private Double price;
 	private String category;
+	private String remarks;
 	private String description;
 	private String image;
+	private int quantity;
+	
 
 	@DBRef
-	private List<Orders> orders;
+	private Orders orders;
 
 	@CreatedDate
 	private Date createdDate;

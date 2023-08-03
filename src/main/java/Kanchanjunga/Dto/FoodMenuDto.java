@@ -17,11 +17,11 @@ public class FoodMenuDto {
 	private String category;
 	private String description;
 	private String type;
-	
+	private int quantity;
 	private MultipartFile image;
 	private String imageName;
 	
-	private List<Orders>  orders;
+	private Orders orders;
 	private Date createdDate;
 	private Date lastModifiedDate;
 }

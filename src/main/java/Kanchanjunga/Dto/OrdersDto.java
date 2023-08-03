@@ -1,10 +1,8 @@
 package Kanchanjunga.Dto;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
-
-import Kanchanjunga.Entity.DrinkMenu;
-import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.Entity.Payment;
 import Kanchanjunga.Entity.Users;
 import lombok.Data;
@@ -17,23 +15,19 @@ public class OrdersDto {
 	private Double price;
 	private int quantity;
 	private String item;
+	private String status = "pending";
+	
+	private List<String> items;
 
+	private UserDTO users;
 
-	
-	private Users users;
-	
-	
-	private Payment payment;
-	
-	
-	private FoodMenu foodMenu;
-	
+	private PaymentDTO payment;
 
-	private DrinkMenu drinkMenu;
-	
-	
+	private List<DrinkMenuDto> drinkMenus;
+
+	private List<FoodMenuDto> foodMenus;
+
 	private Date createdDate;
 
-	
 	private Date lastModifiedDate;
 }

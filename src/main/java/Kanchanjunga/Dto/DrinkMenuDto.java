@@ -16,10 +16,12 @@ public class DrinkMenuDto {
 	private Double price;
 	private String category;
 	private String description;
+	private String remarks;
 	private MultipartFile image;
 	private String imageName;
+	private int quantity;
 
-	private List<Orders> orders;
+	private Orders orders;
 	private Date createdDate;
 	private Date lastModifiedDate;
 }
