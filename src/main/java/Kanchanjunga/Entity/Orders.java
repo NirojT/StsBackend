@@ -1,5 +1,6 @@
 package Kanchanjunga.Entity;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -8,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import Kanchanjunga.Dto.AddOrderDto;
 import lombok.Data;
 
 @Data
@@ -21,7 +23,7 @@ public class Orders {
 	private int quantity;
 	
 	
-	private String item;
+	private List<AddOrderDto> items;
 	private String status = "pending";
 	
 
@@ -32,10 +34,10 @@ public class Orders {
 	private Payment payment;
 	
 	@DBRef
-	private FoodMenu foodMenu;
+	private List<FoodMenu> foodMenus;
 	
 	@DBRef
-	private DrinkMenu drinkMenu;
+	private List<DrinkMenu> drinkMenus;
 	
 	@CreatedDate
 	private Date createdDate;

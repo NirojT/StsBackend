@@ -22,7 +22,9 @@ import Kanchanjunga.Services.UsersService;
 
 @RestController
 @RequestMapping("/api/user/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/" }, allowCredentials = "true")
+
+@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }, allowCredentials = "true")
+
 public class UsersController {
 
     @Autowired

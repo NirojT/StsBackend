@@ -23,6 +23,11 @@ public class JwtHelper {
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
+	//extract id
+	public String extractId(String token) {
+	    return extractClaim(token, claims -> claims.get("id", String.class));
+	}
+
 
 	public Date extractExpiration(String token) {
 		return extractClaim(token, Claims::getExpiration);

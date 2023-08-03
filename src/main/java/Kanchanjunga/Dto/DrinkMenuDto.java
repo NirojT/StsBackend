@@ -19,8 +19,9 @@ public class DrinkMenuDto {
 	private String remarks;
 	private MultipartFile image;
 	private String imageName;
+	private int quantity;
 
-	private List<Orders> orders;
+	private Orders orders;
 	private Date createdDate;
 	private Date lastModifiedDate;
 }

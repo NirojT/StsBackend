@@ -18,8 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import Kanchanjunga.Dto.AddOrderDto;
 import Kanchanjunga.Dto.OrdersDto;
+import Kanchanjunga.JWT.JwtHelper;
 import Kanchanjunga.Services.OrdersService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/orders/")
@@ -29,19 +32,46 @@ public class OrdersController {
 	@Autowired
 	private OrdersService ordersService;
 	
+	@Autowired
+	private JwtHelper jwtHelper;
+	
 	
 	@PostMapping("create")
 	public ResponseEntity<?> createOrders(
-			@RequestBody OrdersDto ordersDto,
-			@RequestParam UUID userId,
-			@RequestParam UUID foodMenuId,
-			@RequestParam UUID drinkMenuId
+			@RequestParam String tableNo,
+			@RequestParam String totalPrice,
+			@RequestBody List<AddOrderDto> addOrderDtos,
+			HttpServletRequest request
 			
 			) {
+		
+		
 		HashMap<String, Object> response = new HashMap<>();
 		try {
+			
+			String requestHeader = request.getHeader("Authorization");
+			String token =null;
+			if (requestHeader != null && requestHeader.startsWith("Bearer")) {
+				token = requestHeader.substring(7);
+				
+				
+				Boolean isValid = jwtHelper.validateLoginToken(token);
+				
+				
+				if (!isValid) {
+					response.put("status", 400);
+					response.put("message", "invalid token");
+					return ResponseEntity.status(200).body(response);
+				}
+					
+				
+				
+				String userId = jwtHelper.extractId(token);
+				
+				UUID userID = UUID.fromString(userId);
 
-			Boolean isSaved = ordersService.createOrders(ordersDto, userId, foodMenuId, drinkMenuId);
+			
+			Boolean isSaved = ordersService.createOrders(addOrderDtos, tableNo,totalPrice,userID);
 			
 		
 				response.put("status", isSaved ? 200 : 400);
@@ -50,6 +80,9 @@ public class OrdersController {
 			
 			
 
+		}
+			
+		return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.put("status", 500);
@@ -57,6 +90,33 @@ public class OrdersController {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
+//	@PostMapping("create")
+//	public ResponseEntity<?> createOrders(
+//			@RequestParam UUID userId,
+//			@RequestParam UUID foodMenuId,
+//			@RequestParam UUID drinkMenuId,
+//			@RequestBody List<OrdersDto>  ordersDto
+//			
+//			) {
+//		HashMap<String, Object> response = new HashMap<>();
+//		try {
+//			
+//			Boolean isSaved = ordersService.createOrders(ordersDto, userId, foodMenuId, drinkMenuId);
+//			
+//			
+//			response.put("status", isSaved ? 200 : 400);
+//			response.put("message", isSaved ? "Orders  saved successfully": "Orders not saved");
+//			return ResponseEntity.status(200).body(response);
+//			
+//			
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			response.put("status", 500);
+//			response.put("message", "something went wrong... ");
+//			return ResponseEntity.status(200).body(response);
+//		}
+//	}
 
 
 	@PutMapping("update/{id}")
@@ -64,15 +124,15 @@ public class OrdersController {
 			@PathVariable  UUID id,
 			@RequestParam(required = false) String tableNo,
 			@RequestParam(required = false) Double price,
-			@RequestParam(required = false) int quantity, 
-			@RequestParam(required = false) String item
+			@RequestParam(required = false) List<AddOrderDto> item,
+			@RequestParam(required = false) String status
 		
 
 	) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 
-			Boolean isUpdated= this.ordersService.updateOrders(id, tableNo, price, quantity, item);
+			Boolean isUpdated= this.ordersService.updateOrders(id, tableNo, price, item,status);
 			
 
 			

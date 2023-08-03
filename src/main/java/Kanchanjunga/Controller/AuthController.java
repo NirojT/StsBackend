@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import Kanchanjunga.JWT.JwtHelper;
 import Kanchanjunga.JWT.JwtRequest;
 import Kanchanjunga.JWT.JwtResponse;
 import Kanchanjunga.Services.UsersService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/user/")
@@ -54,23 +56,6 @@ public class AuthController {
 
 		JwtResponse jwtResponse = JwtResponse.builder().token(token).username(userDetails.getUsername()).build();
 		return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
-
-		// try {
-		// OrdersDto ordersByID = this.ordersService.getOrdersByID(ids);
-		// if (ordersByID != null) {
-		// response.put("status", 200);
-		// response.put("Order", ordersByID);
-		// return ResponseEntity.status(200).body(response);
-
-		// }
-		// response.put("status", 400);
-		// response.put("message", "order is empty 🤢🤢");
-		// return ResponseEntity.status(200).body(response);
-
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// return null;
-		// }
 	}
 
 	public void doAuthenticate(String name, String password) {
@@ -105,5 +90,7 @@ public class AuthController {
 		return ResponseEntity.status(200).body(response);
 
 	}
+	
+
 
 }
