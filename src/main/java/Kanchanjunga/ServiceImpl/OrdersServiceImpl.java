@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import Kanchanjunga.Dto.AddOrderDto;
 import Kanchanjunga.Dto.DrinkMenuDto;
 import Kanchanjunga.Dto.FoodMenuDto;
+import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.Dto.UserDTO;
 import Kanchanjunga.Entity.DrinkMenu;
@@ -49,9 +50,11 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	private ModelMapper mapper;
 
 	@Override
-	public Boolean createOrders(List<AddOrderDto> addOrderDtos, String tableNo,String totalPrice,UUID userID) {
+	public Boolean createOrders(OrderRequest orderRequest, String username ) {
 
 	try {
+		List<AddOrderDto> addOrderDtos = orderRequest.getAddOrderDtos();
+		
 		List<AddOrderDto> item = addOrderDtos.stream().map((order) -> {
 			UUID foodMenuId = order.getFoodMenuId();
 			UUID drinkMenuId = order.getDrinkMenuId();
@@ -76,13 +79,13 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 			return order;
 		}).collect(Collectors.toList());
 		
-		Users userFromDb = this.userRepo.findById(userID)
-				.orElseThrow(() -> new ResourceNotFound("User", "user id", userID));
+		Users userFromDb = this.userRepo.findByName(username).get();
 		
 		Orders orders = new Orders();
-		orders.setTableNo(tableNo);
+		orders.setId(UUID.randomUUID());
+		orders.setTableNo(orderRequest.getTableNo());
 		orders.setCreatedDate(new Date());
-		orders.setPrice(Double.parseDouble(totalPrice));
+		orders.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
 		orders.setItems(item);
 		orders.setUsers(userFromDb);
 		

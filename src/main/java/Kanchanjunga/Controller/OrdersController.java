@@ -3,6 +3,7 @@ package Kanchanjunga.Controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import Kanchanjunga.Dto.AddOrderDto;
+import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
+import Kanchanjunga.Entity.Users;
 import Kanchanjunga.JWT.JwtHelper;
+import Kanchanjunga.Reposioteries.UserRepo;
 import Kanchanjunga.Services.OrdersService;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -36,15 +40,18 @@ public class OrdersController {
 	private JwtHelper jwtHelper;
 	
 	
+
+	
+	
 	@PostMapping("create")
 	public ResponseEntity<?> createOrders(
-			@RequestParam String tableNo,
-			@RequestParam String totalPrice,
-			@RequestBody List<AddOrderDto> addOrderDtos,
+			 @RequestBody OrderRequest orderRequest,
 			HttpServletRequest request
 			
 			) {
 		
+		System.out.println(orderRequest.getTableNo());
+		System.out.println(orderRequest.getTotalPrice());
 		
 		HashMap<String, Object> response = new HashMap<>();
 		try {
@@ -66,12 +73,10 @@ public class OrdersController {
 					
 				
 				
-				String userId = jwtHelper.extractId(token);
-				
-				UUID userID = UUID.fromString(userId);
-
+				 String username = jwtHelper.extractUsername(token);
+				System.out.println(username);
 			
-			Boolean isSaved = ordersService.createOrders(addOrderDtos, tableNo,totalPrice,userID);
+			Boolean isSaved = ordersService.createOrders(orderRequest,username);
 			
 		
 				response.put("status", isSaved ? 200 : 400);
