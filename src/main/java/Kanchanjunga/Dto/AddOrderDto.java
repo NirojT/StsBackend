@@ -15,6 +15,8 @@ private UUID drinkMenuId;
 private int quantity;
 
 private Double price;
+
+private String imageName;
 	
 
 }
