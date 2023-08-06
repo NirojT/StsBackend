@@ -3,6 +3,7 @@ package Kanchanjunga.Controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import Kanchanjunga.Dto.AddOrderDto;
+import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
+import Kanchanjunga.Entity.Users;
 import Kanchanjunga.JWT.JwtHelper;
+import Kanchanjunga.Reposioteries.UserRepo;
 import Kanchanjunga.Services.OrdersService;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -35,48 +39,56 @@ public class OrdersController {
 
 	@Autowired
 	private JwtHelper jwtHelper;
+	
+	
 
+	
+	
 	@PostMapping("create")
 	public ResponseEntity<?> createOrders(
-			@RequestParam String tableNo,
-			@RequestParam String totalPrice,
-			@RequestBody List<AddOrderDto> addOrderDtos,
+			 @RequestBody OrderRequest orderRequest,
 			HttpServletRequest request
-
-	) {
-		System.out.println("tableNo");
-		System.out.println(tableNo);
+			
+			) {
+		
+		System.out.println(orderRequest.getTableNo());
+		System.out.println(orderRequest.getTotalPrice());
+		
 		HashMap<String, Object> response = new HashMap<>();
 		try {
+			
+			String requestHeader = request.getHeader("Authorization");
+			String token =null;
+			if (requestHeader != null && requestHeader.startsWith("Bearer")) {
+				token = requestHeader.substring(7);
+				
+				
+				Boolean isValid = jwtHelper.validateLoginToken(token);
+				
+				
+				if (!isValid) {
+					response.put("status", 400);
+					response.put("message", "invalid token");
+					return ResponseEntity.status(200).body(response);
+				}
+					
+				
+				
+				 String username = jwtHelper.extractUsername(token);
+				System.out.println(username);
+			
+			Boolean isSaved = ordersService.createOrders(orderRequest,username);
+			
+		
+				response.put("status", isSaved ? 200 : 400);
+				response.put("message", isSaved ? "Orders  saved successfully": "Orders not saved");
+				return ResponseEntity.status(200).body(response);
+			
+			
 
-			// String requestHeader = request.getHeader("Authorization");
-			// String token = null;
-			// if (requestHeader != null && requestHeader.startsWith("Bearer")) {
-			// token = requestHeader.substring(7);
-
-			// Boolean isValid = jwtHelper.validateLoginToken(token);
-
-			// if (!isValid) {
-			// response.put("status", 400);
-			// response.put("message", "invalid token");
-			// return ResponseEntity.status(200).body(response);
-			// }
-
-			// String userId = jwtHelper.extractId(token);
-
-			// UUID userID = UUID.fromString(userId);
-
-			// Boolean isSaved = ordersService.createOrders(addOrderDtos, tableNo,
-			// totalPrice, userID);
-
-			// response.put("status", isSaved ? 200 : 400);
-			// response.put("message", isSaved ? "Orders saved successfully" : "Orders not
-			// saved");
-			// return ResponseEntity.status(200).body(response);
-
-			// }
-
-			return null;
+		}
+			
+		return ResponseEntity.status(200).body("fail");
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.put("status", 500);

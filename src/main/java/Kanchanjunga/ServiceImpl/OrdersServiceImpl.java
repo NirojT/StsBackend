@@ -1,6 +1,7 @@
 package Kanchanjunga.ServiceImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import Kanchanjunga.Dto.AddOrderDto;
 import Kanchanjunga.Dto.DrinkMenuDto;
 import Kanchanjunga.Dto.FoodMenuDto;
+import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.Dto.UserDTO;
 import Kanchanjunga.Entity.DrinkMenu;
@@ -47,9 +49,11 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	private ModelMapper mapper;
 
 	@Override
-	public Boolean createOrders(List<AddOrderDto> addOrderDtos, String tableNo, String totalPrice, UUID userID) {
+	public Boolean createOrders(OrderRequest orderRequest, String username) {
 
 		try {
+			List<AddOrderDto> addOrderDtos = orderRequest.getAddOrderDtos();
+
 			List<AddOrderDto> item = addOrderDtos.stream().map((order) -> {
 				UUID foodMenuId = order.getFoodMenuId();
 				UUID drinkMenuId = order.getDrinkMenuId();
@@ -74,13 +78,13 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 				return order;
 			}).collect(Collectors.toList());
 
-			Users userFromDb = this.userRepo.findById(userID)
-					.orElseThrow(() -> new ResourceNotFound("User", "user id", userID));
+			Users userFromDb = this.userRepo.findByName(username).get();
 
 			Orders orders = new Orders();
-			orders.setTableNo(tableNo);
+			orders.setId(UUID.randomUUID());
+			orders.setTableNo(orderRequest.getTableNo());
 			orders.setCreatedDate(new Date());
-			orders.setPrice(Double.parseDouble(totalPrice));
+			orders.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
 			orders.setItems(item);
 			orders.setUsers(userFromDb);
 
@@ -215,37 +219,48 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 			// is
 
 			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
+
 				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
-				ordersDto.getUsers().setImageName(order.getUsers().getImage());
-				ordersDto.getUsers().setPassword("");
+			ordersDto.getUsers().setImageName(order.getUsers().getImage());	
+		
+//
+			ordersDto.getUsers().setPassword(null);
+				ordersDto.setItems(order.getItems());
+				if (order.getDrinkMenus() != null) {
+					List<DrinkMenuDto> drinkMenuDtos = order.getDrinkMenus().stream().map(drink -> {
+						DrinkMenuDto drinkDto = mapper.map(drink, DrinkMenuDto.class);
+						drinkDto.setImageName(drink.getImage());
+						
+						drinkDto.setPrice(order.getPrice());
+						return drinkDto;
 
-				List<DrinkMenuDto> drinkMenuDtos = order.getDrinkMenus().stream().map(drink -> {
-					DrinkMenuDto drinkDto = mapper.map(drink, DrinkMenuDto.class);
-					drinkDto.setImageName(drink.getImage());
-					return drinkDto;
+					}).collect(Collectors.toList());
+					ordersDto.setDrinkMenus(drinkMenuDtos);
+				}
 
-				}).collect(Collectors.toList());
+				if (order.getFoodMenus() != null) {
+					List<FoodMenuDto> foodMenuDtos = order.getFoodMenus().stream().map(menu -> {
+						FoodMenuDto foodMenuDto = mapper.map(menu, FoodMenuDto.class);
+						foodMenuDto.setImageName(menu.getImage());
+						foodMenuDto.setPrice(menu.getPrice());
+						return foodMenuDto;
 
-				List<FoodMenuDto> foodMenuDtos = order.getFoodMenus().stream().map(menu -> {
-					FoodMenuDto foodMenuDto = mapper.map(menu, FoodMenuDto.class);
-					foodMenuDto.setImageName(menu.getImage());
-					return foodMenuDto;
-				}).collect(Collectors.toList());
-
-				ordersDto.setDrinkMenus(drinkMenuDtos);
-				ordersDto.setFoodMenus(foodMenuDtos);
+					}).collect(Collectors.toList());
+					ordersDto.setFoodMenus(foodMenuDtos);
+				}
 
 				return ordersDto;
 			}).collect(Collectors.toList());
 
-			if (allOrdersDto.size() > 0) {
-				return allOrdersDto;
-			}
+			return allOrdersDto;
 
-		} catch (Exception e) {
+		}
+
+		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -269,6 +284,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 			OrdersDto ordersDto = this.mapper.map(ordersFromDb, OrdersDto.class);
 			ordersDto.getUsers().setImageName(ordersFromDb.getUsers().getImage());
 			ordersDto.getUsers().setPassword("");
+			ordersDto.setItems(ordersFromDb.getItems());
 			ordersDto.setFoodMenus(foodmenuDtos);
 			ordersDto.setDrinkMenus(drinkMenuDtos);
 

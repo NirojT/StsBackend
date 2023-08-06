@@ -23,10 +23,10 @@ public class JwtHelper {
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
-	//extract id
-	public String extractId(String token) {
-	    return extractClaim(token, claims -> claims.get("id", String.class));
-	}
+//	//extract id
+//	public String extractId(String token) {
+//	    return extractClaim(token, claims -> claims.get("id", String.class));
+//	}
 
 
 	public Date extractExpiration(String token) {
@@ -74,7 +74,7 @@ public class JwtHelper {
 		long nowMillis = System.currentTimeMillis();
 		long expMillis = nowMillis + (30L * 24L * 60L * 60L * 1000L); // 30 days in milliseconds
 		Date exp = new Date(expMillis);
-
+		  
 		return Jwts.builder().setClaims(claims).setSubject(userName).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(exp).signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 

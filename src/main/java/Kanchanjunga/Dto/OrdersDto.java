@@ -14,10 +14,10 @@ public class OrdersDto {
 	private String tableNo;
 	private Double price;
 	private int quantity;
-	private String item;
+
 	private String status = "pending";
 	
-	private List<String> items;
+	private List<AddOrderDto> items;
 
 	private UserDTO users;
 
