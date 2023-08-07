@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +71,8 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 					foodMenu.setQuantity(quantity);
 
 					order.setImageName(foodMenu.getImage());
+					order.setName(foodMenu.getName());
+					order.setPrice(foodMenu.getPrice());
 
 				}
 				if (drinkMenuId != null) {
@@ -77,6 +80,8 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 							.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", drinkMenuId));
 					drinkMenu.setQuantity(quantity);
 					order.setImageName(drinkMenu.getImage());
+					order.setName(drinkMenu.getName());
+					order.setPrice(drinkMenu.getPrice());
 				}
 
 				return order;
@@ -90,6 +95,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 			orders.setCreatedDate(new Date());
 			orders.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
 			orders.setItems(item);
+			orders.setRemarks(orderRequest.getRemarks());
 
 			orders.setUsers(userFromDb);
 
@@ -164,6 +170,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 				ordersDto.getUsers().setPassword(null);
 				ordersDto.setItems(order.getItems());
+				ordersDto.setRemarks(order.getRemarks());
 				if (order.getDrinkMenus() != null) {
 
 				}
@@ -236,6 +243,49 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 		return null;
 
+	}
+
+	@Override
+	public List<OrdersDto> getLatestOrders() {
+		try {
+			List<Orders> allOrders = this.ordersRepo.findAll(Sort.by(Sort.Direction.DESC, "createdDate")).stream()
+					.limit(12).collect(Collectors.toList());
+
+			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
+
+				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
+				ordersDto.getUsers().setImageName(order.getUsers().getImage());
+
+				ordersDto.getUsers().setPassword(null);
+				ordersDto.setItems(order.getItems());
+				ordersDto.setRemarks(order.getRemarks());
+				if (order.getDrinkMenus() != null) {
+
+				}
+
+				if (order.getFoodMenus() != null) {
+					List<FoodMenuDto> foodMenuDtos = order.getFoodMenus().stream().map(menu -> {
+						FoodMenuDto foodMenuDto = mapper.map(menu, FoodMenuDto.class);
+						foodMenuDto.setImageName(menu.getImage());
+						foodMenuDto.setPrice(menu.getPrice());
+						return foodMenuDto;
+
+					}).collect(Collectors.toList());
+					ordersDto.setFoodMenus(foodMenuDtos);
+				}
+
+				return ordersDto;
+			}).collect(Collectors.toList());
+
+			return allOrdersDto;
+
+		}
+
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return Collections.emptyList();
 	}
 
 }

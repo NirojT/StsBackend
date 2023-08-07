@@ -1,4 +1,5 @@
 package Kanchanjunga.Entity;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,24 +22,23 @@ public class Orders {
 	private String tableNo;
 	private Double price;
 	private int quantity;
-	
-	
+	private String remarks;
+
 	private List<AddOrderDto> items;
 	private String status = "pending";
-	
 
 	@DBRef
 	private Users users;
-	
+
 	@DBRef
 	private Payment payment;
-	
+
 	@DBRef
 	private List<FoodMenu> foodMenus;
-	
+
 	@DBRef
 	private List<DrinkMenu> drinkMenus;
-	
+
 	@CreatedDate
 	private Date createdDate;
 

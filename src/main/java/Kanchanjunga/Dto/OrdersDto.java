@@ -12,11 +12,12 @@ public class OrdersDto {
 
 	private UUID id;
 	private String tableNo;
+	private String remarks;
 	private Double price;
 	private int quantity;
 
 	private String status = "pending";
-	
+
 	private List<AddOrderDto> items;
 
 	private UserDTO users;
