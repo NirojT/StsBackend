@@ -72,6 +72,8 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 					foodMenu.setQuantity(quantity);
 				
 					order.setImageName(foodMenu.getImage());
+					order.setName(foodMenu.getName());
+					order.setPrice(foodMenu.getPrice());
 
 				}
 				if (drinkMenuId != null) {
@@ -79,6 +81,8 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 							.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", drinkMenuId));
 					drinkMenu.setQuantity(quantity);
 					order.setImageName(drinkMenu.getImage());
+					order.setName(drinkMenu.getName());
+					order.setPrice(drinkMenu.getPrice());
 				}
 
 				return order;
@@ -106,65 +110,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 		return false;
 	}
-//	@Override
-//	public Boolean createOrders(OrdersDto orderDto, UUID userId, UUID foodMenuId, UUID drinkMenuId) {
-//		try {
-//			Users userFromDb = this.userRepo.findById(userId)
-//					.orElseThrow(() -> new ResourceNotFound("User", "user id", userId));
-//
-//			FoodMenu foodMenuFromDb = this.foodMenuRepo.findById(foodMenuId)
-//					.orElseThrow(() -> new ResourceNotFound("foodMenu", "foodMenu id", foodMenuId));
-//
-//			DrinkMenu drinkMenuFromDb = this.drinkMenuRepo.findById(drinkMenuId)
-//					.orElseThrow(() -> new ResourceNotFound("drinkMenu", "drinkMenu id", drinkMenuId));
-//
-//			UserDTO userDTO = this.mapper.map(userFromDb, UserDTO.class);
-////			FoodMenuDto foodMenuDto = this.mapper.map(foodMenuFromDb, FoodMenuDto.class);
-////			DrinkMenuDto drinkMenuDto = this.mapper.map(drinkMenuFromDb,DrinkMenuDto.class);
-////			
-//			userDTO.setImageName(userFromDb.getImage());
-////			foodMenuDto.setImageName(foodMenuFromDb.getImage());
-////			drinkMenuDto.setImageName(drinkMenuFromDb.getImage());
-////		
-//			
-//			orderDto.setCreatedDate(new Date());
-//			orderDto.setUsers(userDTO);
-//			
-////			orderDto.setUsers(userDTO);
-//			
-//			Orders orders = this.mapper.map(orderDto, Orders.class);
-//		
-//			
-//			
-//			orders.setId(UUID.randomUUID());
-//			
-//			orders.setUsers(userFromDb);
-//			
-//			 List<FoodMenu> foodMenusList = new ArrayList<>();
-//		        foodMenusList.add(foodMenuFromDb);
-//		        
-//		        List<DrinkMenu> drinkMenuList = new ArrayList<>();
-//		        drinkMenuList.add(drinkMenuFromDb);
-//		        
-//		        orders.setFoodMenus(foodMenusList);
-//		        orders.setDrinkMenus(drinkMenuList);
-//		        
-//			
-////			orders.setFoodMenu(foodMenuFromDb);
-////			orders.setDrinkMenu(drinkMenuFromDb);
-//	
-//
-//			Orders savedOrder = this.ordersRepo.save(orders);
-//
-//			if (savedOrder != null) {
-//				return true;
-//			}
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return false;
-//	}
+
 
 	@Override
 	public Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item, String status) {

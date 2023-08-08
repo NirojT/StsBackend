@@ -17,6 +17,7 @@ private int quantity;
 private Double price;
 
 private String imageName;
+private String name;
 	
 
 }
