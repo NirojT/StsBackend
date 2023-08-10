@@ -1,5 +1,6 @@
 package Kanchanjunga.ServiceImpl;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.Entity.Orders;
+import Kanchanjunga.Entity.Payment;
 import Kanchanjunga.Entity.Users;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.DrinkMenuRepo;
@@ -295,122 +297,85 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	}
 
 // getting no. of orders with in 24 hrs
-	@Override
-	public int getNoOfOrdersBy24Hrs() {
-		// Instant give date and time
-		Instant twentyFourHoursAgo = Instant.now().minus(24, ChronoUnit.HOURS);
-		Date twentyFourHoursAgoDate = Date.from(twentyFourHoursAgo);
-
-		List<Orders> ordersWithin24Hours = this.ordersRepo.findOrdersWithinLast24Hours(twentyFourHoursAgoDate);
-
-		int numberOfOrders = ordersWithin24Hours.size();
-		System.out.println(numberOfOrders);
-		return numberOfOrders;
-	}
-	
-	
-	
-
-
-	// getting no. of orders with in 1 day acccording to date
-	@Override
-	public int getNoOfOrdersBy1Day() {
-	    // Get the current date
-	    LocalDate currentDate = LocalDate.now();
-
-	    // Calculate the date for the previous day
-	    LocalDate previousDay = currentDate.minusDays(1);
-
-	    // Get the start and end timestamps for the previous day
-	    LocalDateTime startOfDay = previousDay.atStartOfDay();
-	    LocalDateTime endOfDay = previousDay.atTime(LocalTime.MAX);
-
-	    // Convert to Instant for comparison
-	    Instant startInstant = startOfDay.toInstant(ZoneOffset.UTC);
-	    Instant endInstant = endOfDay.toInstant(ZoneOffset.UTC);
-
-	    List<Orders> ordersWithin1Day = this.ordersRepo.findOrdersWithinTimeRange(startInstant, endInstant);
-
-	    int numberOfOrders = ordersWithin1Day.size();
-	    System.out.println(numberOfOrders);
-	    return numberOfOrders;
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	// get total sell or addidng price 1month
-	@Override
-	public Double getTotalSellAmtMonthly() {
-
-		ZonedDateTime currentDateTime = ZonedDateTime.now();
-
-		// Extract the year and month components
-		int year = currentDateTime.getYear();
-		int month = currentDateTime.getMonthValue();
-
-		YearMonth currentYearMonth = YearMonth.of(year, month);
-
-		double TotalOrdersAmt = this.ordersRepo.findAll().stream().filter(order -> {
-			Instant createdInstant = order.getCreatedDate().toInstant();
-			LocalDate createdDate = createdInstant.atZone(ZoneId.systemDefault()).toLocalDate();
-			return YearMonth.from(createdDate).equals(currentYearMonth);
-		}).mapToDouble((order) -> order.getPrice()).sum();
-
-		if (TotalOrdersAmt != 0) {
-			return TotalOrdersAmt;
-		}
-
-		return 0.0;
-	}
-	
-	
-	// for 1 week
-	@Override
-//	public Double getTotalSellAmtWeekly() {
-//		
-//		// 168 = 1week
+//	@Override
+//	public int getNoOfOrdersBy24Hrs() {
 //		// Instant give date and time
-//		Instant oneHundredSixtyHoursAgo = Instant.now().minus(168, ChronoUnit.HOURS);
-//		Date oneHundredSixtyAgoDate = Date.from(oneHundredSixtyHoursAgo);
+//		Instant twentyFourHoursAgo = Instant.now().minus(24, ChronoUnit.HOURS);
+//		Date twentyFourHoursAgoDate = Date.from(twentyFourHoursAgo);
 //
-//		List<Orders> ordersWithin168Hours = this.ordersRepo.findOrdersWithinLast24Hours(oneHundredSixtyAgoDate);
+//		List<Orders> ordersWithin24Hours = this.ordersRepo.findOrdersWithinLast24Hours(twentyFourHoursAgoDate);
 //
 //		int numberOfOrders = ordersWithin24Hours.size();
 //		System.out.println(numberOfOrders);
 //		return numberOfOrders;
-//	}	
-	
+//	}
+//	 
 
-	// for 1 week the sell amount will change
-	public Double getTotalSellAmtWeekly() {
-	    // Calculate the start of the week (7 days ago from the current instant)
-	    Instant startOfWeek = Instant.now().minus(7, ChronoUnit.DAYS);
+	// getting no. of orders with in 1 day acccording to date
 
-	    // Find orders within the past week and calculate total sell amount
-	    
-	    double totalSellAmount = this.ordersRepo.findOrdersWithinLast7Days(Date.from(startOfWeek)).stream()
-	           
-	                    .mapToDouble(order -> order.getPrice()).sum();
+	@Override
+	public int getNoOfOrdersBy1Day() {
+	    try {
+	        LocalDate today = LocalDate.now();
+	        LocalDateTime startOfDay = today.atStartOfDay();
+	        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 
-	    return totalSellAmount;
+	        List<Orders> allOrders = this.ordersRepo.findOrdersBy1Day(startOfDay, endOfDay);
+
+	     int noOfOrders = allOrders.size();
+	        return noOfOrders;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return 0;
+	    }
+
+	  
 	}
 
+	
+	
+	// for 1 week the sell amount will change sunday to end of saturday
+	@Override
+	public int getOrderNoWeekly() {
+	    try {
+	        LocalDate currentDate = LocalDate.now();
+	        LocalDate sundayOfCurrentWeek = currentDate.minusDays(currentDate.getDayOfWeek().getValue() - DayOfWeek.SUNDAY.getValue());
+	        
+	        LocalDateTime startOfWeek = sundayOfCurrentWeek.atStartOfDay();
+	        LocalDateTime endOfWeek = startOfWeek.plusDays(6).plusHours(23).plusMinutes(59).plusSeconds(59);
 
+	         List<Payment> payments = this.ordersRepo.findOrderNoBy1Week(startOfWeek, endOfWeek);
+
+	         int noOfOrders = payments.size();
+
+	        return noOfOrders;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return 0;
+	    }
+	}
+	
+	
+	// getting no. of orders with in current month acccording to date
+	@Override
+	public int getNoOfOrdersByCurrentMonth() {
+		
+try {
+	YearMonth currentYearMonth = YearMonth.now();
+	LocalDate startDate = currentYearMonth.atDay(1);
+	LocalDate endDate = currentYearMonth.atEndOfMonth();
+
+	List<Orders> ordersWithinCurrentMonth = this.ordersRepo.findOrdersByCurrentMonth(startDate, endDate);
+
+	int numberOfOrders = ordersWithinCurrentMonth.size();
+	System.out.println(numberOfOrders);
+	return numberOfOrders;
+} catch (Exception e) {
+	 e.printStackTrace();
+     return 0;
+}
+	}
 
 	
-	
-	
-	
-	
-
 }

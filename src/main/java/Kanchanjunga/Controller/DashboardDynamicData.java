@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.Services.OrdersService;
+import Kanchanjunga.Services.PaymentService;
 
 @RestController
 @RequestMapping("/api/dynamic/")
@@ -23,9 +24,12 @@ public class DashboardDynamicData {
 	
 	@Autowired
 	private OrdersService ordersService;
+	
+	@Autowired
+	private PaymentService paymentService;
 
 	
-	// give latest orders up to 12 according to date
+	// give latest orders up to 12 latest  according to date
 	@GetMapping("get-latest")
 	public ResponseEntity<?> getLatestOrders() {
 		Map<String, Object> response = new HashMap<>();
@@ -43,12 +47,13 @@ public class DashboardDynamicData {
 	}
 	
 	
-	// gives the total no. of orders changing every 24 hrs
-	@GetMapping("get-No")
-	public ResponseEntity<?> getNoOfOrders() {
+	// gives the total no. of orders changing 1 day 12:01am to 12:00pm
+	@GetMapping("get-noDay")
+	//orders start..................................
+	public ResponseEntity<?> getNoOfOrdersBy1Day() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			int noOfOrders = this.ordersService.getNoOfOrders();
+			int noOfOrders = this.ordersService.getNoOfOrdersBy1Day();
 			response.put("status",noOfOrders>=0 ? 200 : 400 );
 			response.put("ordersNo",noOfOrders>=0 ? noOfOrders : "no orders are ordered" );
 			return ResponseEntity.status(200).body(response);
@@ -60,12 +65,46 @@ public class DashboardDynamicData {
 		}
 	}
 	
-	// get total sell or addidng price 1month acccording to digit of month (not by day )
-	@GetMapping("get-totalSellMonthly")
-	public ResponseEntity<?> getTotalSellAmt() {
+	// gives the total no. of orders changing  sun to end of Sat
+	@GetMapping("get-noWeek")
+	public ResponseEntity<?> getOrderNoWeekly() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			 Double totalSellAmt = this.ordersService.getTotalSellAmtMonthly();
+			int noOfOrders = this.ordersService.getOrderNoWeekly();
+			response.put("status",noOfOrders>=0 ? 200 : 400 );
+			response.put("ordersNo",noOfOrders>=0 ? noOfOrders : "no orders are ordered" );
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+	// gives the total no. of orders changing  sun to end of Sat
+	@GetMapping("get-noMonth")
+	public ResponseEntity<?> getNoOfOrdersByCurrentMonth() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			int noOfOrders = this.ordersService.getNoOfOrdersByCurrentMonth();
+			response.put("status",noOfOrders>=0 ? 200 : 400 );
+			response.put("ordersNo",noOfOrders>=0 ? noOfOrders : "no orders are ordered" );
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+	
+	//..................................orders end
+	// get total sell or addidng price 1month acccording to digit of month (not by day )
+	@GetMapping("get-totalSellMonthly")
+	public ResponseEntity<?> getTotalSellAmtMonthly() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			 Double totalSellAmt = this.paymentService.getTotalSellAmtMonthly();
 			response.put("status",totalSellAmt>=0 ? 200 : 400 );
 			response.put("SellsAmtMonthly",totalSellAmt>=0 ? totalSellAmt : "Sells didnot went well in this month" );
 			return ResponseEntity.status(200).body(response);
@@ -79,10 +118,26 @@ public class DashboardDynamicData {
 	
 	// for 1 week the sell amount will change by counting days i.e 7
 	@GetMapping("get-totalAmtWeekly")
+	public ResponseEntity<?> getSellsBy1Day() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			Double totalSellAmt = this.paymentService.getSellsBy1Day();
+			response.put("status",totalSellAmt>=0 ? 200 : 400 );
+			response.put("SellsAmtWeekly",totalSellAmt>=0 ? totalSellAmt : "Sells didnot went well today" );
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+	// for 1 week the sell amount will change by counting days i.e 7
+	@GetMapping("get-totalAmtWeekly")
 	public ResponseEntity<?> getTotalSellAmtWeekly() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			Double totalSellAmt = this.ordersService.getTotalSellAmtWeekly();
+			Double totalSellAmt = this.paymentService.getTotalSellAmtWeekly();
 			response.put("status",totalSellAmt>=0 ? 200 : 400 );
 			response.put("SellsAmtWeekly",totalSellAmt>=0 ? totalSellAmt : "Sells didnot went well in this week" );
 			return ResponseEntity.status(200).body(response);

@@ -21,10 +21,13 @@ public interface OrdersService {
 
 	OrdersDto getOrdersByID(UUID id);
 	
-	int getNoOfOrdersBy24Hrs();
+//	int getNoOfOrdersBy24Hrs();
+	
 	int getNoOfOrdersBy1Day();
 	
-	Double getTotalSellAmtMonthly();
+	 int getOrderNoWeekly();
 	
-	Double getTotalSellAmtWeekly() ;
+	int getNoOfOrdersByCurrentMonth() ;
+	
+	
 }
