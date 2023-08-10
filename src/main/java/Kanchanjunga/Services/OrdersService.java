@@ -17,6 +17,14 @@ public interface OrdersService {
 	Boolean deleteOrders(UUID id);
 
 	List<OrdersDto> getAllOrders();
+	List<OrdersDto> getLatestOrders();
 
 	OrdersDto getOrdersByID(UUID id);
+	
+	int getNoOfOrdersBy24Hrs();
+	int getNoOfOrdersBy1Day();
+	
+	Double getTotalSellAmtMonthly();
+	
+	Double getTotalSellAmtWeekly() ;
 }

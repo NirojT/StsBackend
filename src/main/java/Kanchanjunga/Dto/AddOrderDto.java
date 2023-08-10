@@ -6,18 +6,17 @@ import lombok.Data;
 
 @Data
 public class AddOrderDto {
-	
-	
-	
-private UUID foodMenuId; 
-private UUID drinkMenuId;
 
-private int quantity;
+	private String name;
+	private UUID foodMenuId;
+	private UUID drinkMenuId;
 
-private Double price;
+	private int quantity;
 
-private String imageName;
-private String name;
+	private String imageName;
+
+
+	private Double price;
+
 	
-
 }

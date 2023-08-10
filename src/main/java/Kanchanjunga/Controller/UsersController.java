@@ -34,8 +34,6 @@ public class UsersController {
     public ResponseEntity<?> createUser(@ModelAttribute UserDTO users) {
         String result = this.usersService.createUser(users);
         HashMap<String, Object> response = new HashMap<>();
-
-
         if (result.equalsIgnoreCase("saved")) {
             response.put("status", 200);
             response.put("message", "user created successfully");

@@ -1,7 +1,6 @@
 package Kanchanjunga.Controller;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,11 +29,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/user/")
-
 @CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
-		"http://192.168.0.102:5173/" }, allowCredentials = "true")
-
-
+		"http://192.168.0.128:5173" }, allowCredentials = "true")
 public class AuthController {
 
 	@Autowired

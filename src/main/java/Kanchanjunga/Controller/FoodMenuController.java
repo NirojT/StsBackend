@@ -1,7 +1,5 @@
 package Kanchanjunga.Controller;
 
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,8 @@ import Kanchanjunga.Services.FoodMenuService;
 
 @RestController
 @RequestMapping("/api/foods/menu/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }, allowCredentials = "true")
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/", "http://192.168.0.102:5173/",
+		"http://localhost:5173" }, allowCredentials = "true")
 public class FoodMenuController {
 
 	@Autowired
@@ -57,17 +56,17 @@ public class FoodMenuController {
 	@PutMapping("update/{id}")
 	public ResponseEntity<?> updateFoodMenu(
 			@PathVariable UUID id,
-			@RequestParam (required = false) String name,
-			@RequestParam (required = false) Double price,
-			@RequestParam (required = false) String category,
-			@RequestParam (required = false) String type,
-			@RequestParam (required = false) String description,
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) Double price,
+			@RequestParam(required = false) String category,
+			@RequestParam(required = false) String type,
+			@RequestParam(required = false) String description,
 			@RequestParam(required = false) MultipartFile image
 
 	) {
 		try {
 
-			Boolean updateFoodMenu = this.foodMenuService.updateFoodMenu(id, name, price, category, description,type,
+			Boolean updateFoodMenu = this.foodMenuService.updateFoodMenu(id, name, price, category, description, type,
 					image);
 			Map<String, Object> response = new HashMap<>();
 
@@ -113,7 +112,7 @@ public class FoodMenuController {
 	public ResponseEntity<?> getFoodMenuById(@PathVariable("id") UUID ids) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			 FoodMenuDto foodMenuByID = this.foodMenuService.getFoodMenuByID(ids);
+			FoodMenuDto foodMenuByID = this.foodMenuService.getFoodMenuByID(ids);
 			if (foodMenuByID != null) {
 				response.put("status", 200);
 				response.put("FoodMenu", foodMenuByID);
@@ -135,7 +134,7 @@ public class FoodMenuController {
 		Map<String, Object> response = new HashMap<>();
 
 		try {
-			Boolean deleteFoodMenu  = this.foodMenuService.deleteFoodMenu(ids);
+			Boolean deleteFoodMenu = this.foodMenuService.deleteFoodMenu(ids);
 			if (deleteFoodMenu) {
 				response.put("status", 200);
 				response.put("message", "FoodMenus Deleted Succesfully");
@@ -151,6 +150,5 @@ public class FoodMenuController {
 		}
 
 	}
-
 
 }

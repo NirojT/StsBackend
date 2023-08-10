@@ -1,9 +1,17 @@
 package Kanchanjunga.ServiceImpl;
 
-import java.util.ArrayList;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,7 +19,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import Kanchanjunga.Dto.AddOrderDto;
@@ -19,17 +27,14 @@ import Kanchanjunga.Dto.DrinkMenuDto;
 import Kanchanjunga.Dto.FoodMenuDto;
 import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
-import Kanchanjunga.Dto.UserDTO;
 import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.Entity.Orders;
-import Kanchanjunga.Entity.Payment;
 import Kanchanjunga.Entity.Users;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.DrinkMenuRepo;
 import Kanchanjunga.Reposioteries.FoodMenuRepo;
 import Kanchanjunga.Reposioteries.OrdersRepo;
-import Kanchanjunga.Reposioteries.PaymentRepo;
 import Kanchanjunga.Reposioteries.UserRepo;
 
 @Service
@@ -70,7 +75,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 							.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", foodMenuId));
 
 					foodMenu.setQuantity(quantity);
-				
+
 					order.setImageName(foodMenu.getImage());
 					order.setName(foodMenu.getName());
 					order.setPrice(foodMenu.getPrice());
@@ -96,7 +101,8 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 			orders.setCreatedDate(new Date());
 			orders.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
 			orders.setItems(item);
-			
+			orders.setRemarks(orderRequest.getRemarks());
+
 			orders.setUsers(userFromDb);
 
 			Orders savedOrder = this.ordersRepo.save(orders);
@@ -110,7 +116,6 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 		return false;
 	}
-
 
 	@Override
 	public Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item, String status) {
@@ -164,32 +169,15 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		try {
 			List<Orders> allOrders = this.ordersRepo.findAll();
 
-			// is
-
 			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
 
 				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
 				ordersDto.getUsers().setImageName(order.getUsers().getImage());
-				
-				
-			
-//
+
 				ordersDto.getUsers().setPassword(null);
 				ordersDto.setItems(order.getItems());
+				ordersDto.setRemarks(order.getRemarks());
 				if (order.getDrinkMenus() != null) {
-//					List<DrinkMenuDto> drinkMenuDtos = order.getDrinkMenus().stream().map(drink -> {
-//						DrinkMenuDto drinkDto = mapper.map(drink, DrinkMenuDto.class);
-//						drinkDto.setImageName(drink.getImage());
-//
-//						drinkDto.setPrice(order.getPrice());
-//						return drinkDto;
-//
-//					}).collect(Collectors.toList());
-//					ordersDto.setDrinkMenus(drinkMenuDtos);
-					
-//					order.getItems().stream().map(item->{
-//						item.setImageName()
-//					})
 
 				}
 
@@ -223,37 +211,32 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		try {
 			Orders ordersFromDb = this.ordersRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
-			
-			
+
 			OrdersDto ordersDto = this.mapper.map(ordersFromDb, OrdersDto.class);
-			
-			if (ordersFromDb.getDrinkMenus()!=null) {
-				
-			
-			List<DrinkMenuDto> drinkMenuDtos = ordersFromDb.getDrinkMenus().stream().map(drink -> {
-				DrinkMenuDto drinkDto = mapper.map(drink, DrinkMenuDto.class);
-				drinkDto.setImageName(drink.getImage());
-				return drinkDto;
-			}).collect(Collectors.toList());
-			ordersDto.setDrinkMenus(drinkMenuDtos);
+
+			if (ordersFromDb.getDrinkMenus() != null) {
+
+				List<DrinkMenuDto> drinkMenuDtos = ordersFromDb.getDrinkMenus().stream().map(drink -> {
+					DrinkMenuDto drinkDto = mapper.map(drink, DrinkMenuDto.class);
+					drinkDto.setImageName(drink.getImage());
+					return drinkDto;
+				}).collect(Collectors.toList());
+				ordersDto.setDrinkMenus(drinkMenuDtos);
 			}
 
-			if (ordersFromDb.getFoodMenus()!=null) {
-				
-			
-			List<FoodMenuDto> foodmenuDtos = ordersFromDb.getFoodMenus().stream().map(menu -> {
-				FoodMenuDto foodMenuDto = mapper.map(menu, FoodMenuDto.class);
-				foodMenuDto.setImageName(menu.getImage());
-				return foodMenuDto;
-			}).collect(Collectors.toList());
-			ordersDto.setFoodMenus(foodmenuDtos);
+			if (ordersFromDb.getFoodMenus() != null) {
+
+				List<FoodMenuDto> foodmenuDtos = ordersFromDb.getFoodMenus().stream().map(menu -> {
+					FoodMenuDto foodMenuDto = mapper.map(menu, FoodMenuDto.class);
+					foodMenuDto.setImageName(menu.getImage());
+					return foodMenuDto;
+				}).collect(Collectors.toList());
+				ordersDto.setFoodMenus(foodmenuDtos);
 			}
-			
+
 			ordersDto.getUsers().setImageName(ordersFromDb.getUsers().getImage());
 			ordersDto.getUsers().setPassword("");
 			ordersDto.setItems(ordersFromDb.getItems());
-			
-		
 
 			if (ordersDto != null) {
 				return ordersDto;
@@ -267,5 +250,167 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		return null;
 
 	}
+
+	@Override
+	public List<OrdersDto> getLatestOrders() {
+		try {
+			List<Orders> allOrders = this.ordersRepo.findAll(Sort.by(Sort.Direction.DESC, "createdDate")).stream()
+					.limit(12).collect(Collectors.toList());
+
+			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
+
+				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
+				ordersDto.getUsers().setImageName(order.getUsers().getImage());
+
+				ordersDto.getUsers().setPassword(null);
+				ordersDto.setItems(order.getItems());
+				ordersDto.setRemarks(order.getRemarks());
+				if (order.getDrinkMenus() != null) {
+
+				}
+
+				if (order.getFoodMenus() != null) {
+					List<FoodMenuDto> foodMenuDtos = order.getFoodMenus().stream().map(menu -> {
+						FoodMenuDto foodMenuDto = mapper.map(menu, FoodMenuDto.class);
+						foodMenuDto.setImageName(menu.getImage());
+						foodMenuDto.setPrice(menu.getPrice());
+						return foodMenuDto;
+
+					}).collect(Collectors.toList());
+					ordersDto.setFoodMenus(foodMenuDtos);
+				}
+
+				return ordersDto;
+			}).collect(Collectors.toList());
+
+			return allOrdersDto;
+
+		}
+
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return Collections.emptyList();
+	}
+
+// getting no. of orders with in 24 hrs
+	@Override
+	public int getNoOfOrdersBy24Hrs() {
+		// Instant give date and time
+		Instant twentyFourHoursAgo = Instant.now().minus(24, ChronoUnit.HOURS);
+		Date twentyFourHoursAgoDate = Date.from(twentyFourHoursAgo);
+
+		List<Orders> ordersWithin24Hours = this.ordersRepo.findOrdersWithinLast24Hours(twentyFourHoursAgoDate);
+
+		int numberOfOrders = ordersWithin24Hours.size();
+		System.out.println(numberOfOrders);
+		return numberOfOrders;
+	}
+	
+	
+	
+
+
+	// getting no. of orders with in 1 day acccording to date
+	@Override
+	public int getNoOfOrdersBy1Day() {
+	    // Get the current date
+	    LocalDate currentDate = LocalDate.now();
+
+	    // Calculate the date for the previous day
+	    LocalDate previousDay = currentDate.minusDays(1);
+
+	    // Get the start and end timestamps for the previous day
+	    LocalDateTime startOfDay = previousDay.atStartOfDay();
+	    LocalDateTime endOfDay = previousDay.atTime(LocalTime.MAX);
+
+	    // Convert to Instant for comparison
+	    Instant startInstant = startOfDay.toInstant(ZoneOffset.UTC);
+	    Instant endInstant = endOfDay.toInstant(ZoneOffset.UTC);
+
+	    List<Orders> ordersWithin1Day = this.ordersRepo.findOrdersWithinTimeRange(startInstant, endInstant);
+
+	    int numberOfOrders = ordersWithin1Day.size();
+	    System.out.println(numberOfOrders);
+	    return numberOfOrders;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// get total sell or addidng price 1month
+	@Override
+	public Double getTotalSellAmtMonthly() {
+
+		ZonedDateTime currentDateTime = ZonedDateTime.now();
+
+		// Extract the year and month components
+		int year = currentDateTime.getYear();
+		int month = currentDateTime.getMonthValue();
+
+		YearMonth currentYearMonth = YearMonth.of(year, month);
+
+		double TotalOrdersAmt = this.ordersRepo.findAll().stream().filter(order -> {
+			Instant createdInstant = order.getCreatedDate().toInstant();
+			LocalDate createdDate = createdInstant.atZone(ZoneId.systemDefault()).toLocalDate();
+			return YearMonth.from(createdDate).equals(currentYearMonth);
+		}).mapToDouble((order) -> order.getPrice()).sum();
+
+		if (TotalOrdersAmt != 0) {
+			return TotalOrdersAmt;
+		}
+
+		return 0.0;
+	}
+	
+	
+	// for 1 week
+	@Override
+//	public Double getTotalSellAmtWeekly() {
+//		
+//		// 168 = 1week
+//		// Instant give date and time
+//		Instant oneHundredSixtyHoursAgo = Instant.now().minus(168, ChronoUnit.HOURS);
+//		Date oneHundredSixtyAgoDate = Date.from(oneHundredSixtyHoursAgo);
+//
+//		List<Orders> ordersWithin168Hours = this.ordersRepo.findOrdersWithinLast24Hours(oneHundredSixtyAgoDate);
+//
+//		int numberOfOrders = ordersWithin24Hours.size();
+//		System.out.println(numberOfOrders);
+//		return numberOfOrders;
+//	}	
+	
+
+	// for 1 week the sell amount will change
+	public Double getTotalSellAmtWeekly() {
+	    // Calculate the start of the week (7 days ago from the current instant)
+	    Instant startOfWeek = Instant.now().minus(7, ChronoUnit.DAYS);
+
+	    // Find orders within the past week and calculate total sell amount
+	    
+	    double totalSellAmount = this.ordersRepo.findOrdersWithinLast7Days(Date.from(startOfWeek)).stream()
+	           
+	                    .mapToDouble(order -> order.getPrice()).sum();
+
+	    return totalSellAmount;
+	}
+
+
+
+	
+	
+	
+	
+	
 
 }

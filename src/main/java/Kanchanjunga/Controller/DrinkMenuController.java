@@ -115,12 +115,8 @@ public class DrinkMenuController {
 		try {
 			DrinkMenuDto drinkMenuByID = this.drinkMenuService.getDrinkMenuByID(id);
 			response.put("status", drinkMenuByID != null ? 200 : 400);
-
 			response.put(drinkMenuByID != null ? "drink" : "message",
 					drinkMenuByID != null ? drinkMenuByID : "drinkMenu not found");
-
-			
-
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();

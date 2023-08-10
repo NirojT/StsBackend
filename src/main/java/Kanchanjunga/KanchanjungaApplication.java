@@ -13,9 +13,7 @@ public class KanchanjungaApplication {
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-
 	public static final String SERVERURL = "http://localhost:9000/";
-
 	public static void main(String[] args) {
 		SpringApplication.run(KanchanjungaApplication.class, args);
 
