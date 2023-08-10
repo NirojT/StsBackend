@@ -20,4 +20,6 @@ public interface FoodStockService {
 	List<FoodStockDto> getAllFoodStock();
 
 	FoodStockDto getFoodStockByID(UUID id);
+	
+	double getMonthlyExpense();
 }

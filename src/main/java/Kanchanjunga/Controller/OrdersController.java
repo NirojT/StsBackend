@@ -200,22 +200,6 @@ public class OrdersController {
 
 	}
 
-	@GetMapping("get-latest")
-	public ResponseEntity<?> getLatestOrders() {
-		Map<String, Object> response = new HashMap<>();
-		try {
-			List<OrdersDto> allOrders = this.ordersService.getLatestOrders();
-			response.put("status", allOrders != null ? 200 : 400);
-			response.put("orders", allOrders != null ? allOrders : "Orders not found");
-			return ResponseEntity.status(200).body(response);
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.put("status", 500);
-			response.put("message", "something went wrong... ");
-			return ResponseEntity.status(200).body(response);
-		}
-	}
-
 	@PatchMapping("update/status/{id}")
 	public ResponseEntity<?> updateOrderStatus(
 			@PathVariable UUID id,

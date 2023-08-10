@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import Kanchanjunga.JWT.JwtAuthenticationEntryPoint;
 import Kanchanjunga.JWT.JwtAuthentictionFilter;
@@ -38,7 +39,11 @@ public class SecurityConfig {
 
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
 
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/**").permitAll()
+//						.requestMatchers("/api/user/**").hasRole("Admin")
+//						.requestMatchers("/api/order/**").hasRole("Waiter")
+						)
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(jwtAuthentictionFilter, UsernamePasswordAuthenticationFilter.class);

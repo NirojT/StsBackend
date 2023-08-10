@@ -7,14 +7,16 @@ import lombok.Data;
 @Data
 public class AddOrderDto {
 
-    private String name;
-    private UUID foodMenuId;
-    private UUID drinkMenuId;
+	private String name;
+	private UUID foodMenuId;
+	private UUID drinkMenuId;
 
-    private int quantity;
+	private int quantity;
 
-    private Double price;
+	private String imageName;
 
-    private String imageName;
 
+	private Double price;
+
+	
 }

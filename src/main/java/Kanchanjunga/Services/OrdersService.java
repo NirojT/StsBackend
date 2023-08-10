@@ -24,4 +24,14 @@ public interface OrdersService {
 	OrdersDto getOrdersByID(UUID id);
 
 	Boolean updateStatus(UUID id, String status);
+	
+//	int getNoOfOrdersBy24Hrs();
+	
+	int getNoOfOrdersBy1Day();
+	
+	 int getOrderNoWeekly();
+	
+	int getNoOfOrdersByCurrentMonth() ;
+	
+	
 }

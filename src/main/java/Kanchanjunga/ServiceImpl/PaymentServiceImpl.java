@@ -1,5 +1,15 @@
 package Kanchanjunga.ServiceImpl;
 
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -117,5 +127,80 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
     }
+    
+	// getting sells data with in 1 day acccording to date
+	@Override
+	public Double getSellsBy1Day() {
+	
+		
+		try {
+			LocalDate currentDate = LocalDate.now();
+			LocalDateTime startOfDay = currentDate.atStartOfDay();
+			LocalDateTime endOfDay = currentDate.atTime(LocalTime.MAX);
+			
+			    List<Payment> payments = this.paymentRepo.findPaymentBy1Day(startOfDay, endOfDay);
+			    
+			    double TotalAmt = payments.stream().mapToDouble((payment)->payment.getTotalPrice()).sum();
+			    
+			    return TotalAmt;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0.00;
+		}
+	}
+    
+	// for 1 week the sell amount will change sunday to end of saturday
+	@Override
+	public Double getTotalSellAmtWeekly() {
+	    try {
+	        LocalDate currentDate = LocalDate.now();
+	        LocalDate sundayOfCurrentWeek = currentDate.minusDays(currentDate.getDayOfWeek().getValue() - DayOfWeek.SUNDAY.getValue());
+	        
+	        LocalDateTime startOfWeek = sundayOfCurrentWeek.atStartOfDay();
+	        LocalDateTime endOfWeek = startOfWeek.plusDays(6).plusHours(23).plusMinutes(59).plusSeconds(59);
+
+	        List<Payment> payments = this.paymentRepo.findPaymentBy1Week(startOfWeek, endOfWeek);
+
+	        double totalAmt = payments.stream().mapToDouble(Payment::getTotalPrice).sum();
+
+	        return totalAmt;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return 0.00;
+	    }
+	}
+
+	
+	
+
+  //get total sell or addidng price 1 month
+	@Override
+	public Double getTotalSellAmtMonthly() {
+
+		try {
+			YearMonth currentYearMonth = YearMonth.now();
+			LocalDate startDate = currentYearMonth.atDay(1);
+			LocalDate endDate = currentYearMonth.atEndOfMonth();
+
+			List<Payment> sellsWithinCurrentMonth = this.paymentRepo.findPaymentByCurrentMonth(startDate, endDate);
+			
+			double totalAmt = sellsWithinCurrentMonth.stream().mapToDouble(Payment::getTotalPrice).sum();
+			
+			return totalAmt;
+		} catch (Exception e) {
+		e.printStackTrace();
+		return 0.0;
+		}
+		
+	}
+
+
 
 }
+
+
+
+
+
+	
+	
