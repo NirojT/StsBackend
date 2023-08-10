@@ -12,15 +12,14 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.stereotype.Service;
 
 import Kanchanjunga.Dto.AddOrderDto;
+import Kanchanjunga.Services.OrdersService;
 import Kanchanjunga.Dto.DrinkMenuDto;
 import Kanchanjunga.Dto.FoodMenuDto;
 import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
-import Kanchanjunga.Dto.UserDTO;
 import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.Entity.Orders;
@@ -32,7 +31,7 @@ import Kanchanjunga.Reposioteries.OrdersRepo;
 import Kanchanjunga.Reposioteries.UserRepo;
 
 @Service
-public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
+public class OrdersServiceImpl implements OrdersService {
 
 	@Autowired
 	private OrdersRepo ordersRepo;

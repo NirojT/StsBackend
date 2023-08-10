@@ -1,5 +1,6 @@
 package Kanchanjunga.ServiceImpl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import Kanchanjunga.Entity.Payment;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.OrdersRepo;
 import Kanchanjunga.Reposioteries.PaymentRepo;
+import Kanchanjunga.Services.OrdersService;
 import Kanchanjunga.Services.PaymentService;
 
 @Service
@@ -24,6 +26,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private OrdersRepo ordersRepo;
+    @Autowired
+    private OrdersService ordersService;
 
     @Autowired
     private ModelMapper mapper;
@@ -36,9 +40,11 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(
                             () -> new ResourceNotFound("payment", "payment id", UUID.fromString(request.getOrderID())));
             request.setOrder(order);
+            request.setCreatedDate(new Date());
             Payment payment = mapper.map(request, Payment.class);
             paymentRepo.save(payment);
-            return true;
+            Boolean isUpdated = ordersService.updateStatus(UUID.fromString(request.getOrderID()), "paid");
+            return isUpdated;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,7 +105,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(
                             () -> new ResourceNotFound("payment", "payment id", UUID.fromString(request.getOrderID())));
             payment.setNetPrice(request.getNetPrice());
-            payment.setRecievedPrice(request.getReceivedPrice());
+            payment.setReceivedPrice(request.getReceivedPrice());
             payment.setTotalPrice(request.getTotalPrice());
             payment.setOrders(order);
 
