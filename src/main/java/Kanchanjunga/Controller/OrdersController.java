@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -214,4 +215,23 @@ public class OrdersController {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
+
+	@PatchMapping("update/status/{id}")
+	public ResponseEntity<?> updateOrderStatus(
+			@PathVariable UUID id,
+			@RequestParam String status) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			Boolean isUpdated = this.ordersService.updateStatus(id, status);
+			response.put("status", isUpdated ? 200 : 400);
+			response.put("message", isUpdated ? "Status updated successfully" : "Orders update failed");
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong...:( ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+
 }

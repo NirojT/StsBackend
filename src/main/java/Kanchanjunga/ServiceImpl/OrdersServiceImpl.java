@@ -288,4 +288,20 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		return Collections.emptyList();
 	}
 
+	@Override
+	public Boolean updateStatus(UUID id, String status) {
+		try {
+			Orders ordersFromDb = this.ordersRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
+			ordersFromDb.setStatus(status);
+			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
+			if (updatedOrder != null) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }
