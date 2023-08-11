@@ -17,14 +17,14 @@ public class Payment {
 
 	@Id
 	private UUID id;
-	
+
 	private double totalPrice;
-	private double recievedPrice;
-	private String netPrice;
-	
+	private double receivedPrice;
+	private double netPrice;
+
 	@DBRef
 	private Orders orders;
-	
+
 	@CreatedDate
 	private Date createdDate;
 

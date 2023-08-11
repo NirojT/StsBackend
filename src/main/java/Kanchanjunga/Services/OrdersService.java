@@ -9,19 +9,20 @@ import Kanchanjunga.Dto.OrdersDto;
 
 public interface OrdersService {
 
-//	Boolean createOrders(OrdersDto orderDto, UUID userId,  UUID foodMenuId, UUID drinkMenuId);
-	Boolean createOrders(OrderRequest orderRequest, String username );
+	// Boolean createOrders(OrdersDto orderDto, UUID userId, UUID foodMenuId, UUID
+	// drinkMenuId);
+	Boolean createOrders(OrderRequest orderRequest, String username);
 
-	Boolean updateOrders(UUID id, String tableNo, Double price,List<AddOrderDto> item,String status);
+	Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item, String status);
 
 	Boolean deleteOrders(UUID id);
 
 	List<OrdersDto> getAllOrders();
+
 	List<OrdersDto> getLatestOrders();
 
 	OrdersDto getOrdersByID(UUID id);
-	
-//	int getNoOfOrdersBy24Hrs();
+
 	
 	int getNoOfOrdersBy1Day();
 	
@@ -29,5 +30,8 @@ public interface OrdersService {
 	
 	int getNoOfOrdersByCurrentMonth() ;
 	
-	
+
+
+	Boolean updateStatus(UUID id, String status);
+
 }

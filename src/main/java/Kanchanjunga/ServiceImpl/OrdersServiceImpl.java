@@ -1,16 +1,10 @@
 package Kanchanjunga.ServiceImpl;
 
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -296,86 +290,96 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		return Collections.emptyList();
 	}
 
-// getting no. of orders with in 24 hrs
-//	@Override
-//	public int getNoOfOrdersBy24Hrs() {
-//		// Instant give date and time
-//		Instant twentyFourHoursAgo = Instant.now().minus(24, ChronoUnit.HOURS);
-//		Date twentyFourHoursAgoDate = Date.from(twentyFourHoursAgo);
-//
-//		List<Orders> ordersWithin24Hours = this.ordersRepo.findOrdersWithinLast24Hours(twentyFourHoursAgoDate);
-//
-//		int numberOfOrders = ordersWithin24Hours.size();
-//		System.out.println(numberOfOrders);
-//		return numberOfOrders;
-//	}
-//	 
 
-	// getting no. of orders with in 1 day acccording to date
 
 	@Override
 	public int getNoOfOrdersBy1Day() {
-	    try {
-	        LocalDate today = LocalDate.now();
-	        LocalDateTime startOfDay = today.atStartOfDay();
-	        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+		try {
+			LocalDate today = LocalDate.now();
+			LocalDateTime startOfDay = today.atStartOfDay();
+			LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 
-	        List<Orders> allOrders = this.ordersRepo.findOrdersBy1Day(startOfDay, endOfDay);
+			List<Orders> allOrders = this.ordersRepo.findOrdersBy1Day(startOfDay, endOfDay);
 
-	     int noOfOrders = allOrders.size();
-	        return noOfOrders;
+			int noOfOrders = allOrders.size();
+			return noOfOrders;
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return 0;
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 
-	  
 	}
 
-	
-	
 	// for 1 week the sell amount will change sunday to end of saturday
 	@Override
 	public int getOrderNoWeekly() {
 	    try {
 	        LocalDate currentDate = LocalDate.now();
-	        LocalDate sundayOfCurrentWeek = currentDate.minusDays(currentDate.getDayOfWeek().getValue() - DayOfWeek.SUNDAY.getValue());
+	       
+	       
 	        
-	        LocalDateTime startOfWeek = sundayOfCurrentWeek.atStartOfDay();
-	        LocalDateTime endOfWeek = startOfWeek.plusDays(6).plusHours(23).plusMinutes(59).plusSeconds(59);
+	        DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY;  // Define the first day of the week
 
-	         List<Payment> payments = this.ordersRepo.findOrderNoBy1Week(startOfWeek, endOfWeek);
+	        int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
+	        int value = currentDate.getDayOfWeek().getValue();
+	        LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
+	        LocalDate endOfWeek = startOfWeek.plusDays(6);
 
-	         int noOfOrders = payments.size();
+	        LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
+	        LocalDateTime endOfWeekDateTime = endOfWeek.atTime(LocalTime.MAX);
 
+	        List<Payment> payments = this.ordersRepo.findOrderNoBy1Week(startOfWeekDateTime, endOfWeekDateTime);
+
+	        int noOfOrders = payments.size();
+
+	        System.out.println(noOfOrders);
+	    	System.out.println(value);
+	        System.out.println(startOfWeekDateTime);
+	        System.out.println(endOfWeekDateTime);
 	        return noOfOrders;
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        return 0;
 	    }
 	}
-	
-	
+
+
+
 	// getting no. of orders with in current month acccording to date
 	@Override
 	public int getNoOfOrdersByCurrentMonth() {
-		
-try {
-	YearMonth currentYearMonth = YearMonth.now();
-	LocalDate startDate = currentYearMonth.atDay(1);
-	LocalDate endDate = currentYearMonth.atEndOfMonth();
 
-	List<Orders> ordersWithinCurrentMonth = this.ordersRepo.findOrdersByCurrentMonth(startDate, endDate);
+		try {
+			YearMonth currentYearMonth = YearMonth.now();
+			LocalDate startDate = currentYearMonth.atDay(1);
+			LocalDate endDate = currentYearMonth.atEndOfMonth();
 
-	int numberOfOrders = ordersWithinCurrentMonth.size();
-	System.out.println(numberOfOrders);
-	return numberOfOrders;
-} catch (Exception e) {
-	 e.printStackTrace();
-     return 0;
-}
+			List<Orders> ordersWithinCurrentMonth = this.ordersRepo.findOrdersByCurrentMonth(startDate, endDate);
+
+			int numberOfOrders = ordersWithinCurrentMonth.size();
+			System.out.println(numberOfOrders);
+			return numberOfOrders;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
-	
+	@Override
+	public Boolean updateStatus(UUID id, String status) {
+		try {
+			Orders ordersFromDb = this.ordersRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
+			ordersFromDb.setStatus(status);
+			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
+			if (updatedOrder != null) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }
