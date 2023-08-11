@@ -1,10 +1,10 @@
 package Kanchanjunga.ServiceImpl;
 
-import java.time.Instant;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +30,8 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 	@Autowired
 	private FoodStockRepo foodStockRepo;
 	@Autowired
-	private DrinkStockRepo drinkStockRepo ;
+
+	private DrinkStockRepo drinkStockRepo;
 	@Autowired
 	private ModelMapper mapper;
 
@@ -166,110 +167,98 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 		return null;
 	}
 
-	
-	//for drinkstock  and foodstock based on monthly....
-//	@Override
-//	public double getMonthlyExpense() {
-//		//localDate give date only not time
-//		LocalDate currentdate = LocalDate.now();
-//		YearMonth currentYearMonth = YearMonth.from(currentdate);
-//		
-//		
-//		double foodExpense = this.foodStockRepo.findAll().stream()
-//				 .filter(stock -> YearMonth.from(stock.getCreatedDate().toInstant()).equals(currentYearMonth))
-//				
-//				.mapToDouble(stock->stock.getPrice()).sum();
-//		double drinkExpense = this.drinkStockRepo.findAll().stream()
-//				.filter(stock->YearMonth.from(stock.getCreatedDate().toInstant()).equals(currentYearMonth))
-//				.mapToDouble(stock->stock.getPrice()).sum();
-//		//alternative
-//		//double sum = this.foodStockRepo.findAll().stream().mapToDouble(FoodStock::getPrice).sum();
-//		double totalExpenses=0.0;
-//		if(foodExpense!=0.0 || drinkExpense!=0.0)
-//			{
-//			 totalExpenses=foodExpense+drinkExpense;
-//			}
-//		System.out.println("totalExpenses is "+totalExpenses);
-//		return totalExpenses;
-//	}
+	// getting expenses data with in 1 day acccording to date
+	@Override
+	public Double getExpenseBy1Day() {
 
-	//according to month 
+		try {
+			LocalDate currentDate = LocalDate.now();
+			LocalDateTime startOfDay = currentDate.atStartOfDay();
+			LocalDateTime endOfDay = currentDate.atTime(LocalTime.MAX);
+
+			double foodExpense = this.foodStockRepo.findExpenseBy1Day(startOfDay, endOfDay).stream()
+					.mapToDouble(FoodStock::getPrice).sum();
+
+			double drinkExpense = this.drinkStockRepo.findExpenseBy1Day(startOfDay, endOfDay)
+					.stream().mapToDouble(DrinkStock::getPrice).sum();
+
+			double totalExpenses = 0.0;
+			
+			if (foodExpense != 0.0 || drinkExpense != 0.0) {
+				totalExpenses = foodExpense + drinkExpense;
+			}
+			System.out.println("totalExpenses is " + totalExpenses);
+			return totalExpenses;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0.00;
+		}
+	}
+
+	// for 1 week the sell amount will change sunday to end of saturday
+	@Override
+	public Double getTotalExpenseWeekly() {
+		try {
+			LocalDate currentDate = LocalDate.now();
+
+			DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY; // Define the first day of the week
+
+			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
+
+			LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
+			LocalDate endOfWeek = startOfWeek.plusDays(6);
+
+			LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
+			LocalDateTime endOfWeekDateTime = endOfWeek.atTime(LocalTime.MAX);
+
+			double foodExpense = this.foodStockRepo.findExpenseBy1Week(startOfWeekDateTime, endOfWeekDateTime).stream()
+					.mapToDouble(FoodStock::getPrice).sum();
+
+			double drinkExpense = this.drinkStockRepo.findExpenseBy1Week(startOfWeekDateTime, endOfWeekDateTime)
+					.stream().mapToDouble(DrinkStock::getPrice).sum();
+
+			double totalExpenses = 0.0;
+			
+			if (foodExpense != 0.0 || drinkExpense != 0.0) {
+				totalExpenses = foodExpense + drinkExpense;
+			}
+			System.out.println("totalExpenses is " + totalExpenses);
+			return totalExpenses;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0.00;
+		}
+	}
+
+	// for drinkstock and foodstock based on monthly....
+
+	// according to month
 	@Override
 	public double getMonthlyExpense() {
-	    // Get the current date-time in the default time zone
-	    ZonedDateTime currentDateTime = ZonedDateTime.now();
 
-	    // Extract the year and month components
-	    int year = currentDateTime.getYear();
-	    int month = currentDateTime.getMonthValue();
+		try {
+			YearMonth currentYearMonth = YearMonth.now();
+			LocalDate startDate = currentYearMonth.atDay(1);
+			LocalDate endDate = currentYearMonth.atEndOfMonth();
 
-	    // Create a YearMonth instance
-	    YearMonth currentYearMonth = YearMonth.of(year, month);
+			double foodExpense = this.foodStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+					.mapToDouble(FoodStock::getPrice).sum();
 
-	    double foodExpense = this.foodStockRepo.findAll().stream()
-	            .filter(stock -> {
-	                Instant createdInstant = stock.getCreatedDate().toInstant();
-	                LocalDate createdDate = createdInstant.atZone(ZoneId.systemDefault()).toLocalDate();
-	                return YearMonth.from(createdDate).equals(currentYearMonth);
-	            })
-	            .mapToDouble(FoodStock::getPrice)
-	            .sum();
+			double drinkExpense = this.drinkStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+					.mapToDouble(DrinkStock::getPrice).sum();
 
-	    double drinkExpense = this.drinkStockRepo.findAll().stream()
-	            .filter(stock -> {
-	                Instant createdInstant = stock.getCreatedDate().toInstant();
-	                LocalDate createdDate = createdInstant.atZone(ZoneId.systemDefault()).toLocalDate();
-	                return YearMonth.from(createdDate).equals(currentYearMonth);
-	            })
-	            .mapToDouble(DrinkStock::getPrice)
-	            .sum();
-
-	    double totalExpenses = 0.0;
-	    if (foodExpense != 0.0 || drinkExpense != 0) {
-	        totalExpenses = foodExpense + drinkExpense;
-	    }
-	    System.out.println("totalExpenses is "+totalExpenses);
-	    return totalExpenses;
+			double totalExpenses = 0.0;
+			if (foodExpense != 0.0 || drinkExpense != 0.0) {
+				totalExpenses = foodExpense + drinkExpense;
+			}
+			System.out.println("totalExpenses is " + totalExpenses);
+			return totalExpenses;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0.00;
+		}
 	}
-	
-	
-	
-	// according to 30days exactly
-//	public double getLast30DaysExpense() {
-//	    // Get the current date
-//	    LocalDate currentDate = LocalDate.now();
-//
-//	    // Calculate the date that is 30 days ago from the current date
-//	    LocalDate thirtyDaysAgo = currentDate.minusDays(30);
-//
-//	    double foodExpense = this.foodStockRepo.findAll().stream()
-//	            .filter(stock -> {
-//	                LocalDate createdDate = stock.getCreatedDate().toInstant()
-//	                        .atZone(ZoneId.systemDefault())
-//	                        .toLocalDate();
-//	                return !createdDate.isBefore(thirtyDaysAgo) && !createdDate.isAfter(currentDate);
-//	            })
-//	            .mapToDouble(FoodStock::getPrice)
-//	            .sum();
-//
-//	    double drinkExpense = this.drinkStockRepo.findAll().stream()
-//	            .filter(stock -> {
-//	                LocalDate createdDate = stock.getCreatedDate().toInstant()
-//	                        .atZone(ZoneId.systemDefault())
-//	                        .toLocalDate();
-//	                return !createdDate.isBefore(thirtyDaysAgo) && !createdDate.isAfter(currentDate);
-//	            })
-//	            .mapToDouble(DrinkStock::getPrice)
-//	            .sum();
-//
-//	    double totalExpenses = 0.0;
-//	    if (foodExpense != 0.0 || drinkExpense != 0) {
-//	        totalExpenses = foodExpense + drinkExpense;
-//	    }
-//	    System.out.println("totalExpenses for the last 30 days is " + totalExpenses);
-//	    return totalExpenses;
-//	}
-	
-	
-	
+
 }

@@ -1,16 +1,10 @@
 package Kanchanjunga.ServiceImpl;
 
 import java.time.DayOfWeek;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import Kanchanjunga.Dto.AddOrderDto;
-import Kanchanjunga.Services.OrdersService;
 import Kanchanjunga.Dto.DrinkMenuDto;
 import Kanchanjunga.Dto.FoodMenuDto;
 import Kanchanjunga.Dto.OrderRequest;
@@ -41,7 +34,7 @@ import Kanchanjunga.Reposioteries.OrdersRepo;
 import Kanchanjunga.Reposioteries.UserRepo;
 
 @Service
-public class OrdersServiceImpl implements OrdersService {
+public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 	@Autowired
 	private OrdersRepo ordersRepo;
@@ -298,40 +291,6 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	public Boolean updateStatus(UUID id, String status) {
-		try {
-			Orders ordersFromDb = this.ordersRepo.findById(id)
-					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
-			ordersFromDb.setStatus(status);
-			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
-			if (updatedOrder != null) {
-				return true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	// getting no. of orders with in 24 hrs
-	// @Override
-	// public int getNoOfOrdersBy24Hrs() {
-	// // Instant give date and time
-	// Instant twentyFourHoursAgo = Instant.now().minus(24, ChronoUnit.HOURS);
-	// Date twentyFourHoursAgoDate = Date.from(twentyFourHoursAgo);
-	//
-	// List<Orders> ordersWithin24Hours =
-	// this.ordersRepo.findOrdersWithinLast24Hours(twentyFourHoursAgoDate);
-	//
-	// int numberOfOrders = ordersWithin24Hours.size();
-	// System.out.println(numberOfOrders);
-	// return numberOfOrders;
-	// }
-	//
-
-	// getting no. of orders with in 1 day acccording to date
-
-	@Override
 	public int getNoOfOrdersBy1Day() {
 		try {
 			LocalDate today = LocalDate.now();
@@ -355,16 +314,25 @@ public class OrdersServiceImpl implements OrdersService {
 	public int getOrderNoWeekly() {
 		try {
 			LocalDate currentDate = LocalDate.now();
-			LocalDate sundayOfCurrentWeek = currentDate
-					.minusDays(currentDate.getDayOfWeek().getValue() - DayOfWeek.SUNDAY.getValue());
 
-			LocalDateTime startOfWeek = sundayOfCurrentWeek.atStartOfDay();
-			LocalDateTime endOfWeek = startOfWeek.plusDays(6).plusHours(23).plusMinutes(59).plusSeconds(59);
+			DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY; // Define the first day of the week
 
-			List<Payment> payments = this.ordersRepo.findOrderNoBy1Week(startOfWeek, endOfWeek);
+			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
+			int value = currentDate.getDayOfWeek().getValue();
+			LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
+			LocalDate endOfWeek = startOfWeek.plusDays(6);
+
+			LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
+			LocalDateTime endOfWeekDateTime = endOfWeek.atTime(LocalTime.MAX);
+
+			List<Payment> payments = this.ordersRepo.findOrderNoBy1Week(startOfWeekDateTime, endOfWeekDateTime);
 
 			int noOfOrders = payments.size();
 
+			System.out.println(noOfOrders);
+			System.out.println(value);
+			System.out.println(startOfWeekDateTime);
+			System.out.println(endOfWeekDateTime);
 			return noOfOrders;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -414,6 +382,21 @@ public class OrdersServiceImpl implements OrdersService {
 			e.printStackTrace();
 			return Collections.emptyList();
 		}
+	}
+
+	public Boolean updateStatus(UUID id, String status) {
+		try {
+			Orders ordersFromDb = this.ordersRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
+			ordersFromDb.setStatus(status);
+			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
+			if (updatedOrder != null) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }
