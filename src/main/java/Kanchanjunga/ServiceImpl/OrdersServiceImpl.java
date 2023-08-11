@@ -71,12 +71,14 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 							.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", foodMenuId));
 
 					foodMenu.setQuantity(quantity);
-
 					order.setImageName(foodMenu.getImage());
 					order.setName(foodMenu.getName());
 					order.setPrice(foodMenu.getPrice());
-
+					order.setType(foodMenu.getType());
+					order.setCategory(foodMenu.getCategory());
+					order.setDescription(foodMenu.getDescription());
 				}
+
 				if (drinkMenuId != null) {
 					drinkMenu = this.drinkMenuRepo.findById(drinkMenuId)
 							.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", drinkMenuId));
@@ -84,6 +86,9 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 					order.setImageName(drinkMenu.getImage());
 					order.setName(drinkMenu.getName());
 					order.setPrice(drinkMenu.getPrice());
+					order.setCategory(drinkMenu.getCategory());
+					order.setDescription(drinkMenu.getDescription());
+
 				}
 
 				return order;
