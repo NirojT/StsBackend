@@ -45,4 +45,12 @@ public class Orders {
 	@LastModifiedDate
 	private Date lastModifiedDate;
 
+	@Override
+	public String toString() {
+		return "Orders [id=" + id + ", tableNo=" + tableNo + ", price=" + price + ", quantity=" + quantity
+				+ ", remarks=" + remarks + ", items=" + items + ", status=" + status + ", users=" + users
+				+ ", payment=" + payment + ", foodMenus=" + foodMenus + ", drinkMenus=" + drinkMenus + ", createdDate="
+				+ createdDate + ", lastModifiedDate=" + lastModifiedDate + "]";
+	}
+
 }

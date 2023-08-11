@@ -47,10 +47,6 @@ public class OrdersController {
 			HttpServletRequest request
 
 	) {
-
-		System.out.println(orderRequest.getTableNo());
-		System.out.println(orderRequest.getTotalPrice());
-
 		HashMap<String, Object> response = new HashMap<>();
 		try {
 
@@ -68,7 +64,6 @@ public class OrdersController {
 				}
 
 				String username = jwtHelper.extractUsername(token);
-				System.out.println(username);
 
 				Boolean isSaved = ordersService.createOrders(orderRequest, username);
 
@@ -218,4 +213,41 @@ public class OrdersController {
 		}
 	}
 
+	@GetMapping("get-my-order")
+	public ResponseEntity<?> getMyOrders(
+			HttpServletRequest request
+
+	) {
+		HashMap<String, Object> response = new HashMap<>();
+		try {
+
+			String requestHeader = request.getHeader("Authorization");
+			String token = null;
+			if (requestHeader != null && requestHeader.startsWith("Bearer")) {
+				token = requestHeader.substring(7);
+
+				Boolean isValid = jwtHelper.validateLoginToken(token);
+
+				if (!isValid) {
+					response.put("status", 400);
+					response.put("message", "invalid token");
+					return ResponseEntity.status(200).body(response);
+				}
+
+				String username = jwtHelper.extractUsername(token);
+
+				List<OrdersDto> orders = this.ordersService.getMyOrders(username);
+				response.put("status", orders.size() > 0 ? 200 : 400);
+				response.put(orders.size() > 0 ? "orders" : "message",
+						orders.size() > 0 ? orders : "no orders found");
+				return ResponseEntity.status(200).body(response);
+			}
+			return ResponseEntity.status(200).body("fail");
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong...");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
 }
