@@ -119,6 +119,22 @@ public class DashboardDynamicData {
 		}
 	}
 	
+	// for 1 week the sell amount will change by counting days i.e 7
+	@GetMapping("get-totalSellWeekly")
+	public ResponseEntity<?> getTotalSellAmtWeekly() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			Double totalSellAmt = this.paymentService.getTotalSellAmtWeekly();
+			response.put("status", totalSellAmt > 0 ? 200 : 400);
+			response.put("SellsAmtWeekly", totalSellAmt > 0 ? totalSellAmt : "Sells didnot went well in this week");
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
 	
 	
 	
@@ -140,14 +156,16 @@ public class DashboardDynamicData {
 
 
 
-	// for 1 week the sell amount will change by counting days i.e 7
-	@GetMapping("get-totalAmtWeekly")
-	public ResponseEntity<?> getTotalSellAmtWeekly() {
+
+	
+	//expenses
+	@GetMapping("get-totalExpenseDaily")
+	public ResponseEntity<?> getDailyExpense() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			Double totalSellAmt = this.paymentService.getTotalSellAmtWeekly();
+			Double totalSellAmt = this.foodStockService.getTotalExpenseWeekly();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("SellsAmtWeekly", totalSellAmt > 0 ? totalSellAmt : "Sells didnot went well in this week");
+			response.put("ExpenseAmtMonthly", totalSellAmt > 0 ? totalSellAmt : "No expense today");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,9 +174,23 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
-	
-	
-	//expenses
+
+	@GetMapping("get-totalExpenseWeekly")
+	public ResponseEntity<?> getWeeklyExpense() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			Double totalSellAmt = this.foodStockService.getMonthlyExpense();
+			response.put("status", totalSellAmt > 0 ? 200 : 400);
+			response.put("ExpenseAmtMonthly", totalSellAmt > 0 ? totalSellAmt : "No expense in this week");
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+
 	@GetMapping("get-totalExpenseMonthly")
 	public ResponseEntity<?> getMonthlyExpense() {
 		Map<String, Object> response = new HashMap<>();
@@ -174,4 +206,6 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
+	
+	// expense ends......
 }
