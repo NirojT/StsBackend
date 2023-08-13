@@ -74,7 +74,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 					order.setImageName(foodMenu.getImage());
 					order.setName(foodMenu.getName());
 					order.setPrice(foodMenu.getPrice());
-					order.setType(foodMenu.getType());
+					order.setType(foodMenu.getType());`
 					order.setCategory(foodMenu.getCategory());
 					order.setDescription(foodMenu.getDescription());
 				}
