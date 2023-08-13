@@ -364,6 +364,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	public List<OrdersDto> getMyOrders(String name) {
 		try {
 			Optional<Users> user = userRepo.findByName(name);
+			
 			if (user.isPresent()) {
 				Users userFromDb = user.get();
 				List<Orders> orders = this.ordersRepo.findAll().stream()
