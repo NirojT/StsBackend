@@ -109,7 +109,7 @@ public class DashboardDynamicData {
 		try {
 			Double totalSellAmt = this.paymentService.getSellsBy1Day();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("SellsAmtMonthly", totalSellAmt > 0 ? totalSellAmt : "Sells didnot went well today");
+			response.put("SellsAmtDaily", totalSellAmt > 0 ? totalSellAmt : "Sells didnot went well today");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -163,9 +163,9 @@ public class DashboardDynamicData {
 	public ResponseEntity<?> getDailyExpense() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			Double totalSellAmt = this.foodStockService.getTotalExpenseWeekly();
+			Double totalSellAmt = this.foodStockService.getExpenseBy1Day();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("ExpenseAmtMonthly", totalSellAmt > 0 ? totalSellAmt : "No expense today");
+			response.put("ExpenseAmtDaily", totalSellAmt > 0 ? totalSellAmt : "No expense today");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -179,9 +179,9 @@ public class DashboardDynamicData {
 	public ResponseEntity<?> getWeeklyExpense() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			Double totalSellAmt = this.foodStockService.getMonthlyExpense();
+			Double totalSellAmt = this.foodStockService.getTotalExpenseWeekly();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("ExpenseAmtMonthly", totalSellAmt > 0 ? totalSellAmt : "No expense in this week");
+			response.put("ExpenseAmtWeekly", totalSellAmt > 0 ? totalSellAmt : "No expense in this week");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -24,7 +24,7 @@ public class DrinkStock {
 
 	private String category;
 	private String description;
-	private String image;
+
 	@CreatedDate
 	private Date createdDate;
 
