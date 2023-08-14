@@ -24,8 +24,6 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 	@Autowired
 	private ModelMapper mapper;
 
-
-
 	@Override
 	public Boolean createStockDrinks(DrinkStockDto drinkStockDto) {
 		try {
@@ -43,7 +41,8 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 	}
 
 	@Override
-	public Boolean updateStockDrinks(UUID id, String name, Double price, Integer quantity, String supplier, Date expireDate,
+	public Boolean updateStockDrinks(UUID id, String name, Double price, Integer quantity, String supplier,
+			Date expireDate,
 			String category, String description) {
 		try {
 			DrinkStock dbStockDrink = this.drinkStockRepo.findById(id)
@@ -51,14 +50,15 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 
 			dbStockDrink.setName(name);
 			dbStockDrink.setPrice(price);
-			if (quantity!=null) dbStockDrink.setQuantity(quantity);
-			
+			if (quantity != null)
+				dbStockDrink.setQuantity(quantity);
+
 			dbStockDrink.setSupplier(supplier);
 			dbStockDrink.setExpireDate(expireDate);
 			dbStockDrink.setDescription(description);
 			dbStockDrink.setCategory(category);
 
-			if(dbStockDrink!=null) {
+			if (dbStockDrink != null) {
 				this.drinkStockRepo.save(dbStockDrink);
 				return true;
 			}

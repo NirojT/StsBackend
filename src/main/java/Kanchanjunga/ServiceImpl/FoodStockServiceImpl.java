@@ -27,19 +27,19 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 
 	@Autowired
 	private FoodStockRepo foodStockRepo;
-	@Autowired
 
+	@Autowired
 	private DrinkStockRepo drinkStockRepo;
+
 	@Autowired
 	private ModelMapper mapper;
- 
 
 	@Override
 	public Boolean createStockFood(FoodStockDto foodStockDto) {
 		try {
 			foodStockDto.setId(UUID.randomUUID());
 			FoodStock foodStock = this.mapper.map(foodStockDto, FoodStock.class);
-		
+
 			foodStock.setCreatedDate(new Date());
 			foodStockRepo.save(foodStock);
 			return true;
@@ -56,19 +56,18 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 		try {
 			FoodStock foodStockDb = this.foodStockRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
-			
-					foodStockDb.setName(name);
-					foodStockDb.setPrice(price);
-					foodStockDb.setQuantity(quantity);
-					foodStockDb.setSupplier(supplier);
-					foodStockDb.setExpireDate(expireDate);
-					foodStockDb.setCategory(category);
-					foodStockDb.setDescription(description);
 
-					this.foodStockRepo.save(foodStockDb);
+			foodStockDb.setName(name);
+			foodStockDb.setPrice(price);
+			foodStockDb.setQuantity(quantity);
+			foodStockDb.setSupplier(supplier);
+			foodStockDb.setExpireDate(expireDate);
+			foodStockDb.setCategory(category);
+			foodStockDb.setDescription(description);
 
-					return true;
-			
+			this.foodStockRepo.save(foodStockDb);
+
+			return true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,7 +105,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			List<FoodStock> allFoodStocks = this.foodStockRepo.findAll();
 			List<FoodStockDto> allFoodStockDto = allFoodStocks.stream().map((stock) -> {
 				FoodStockDto foodStockDto = this.mapper.map(stock, FoodStockDto.class);
-				
+
 				return foodStockDto;
 			}).collect(Collectors.toList());
 
@@ -129,7 +128,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
 
 			FoodStockDto foodStockDto = this.mapper.map(foodStock, FoodStockDto.class);
-			
+
 			if (foodStockDto != null) {
 				return foodStockDto;
 			}
@@ -156,7 +155,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 					.stream().mapToDouble(DrinkStock::getPrice).sum();
 
 			double totalExpenses = 0.0;
-			
+
 			if (foodExpense != 0.0 || drinkExpense != 0.0) {
 				totalExpenses = foodExpense + drinkExpense;
 			}
@@ -176,19 +175,13 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			LocalDate currentDate = LocalDate.now();
 
 			DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY; // Define the first day of the week
-										
+
 			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
-			
+
 			System.out.println(daysUntilFirstDay);
-			
-		
+
 			LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
 			LocalDate endOfWeek = startOfWeek.plusDays(6);
-			
-			
-		
-
-			
 
 			LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
 			LocalDateTime endOfWeekDateTime = endOfWeek.atTime(LocalTime.MAX);
@@ -200,7 +193,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 					.stream().mapToDouble(DrinkStock::getPrice).sum();
 
 			double totalExpenses = 0.0;
-			
+
 			if (foodExpense != 0.0 || drinkExpense != 0.0) {
 				totalExpenses = foodExpense + drinkExpense;
 			}

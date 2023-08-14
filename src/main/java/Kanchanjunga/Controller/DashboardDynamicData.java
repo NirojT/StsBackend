@@ -27,6 +27,7 @@ public class DashboardDynamicData {
 
 	@Autowired
 	private PaymentService paymentService;
+	
 	@Autowired
 	private FoodStockService foodStockService;
 
