@@ -27,9 +27,10 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 
 	@Autowired
 	private FoodStockRepo foodStockRepo;
+	
 	@Autowired
-
 	private DrinkStockRepo drinkStockRepo;
+	
 	@Autowired
 	private ModelMapper mapper;
  

@@ -61,7 +61,7 @@ public class DrinkStockController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String description) {
         try {
-        	System.out.println(name);
+        	
             Boolean isUpdated = this.drinkStockService.updateStockDrinks(id, name, price, quantity, supplier,
                     expireDate, category, description);
             HashMap<String, Object> response = new HashMap<>();
