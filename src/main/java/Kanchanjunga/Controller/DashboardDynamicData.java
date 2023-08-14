@@ -109,7 +109,7 @@ public class DashboardDynamicData {
 		try {
 			Double totalSellAmt = this.paymentService.getSellsBy1Day();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("SellsAmtDaily", totalSellAmt > 0 ? totalSellAmt : "Sells did not went well today");
+			response.put("SellsAmtDaily", totalSellAmt > 0 ? totalSellAmt : "Sells didnot went well today");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();

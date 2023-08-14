@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.Dto.FoodStockDto;
 import Kanchanjunga.Entity.DrinkStock;
@@ -22,7 +21,6 @@ import Kanchanjunga.Entity.FoodStock;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.DrinkStockRepo;
 import Kanchanjunga.Reposioteries.FoodStockRepo;
-import Kanchanjunga.Utility.FilesHelper;
 
 @Service
 public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockService {
@@ -34,18 +32,14 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 	private DrinkStockRepo drinkStockRepo;
 	@Autowired
 	private ModelMapper mapper;
-
-	@Autowired
-	private FilesHelper filesHelper;
+ 
 
 	@Override
 	public Boolean createStockFood(FoodStockDto foodStockDto) {
 		try {
 			foodStockDto.setId(UUID.randomUUID());
 			FoodStock foodStock = this.mapper.map(foodStockDto, FoodStock.class);
-			String filename = filesHelper.saveFile(foodStockDto.getImage());
-
-			foodStock.setImage(filename);
+		
 			foodStock.setCreatedDate(new Date());
 			foodStockRepo.save(foodStock);
 			return true;
@@ -58,44 +52,23 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 
 	@Override
 	public Boolean updateStockFood(UUID id, String name, Double price, int quantity, String supplier, Date expireDate,
-			String category, String description, MultipartFile image) {
+			String category, String description) {
 		try {
 			FoodStock foodStockDb = this.foodStockRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
-			// if user wants to update image
-			if (image != null) {
-				String filename = filesHelper.saveFile(image);
-
-				Boolean isdeleted = this.filesHelper.deleteExistingFile(foodStockDb.getImage());
-
-				if (isdeleted) {
+			
 					foodStockDb.setName(name);
 					foodStockDb.setPrice(price);
 					foodStockDb.setQuantity(quantity);
 					foodStockDb.setSupplier(supplier);
 					foodStockDb.setExpireDate(expireDate);
-					foodStockDb.setImage(filename);
 					foodStockDb.setCategory(category);
 					foodStockDb.setDescription(description);
 
 					this.foodStockRepo.save(foodStockDb);
 
 					return true;
-				}
-
-			}
-
-			// if user dont want to update image
-
-			foodStockDb.setName(name);
-			foodStockDb.setPrice(price);
-			foodStockDb.setImage(foodStockDb.getImage());
-			foodStockDb.setCategory(category);
-			foodStockDb.setDescription(description);
-
-			this.foodStockRepo.save(foodStockDb);
-
-			return true;
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -133,7 +106,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			List<FoodStock> allFoodStocks = this.foodStockRepo.findAll();
 			List<FoodStockDto> allFoodStockDto = allFoodStocks.stream().map((stock) -> {
 				FoodStockDto foodStockDto = this.mapper.map(stock, FoodStockDto.class);
-				foodStockDto.setImageName(stock.getImage());
+				
 				return foodStockDto;
 			}).collect(Collectors.toList());
 
@@ -156,7 +129,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
 
 			FoodStockDto foodStockDto = this.mapper.map(foodStock, FoodStockDto.class);
-			foodStockDto.setImageName(foodStock.getImage());
+			
 			if (foodStockDto != null) {
 				return foodStockDto;
 			}
@@ -203,11 +176,19 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			LocalDate currentDate = LocalDate.now();
 
 			DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY; // Define the first day of the week
-
+										
 			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
-
+			
+			System.out.println(daysUntilFirstDay);
+			
+		
 			LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
 			LocalDate endOfWeek = startOfWeek.plusDays(6);
+			
+			
+		
+
+			
 
 			LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
 			LocalDateTime endOfWeekDateTime = endOfWeek.atTime(LocalTime.MAX);
