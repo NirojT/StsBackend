@@ -119,7 +119,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	}
 
 	@Override
-	public Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item, String status) {
+	public Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item) {
 
 		try {
 
@@ -129,7 +129,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 			ordersFromDb.setTableNo(tableNo);
 			ordersFromDb.setPrice(price);
 			ordersFromDb.setItems(item);
-			ordersFromDb.setStatus(status);
+			ordersFromDb.setStatus(ordersFromDb.getStatus());
 
 			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
 

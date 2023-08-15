@@ -5,15 +5,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import Kanchanjunga.Dto.FoodStockDto;
@@ -269,5 +273,40 @@ public class FoodStockServiceImpl implements FoodStockService {
 			
 		}
 	}
+
+
+	@Override
+	public List<Map<String, Object>> getStockNameAndQuantity() {
+		try {
+			List<FoodStock> collectedStock = this.foodStockRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"))
+					.stream().limit(5).map((stock)->new FoodStock(stock.getName(), stock.getQuantity()))
+					.collect(Collectors.toList());
+			
+			List<Map<String, Object>>stockList=new ArrayList<>();
+			
+			
+			for(int i=0; i<collectedStock.size(); i++) {
+				Map<String, Object> stocks=new HashMap<>();
+
+	
+				String name = collectedStock.get(i).getName();
+				
+				int quantity = collectedStock.get(i).getQuantity();
+				
+				stocks.put("name", name);
+				stocks.put("quantity", quantity);
+				
+				stockList.add(stocks);
+		
+		}
+			return stockList;
+		}
+			catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	
+	}
+	
 
 }

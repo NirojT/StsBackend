@@ -85,14 +85,13 @@ public class OrdersController {
 			@PathVariable UUID id,
 			@RequestParam(required = false) String tableNo,
 			@RequestParam(required = false) Double price,
-			@RequestParam(required = false) List<AddOrderDto> item,
-			@RequestParam(required = false) String status
+			@RequestParam(required = false) List<AddOrderDto> item
 
 	) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 
-			Boolean isUpdated = this.ordersService.updateOrders(id, tableNo, price, item, status);
+			Boolean isUpdated = this.ordersService.updateOrders(id, tableNo, price, item);
 
 			response.put("status", isUpdated ? 200 : 400);
 			response.put("message",

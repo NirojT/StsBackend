@@ -11,7 +11,7 @@ public interface OrdersService {
 
 	Boolean createOrders(OrderRequest orderRequest, String username);
 
-	Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item, String status);
+	Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item);
 
 	Boolean deleteOrders(UUID id);
 

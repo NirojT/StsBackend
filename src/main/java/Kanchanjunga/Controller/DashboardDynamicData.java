@@ -27,7 +27,7 @@ public class DashboardDynamicData {
 
 	@Autowired
 	private PaymentService paymentService;
-	
+
 	@Autowired
 	private FoodStockService foodStockService;
 
@@ -153,6 +153,30 @@ public class DashboardDynamicData {
 		}
 	}
 
+	@GetMapping("get-totalSellDataWholeYear")
+	public ResponseEntity<?> getMonthlySellDataWholeYear() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			double[] monthlySellWholeYear = this.paymentService.getMonthlySellDataWholeYear();
+			boolean allZero = true;
+			for (double everyMonthSell : monthlySellWholeYear) {
+				if (everyMonthSell != 0) {
+					allZero = false;
+					break;
+				}
+			}
+
+			response.put("status", allZero ? 400 : 200);
+			response.put("SellAmtYearly", allZero ? "No sell in this year" : monthlySellWholeYear);
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+
 	// expenses
 	@GetMapping("get-totalExpenseDaily")
 	public ResponseEntity<?> getDailyExpense() {
@@ -201,23 +225,22 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
-	
+
 	@GetMapping("get-totalExpenseDataWholeYear")
 	public ResponseEntity<?> getMonthlyExpenseDataWholeYear() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-		 double[] monthlyExpenseWholeYear = this.foodStockService.getMonthlyExpenseDataWholeYear();
-		 boolean allZero = true;
-	      for (double everyMonthExp : monthlyExpenseWholeYear) {
-	            if (everyMonthExp != 0) {
-	                allZero = false;
-	                break;
-	            }
-	      }
-		 System.out.println(allZero);
-		 
+			double[] monthlyExpenseWholeYear = this.foodStockService.getMonthlyExpenseDataWholeYear();
+			boolean allZero = true;
+			for (double everyMonthExp : monthlyExpenseWholeYear) {
+				if (everyMonthExp != 0) {
+					allZero = false;
+					break;
+				}
+			}
+
 			response.put("status", allZero ? 400 : 200);
-			response.put("ExpenseAmtYearly", allZero ?  "No expense in this year" : monthlyExpenseWholeYear);
+			response.put("ExpenseAmtYearly", allZero ? "No expense in this year" : monthlyExpenseWholeYear);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -228,4 +251,23 @@ public class DashboardDynamicData {
 	}
 
 	// expense ends......
+
+	// get stockname and quantity
+	@GetMapping("get-stockNameQuantity")
+	public ResponseEntity<?> getStockNameAndQuantity() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			List<Map<String,Object>> stockNameAndQuantity = this.foodStockService.getStockNameAndQuantity();
+			response.put("status", stockNameAndQuantity!=null ? 200 : 400);
+			response.put("stockNameQuantity",stockNameAndQuantity!=null ? stockNameAndQuantity : "No name found in stock in this year");
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+	
+	
 }
