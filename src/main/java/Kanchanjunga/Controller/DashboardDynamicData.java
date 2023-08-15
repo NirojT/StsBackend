@@ -27,6 +27,7 @@ public class DashboardDynamicData {
 
 	@Autowired
 	private PaymentService paymentService;
+	
 	@Autowired
 	private FoodStockService foodStockService;
 
@@ -55,7 +56,7 @@ public class DashboardDynamicData {
 		try {
 			int noOfOrders = this.ordersService.getNoOfOrdersBy1Day();
 			response.put("status", noOfOrders > 0 ? 200 : 400);
-			response.put("ordersNo", noOfOrders > 0 ? noOfOrders : "no orders are ordered today");
+			response.put("ordersNo", noOfOrders > 0 ? noOfOrders : "No orders are ordered today");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -102,7 +103,7 @@ public class DashboardDynamicData {
 	// ..................................orders end
 	// get total sell or addidng price 1month acccording to digit of month (not by
 	// day )
-	
+
 	@GetMapping("get-totalSellDaily")
 	public ResponseEntity<?> getSellsBy1Day() {
 		Map<String, Object> response = new HashMap<>();
@@ -118,7 +119,7 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
-	
+
 	// for 1 week the sell amount will change by counting days i.e 7
 	@GetMapping("get-totalSellWeekly")
 	public ResponseEntity<?> getTotalSellAmtWeekly() {
@@ -126,7 +127,7 @@ public class DashboardDynamicData {
 		try {
 			Double totalSellAmt = this.paymentService.getTotalSellAmtWeekly();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("SellsAmtWeekly", totalSellAmt > 0 ? totalSellAmt : "Sells didnot went well in this week");
+			response.put("SellsAmtWeekly", totalSellAmt > 0 ? totalSellAmt : "Sells did not went well in this week");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -135,16 +136,14 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
-	
-	
-	
+
 	@GetMapping("get-totalSellMonthly")
 	public ResponseEntity<?> getTotalSellAmtMonthly() {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Double totalSellAmt = this.paymentService.getTotalSellAmtMonthly();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("SellsAmtMonthly", totalSellAmt > 0 ? totalSellAmt : "Sells didnot went well in this month");
+			response.put("SellsAmtMonthly", totalSellAmt > 0 ? totalSellAmt : "Sells did not went well in this month");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -154,11 +153,7 @@ public class DashboardDynamicData {
 		}
 	}
 
-
-
-
-	
-	//expenses
+	// expenses
 	@GetMapping("get-totalExpenseDaily")
 	public ResponseEntity<?> getDailyExpense() {
 		Map<String, Object> response = new HashMap<>();
@@ -207,5 +202,30 @@ public class DashboardDynamicData {
 		}
 	}
 	
+	@GetMapping("get-totalExpenseDataWholeYear")
+	public ResponseEntity<?> getMonthlyExpenseDataWholeYear() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+		 double[] monthlyExpenseWholeYear = this.foodStockService.getMonthlyExpenseDataWholeYear();
+		 boolean allZero = true;
+	      for (double everyMonthExp : monthlyExpenseWholeYear) {
+	            if (everyMonthExp != 0) {
+	                allZero = false;
+	                break;
+	            }
+	      }
+		 System.out.println(allZero);
+		 
+			response.put("status", allZero ? 400 : 200);
+			response.put("ExpenseAmtYearly", allZero ?  "No expense in this year" : monthlyExpenseWholeYear);
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+
 	// expense ends......
 }

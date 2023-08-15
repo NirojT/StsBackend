@@ -24,4 +24,6 @@ public interface FoodStockService {
 	Double getTotalExpenseWeekly();
 
 	double getMonthlyExpense();
+	
+	double[] getMonthlyExpenseDataWholeYear();
 }

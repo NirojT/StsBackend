@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,26 +22,26 @@ import Kanchanjunga.Entity.FoodStock;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.DrinkStockRepo;
 import Kanchanjunga.Reposioteries.FoodStockRepo;
+import Kanchanjunga.Services.FoodStockService;
 
 @Service
-public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockService {
+public class FoodStockServiceImpl implements FoodStockService {
 
 	@Autowired
 	private FoodStockRepo foodStockRepo;
-	
+
 	@Autowired
 	private DrinkStockRepo drinkStockRepo;
-	
+
 	@Autowired
 	private ModelMapper mapper;
- 
 
 	@Override
 	public Boolean createStockFood(FoodStockDto foodStockDto) {
 		try {
 			foodStockDto.setId(UUID.randomUUID());
 			FoodStock foodStock = this.mapper.map(foodStockDto, FoodStock.class);
-		
+
 			foodStock.setCreatedDate(new Date());
 			foodStockRepo.save(foodStock);
 			return true;
@@ -57,19 +58,18 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 		try {
 			FoodStock foodStockDb = this.foodStockRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
-			
-					foodStockDb.setName(name);
-					foodStockDb.setPrice(price);
-					foodStockDb.setQuantity(quantity);
-					foodStockDb.setSupplier(supplier);
-					foodStockDb.setExpireDate(expireDate);
-					foodStockDb.setCategory(category);
-					foodStockDb.setDescription(description);
 
-					this.foodStockRepo.save(foodStockDb);
+			foodStockDb.setName(name);
+			foodStockDb.setPrice(price);
+			foodStockDb.setQuantity(quantity);
+			foodStockDb.setSupplier(supplier);
+			foodStockDb.setExpireDate(expireDate);
+			foodStockDb.setCategory(category);
+			foodStockDb.setDescription(description);
 
-					return true;
-			
+			this.foodStockRepo.save(foodStockDb);
+
+			return true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -107,7 +107,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			List<FoodStock> allFoodStocks = this.foodStockRepo.findAll();
 			List<FoodStockDto> allFoodStockDto = allFoodStocks.stream().map((stock) -> {
 				FoodStockDto foodStockDto = this.mapper.map(stock, FoodStockDto.class);
-				
+
 				return foodStockDto;
 			}).collect(Collectors.toList());
 
@@ -130,7 +130,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
 
 			FoodStockDto foodStockDto = this.mapper.map(foodStock, FoodStockDto.class);
-			
+
 			if (foodStockDto != null) {
 				return foodStockDto;
 			}
@@ -153,11 +153,11 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			double foodExpense = this.foodStockRepo.findExpenseBy1Day(startOfDay, endOfDay).stream()
 					.mapToDouble(FoodStock::getPrice).sum();
 
-			double drinkExpense = this.drinkStockRepo.findExpenseBy1Day(startOfDay, endOfDay)
-					.stream().mapToDouble(DrinkStock::getPrice).sum();
+			double drinkExpense = this.drinkStockRepo.findExpenseBy1Day(startOfDay, endOfDay).stream()
+					.mapToDouble(DrinkStock::getPrice).sum();
 
 			double totalExpenses = 0.0;
-			
+
 			if (foodExpense != 0.0 || drinkExpense != 0.0) {
 				totalExpenses = foodExpense + drinkExpense;
 			}
@@ -177,19 +177,13 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			LocalDate currentDate = LocalDate.now();
 
 			DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY; // Define the first day of the week
-										
+
 			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
-			
+
 			System.out.println(daysUntilFirstDay);
-			
-		
+
 			LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
 			LocalDate endOfWeek = startOfWeek.plusDays(6);
-			
-			
-		
-
-			
 
 			LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
 			LocalDateTime endOfWeekDateTime = endOfWeek.atTime(LocalTime.MAX);
@@ -201,7 +195,7 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 					.stream().mapToDouble(DrinkStock::getPrice).sum();
 
 			double totalExpenses = 0.0;
-			
+
 			if (foodExpense != 0.0 || drinkExpense != 0.0) {
 				totalExpenses = foodExpense + drinkExpense;
 			}
@@ -240,6 +234,39 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0.00;
+		}
+	}
+
+	public double[] getMonthlyExpenseDataWholeYear() {
+
+		try {
+			int currentYear = YearMonth.now().getYear();
+
+			double monthlyExpense[] = new double[12];
+
+			for (int month = 1; month <= 12; month++) {
+
+				YearMonth currentYearMonth = YearMonth.of(currentYear, month);
+				LocalDate startDate = currentYearMonth.atDay(1);
+				LocalDate endDate = currentYearMonth.atEndOfMonth();
+
+				double foodExpense = this.foodStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+						.mapToDouble(FoodStock::getPrice).sum();
+
+				double drinkExpense = this.drinkStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+						.mapToDouble(DrinkStock::getPrice).sum();
+
+				monthlyExpense[month - 1] = foodExpense + drinkExpense;
+		
+			}
+			
+		
+			return monthlyExpense;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("iam catch block....");
+			return new double[12];
+			
 		}
 	}
 
