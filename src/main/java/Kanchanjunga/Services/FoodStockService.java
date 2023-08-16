@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import Kanchanjunga.Dto.FoodStockDto;
-import Kanchanjunga.Entity.FoodStock;
 
 public interface FoodStockService {
 
@@ -26,10 +25,9 @@ public interface FoodStockService {
 	Double getTotalExpenseWeekly();
 
 	double getMonthlyExpense();
-	
+
 	double[] getMonthlyExpenseDataWholeYear();
-	
+
 	List<Map<String, Object>> getStockNameAndQuantity();
-	
-	
+
 }
