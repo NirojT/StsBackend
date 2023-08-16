@@ -6,6 +6,7 @@ import java.util.UUID;
 import Kanchanjunga.Dto.AddOrderDto;
 import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
+import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
 
 public interface OrdersService {
@@ -32,6 +33,8 @@ public interface OrdersService {
 
 	Boolean updateStatus(UUID id, String status);
 	
-	List<FoodMenu> getMostOrderedFood();
+	List<FoodMenu> getMostOrderedFoods();
+	
+	List<DrinkMenu> getMostOrderedDrinks();
 
 }

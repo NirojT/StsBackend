@@ -24,7 +24,7 @@ public class DrinkMenu {
 	private String description;
 	private String image;
 	private int quantity;
-	
+	private int frequency;
 
 	@DBRef
 	private Orders orders;

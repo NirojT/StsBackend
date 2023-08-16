@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Kanchanjunga.Dto.OrdersDto;
+import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.Services.FoodStockService;
 import Kanchanjunga.Services.OrdersService;
@@ -274,7 +275,7 @@ public class DashboardDynamicData {
 	public ResponseEntity<?> getMostOrderedFood() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			 List<FoodMenu> mostOrderedFood = this.ordersService.getMostOrderedFood();
+			 List<FoodMenu> mostOrderedFood = this.ordersService.getMostOrderedFoods();
 			 
 		
 				 response.put("status", mostOrderedFood!=null ? 200 : 400);
@@ -282,6 +283,27 @@ public class DashboardDynamicData {
 					return ResponseEntity.status(200).body(response); 
 				 
 			 
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+	
+	@GetMapping("get-MostOrderedDrinks")
+	public ResponseEntity<?> getMostOrderedDrinks() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			List<DrinkMenu> mostOrderedDrinks = this.ordersService.getMostOrderedDrinks();
+			
+			
+			response.put("status", mostOrderedDrinks!=null ? 200 : 400);
+			response.put("mostOrderedDrink", mostOrderedDrinks!=null  ? mostOrderedDrinks : "There are no mostOrderedDrinks");
+			return ResponseEntity.status(200).body(response); 
+			
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
