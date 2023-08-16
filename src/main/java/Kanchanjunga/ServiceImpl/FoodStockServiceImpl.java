@@ -5,14 +5,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import Kanchanjunga.Dto.FoodStockDto;
@@ -21,9 +26,10 @@ import Kanchanjunga.Entity.FoodStock;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.DrinkStockRepo;
 import Kanchanjunga.Reposioteries.FoodStockRepo;
+import Kanchanjunga.Services.FoodStockService;
 
 @Service
-public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockService {
+public class FoodStockServiceImpl implements FoodStockService {
 
 	@Autowired
 	private FoodStockRepo foodStockRepo;
@@ -151,8 +157,8 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			double foodExpense = this.foodStockRepo.findExpenseBy1Day(startOfDay, endOfDay).stream()
 					.mapToDouble(FoodStock::getPrice).sum();
 
-			double drinkExpense = this.drinkStockRepo.findExpenseBy1Day(startOfDay, endOfDay)
-					.stream().mapToDouble(DrinkStock::getPrice).sum();
+			double drinkExpense = this.drinkStockRepo.findExpenseBy1Day(startOfDay, endOfDay).stream()
+					.mapToDouble(DrinkStock::getPrice).sum();
 
 			double totalExpenses = 0.0;
 
@@ -234,5 +240,73 @@ public class FoodStockServiceImpl implements Kanchanjunga.Services.FoodStockServ
 			return 0.00;
 		}
 	}
+
+	public double[] getMonthlyExpenseDataWholeYear() {
+
+		try {
+			int currentYear = YearMonth.now().getYear();
+
+			double monthlyExpense[] = new double[12];
+
+			for (int month = 1; month <= 12; month++) {
+
+				YearMonth currentYearMonth = YearMonth.of(currentYear, month);
+				LocalDate startDate = currentYearMonth.atDay(1);
+				LocalDate endDate = currentYearMonth.atEndOfMonth();
+
+				double foodExpense = this.foodStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+						.mapToDouble(FoodStock::getPrice).sum();
+
+				double drinkExpense = this.drinkStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+						.mapToDouble(DrinkStock::getPrice).sum();
+
+				monthlyExpense[month - 1] = foodExpense + drinkExpense;
+		
+			}
+			
+		
+			return monthlyExpense;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("iam catch block....");
+			return new double[12];
+			
+		}
+	}
+
+
+	@Override
+	public List<Map<String, Object>> getStockNameAndQuantity() {
+		try {
+			List<FoodStock> collectedStock = this.foodStockRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"))
+					.stream().limit(5).map((stock)->new FoodStock(stock.getName(), stock.getQuantity()))
+					.collect(Collectors.toList());
+			
+			List<Map<String, Object>>stockList=new ArrayList<>();
+			
+			
+			for(int i=0; i<collectedStock.size(); i++) {
+				Map<String, Object> stocks=new HashMap<>();
+
+	
+				String name = collectedStock.get(i).getName();
+				
+				int quantity = collectedStock.get(i).getQuantity();
+				
+				stocks.put("name", name);
+				stocks.put("quantity", quantity);
+				
+				stockList.add(stocks);
+		
+		}
+			return stockList;
+		}
+			catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	
+	}
+	
 
 }

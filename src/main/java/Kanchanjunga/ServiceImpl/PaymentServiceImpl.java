@@ -148,7 +148,7 @@ public class PaymentServiceImpl implements PaymentService {
 			LocalDate currentDate = LocalDate.now();
 
 			DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY; // Define the first day of the week
-			
+
 			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
 
 			LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
@@ -161,7 +161,7 @@ public class PaymentServiceImpl implements PaymentService {
 			double totalAmt = payments.stream().mapToDouble(Payment::getTotalPrice).sum();
 
 			System.out.println(totalAmt);
-		
+
 			System.out.println(startOfWeek);
 			System.out.println(endOfWeek);
 			return totalAmt;
@@ -190,6 +190,36 @@ public class PaymentServiceImpl implements PaymentService {
 			return 0.0;
 		}
 
+	}
+	// get total sell or addidng price whole year
+
+	public double[] getMonthlySellDataWholeYear() {
+
+		try {
+			int currentYear = YearMonth.now().getYear();
+
+			double monthlySell[] = new double[12];
+
+			for (int month = 1; month <= 12; month++) {
+
+				YearMonth currentYearMonth = YearMonth.of(currentYear, month);
+				LocalDate startDate = currentYearMonth.atDay(1);
+				LocalDate endDate = currentYearMonth.atEndOfMonth();
+
+				double totalAmt = this.paymentRepo.findPaymentByCurrentMonth(startDate, endDate).stream()
+						.mapToDouble(Payment::getTotalPrice).sum();
+
+				monthlySell[month - 1] = totalAmt;
+				
+			}
+
+			return monthlySell;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("iam catch block....");
+			return new double[12];
+
+		}
 	}
 
 }
