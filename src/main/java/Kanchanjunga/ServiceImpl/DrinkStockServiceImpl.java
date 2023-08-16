@@ -63,7 +63,6 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 				return true;
 			}
 			return false;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

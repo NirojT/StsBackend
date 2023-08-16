@@ -3,7 +3,6 @@ package Kanchanjunga.Services;
 import java.util.List;
 import java.util.UUID;
 
-import Kanchanjunga.Dto.AddOrderDto;
 import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.Entity.DrinkMenu;
@@ -13,7 +12,7 @@ public interface OrdersService {
 
 	Boolean createOrders(OrderRequest orderRequest, String username);
 
-	Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item);
+	Boolean updateOrders(UUID id, OrderRequest orderRequest);
 
 	Boolean deleteOrders(UUID id);
 
