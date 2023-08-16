@@ -368,22 +368,11 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	@Override
 	public List<OrdersDto> getMyOrders(String name) {
 		try {
-			Optional<Users> user = userRepo.findByName(name);
-			
-			if (user.isPresent()) {
-				Users userFromDb = user.get();
-				List<Orders> orders = this.ordersRepo.findAll().stream()
-						.filter(order -> {
-							order.getUsers().setPassword(null);
-							return order.getUsers().getId().equals(userFromDb.getId());
-						}).collect(Collectors.toList());
-				List<OrdersDto> data = orders.stream().map(order -> {
-					return this.mapper.map(order, OrdersDto.class);
-				}).collect(Collectors.toList());
-
-				return orders.size() > 0 ? data : Collections.emptyList();
-			}
-			return Collections.emptyList();
+			List<Orders> orders = this.ordersRepo.findAll();
+			List<OrdersDto> data = orders.stream().map(order -> {
+				return this.mapper.map(order, OrdersDto.class);
+			}).collect(Collectors.toList());
+			return orders.size() > 0 ? data : Collections.emptyList();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Collections.emptyList();
