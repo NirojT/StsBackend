@@ -122,24 +122,57 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	}
 
 	@Override
-	public Boolean updateOrders(UUID id, String tableNo, Double price, List<AddOrderDto> item) {
+	public Boolean updateOrders(UUID id, OrderRequest orderRequest) {
 
 		try {
-
 			Orders ordersFromDb = this.ordersRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
+			List<AddOrderDto> addOrderDtos = orderRequest.getAddOrderDtos();
 
-			ordersFromDb.setTableNo(tableNo);
-			ordersFromDb.setPrice(price);
+			List<AddOrderDto> item = addOrderDtos.stream().map((order) -> {
+				UUID foodMenuId = order.getFoodMenuId();
+				UUID drinkMenuId = order.getDrinkMenuId();
+
+				int quantity = order.getQuantity();
+
+				FoodMenu foodMenu;
+				DrinkMenu drinkMenu;
+
+				if (foodMenuId != null) {
+					foodMenu = this.foodMenuRepo.findById(foodMenuId)
+							.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", foodMenuId));
+
+					foodMenu.setQuantity(quantity);
+					order.setImageName(foodMenu.getImage());
+					order.setName(foodMenu.getName());
+					order.setPrice(foodMenu.getPrice());
+					order.setType(foodMenu.getType());
+					order.setCategory(foodMenu.getCategory());
+					order.setDescription(foodMenu.getDescription());
+				}
+
+				if (drinkMenuId != null) {
+					drinkMenu = this.drinkMenuRepo.findById(drinkMenuId)
+							.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", drinkMenuId));
+					drinkMenu.setQuantity(quantity);
+					order.setImageName(drinkMenu.getImage());
+					order.setName(drinkMenu.getName());
+					order.setPrice(drinkMenu.getPrice());
+					order.setCategory(drinkMenu.getCategory());
+					order.setDescription(drinkMenu.getDescription());
+
+				}
+
+				return order;
+			}).collect(Collectors.toList());
 			ordersFromDb.setItems(item);
+			ordersFromDb.setTableNo(orderRequest.getTableNo());
+			ordersFromDb.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
 			ordersFromDb.setStatus(ordersFromDb.getStatus());
-
 			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
-
 			if (updatedOrder != null) {
 				return true;
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -397,37 +430,36 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		return false;
 	}
 
-
 	@Override
 	public List<FoodMenu> getMostOrderedFood() {
-	    List<Orders> ordersList = this.ordersRepo.findAll();
+		List<Orders> ordersList = this.ordersRepo.findAll();
 
-	    Map<UUID, Integer> foodMenuFrequency = new HashMap<>();
+		Map<UUID, Integer> foodMenuFrequency = new HashMap<>();
 
-	    ordersList.forEach(order -> {
-	        List<AddOrderDto> items = order.getItems();
-	        items.forEach(item -> {
-	            UUID foodMenuId = item.getFoodMenuId();
-	            
-	            if (foodMenuId != null) {
-	                foodMenuFrequency.put(foodMenuId, foodMenuFrequency.getOrDefault(foodMenuId, 0) + 1);
-	            }
-	        });
-	    });
+		ordersList.forEach(order -> {
+			List<AddOrderDto> items = order.getItems();
+			items.forEach(item -> {
+				UUID foodMenuId = item.getFoodMenuId();
 
-	    List<UUID> orderedFoodMenuIds = new ArrayList<>(foodMenuFrequency.keySet());
+				if (foodMenuId != null) {
+					foodMenuFrequency.put(foodMenuId, foodMenuFrequency.getOrDefault(foodMenuId, 0) + 1);
+				}
+			});
+		});
 
-	    orderedFoodMenuIds.sort((id1, id2) -> Integer.compare(foodMenuFrequency.get(id2), foodMenuFrequency.get(id1)));
+		List<UUID> orderedFoodMenuIds = new ArrayList<>(foodMenuFrequency.keySet());
 
-	    List<FoodMenu> orderedFoodMenus = new ArrayList<>();
+		orderedFoodMenuIds.sort((id1, id2) -> Integer.compare(foodMenuFrequency.get(id2), foodMenuFrequency.get(id1)));
 
-	    orderedFoodMenuIds.forEach(foodMenuId -> {
-	        FoodMenu foodMenu = this.foodMenuRepo.findById(foodMenuId)
-	                .orElseThrow(() -> new ResourceNotFound("foodmenu", "foodmenu id", foodMenuId));
-	        orderedFoodMenus.add(foodMenu);
-	    });
+		List<FoodMenu> orderedFoodMenus = new ArrayList<>();
 
-	    return orderedFoodMenus;
+		orderedFoodMenuIds.forEach(foodMenuId -> {
+			FoodMenu foodMenu = this.foodMenuRepo.findById(foodMenuId)
+					.orElseThrow(() -> new ResourceNotFound("foodmenu", "foodmenu id", foodMenuId));
+			orderedFoodMenus.add(foodMenu);
+		});
+
+		return orderedFoodMenus;
 	}
 
 }

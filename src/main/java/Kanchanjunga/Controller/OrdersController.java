@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import Kanchanjunga.Dto.AddOrderDto;
 import Kanchanjunga.Dto.OrderRequest;
 import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.JWT.JwtHelper;
@@ -83,15 +82,13 @@ public class OrdersController {
 	@PutMapping("update/{id}")
 	public ResponseEntity<?> updateFoodStock(
 			@PathVariable UUID id,
-			@RequestParam(required = false) String tableNo,
-			@RequestParam(required = false) Double price,
-			@RequestParam(required = false) List<AddOrderDto> item
+			@RequestBody OrderRequest orderRequest
 
 	) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-
-			Boolean isUpdated = this.ordersService.updateOrders(id, tableNo, price, item);
+			System.out.println(orderRequest.toString());
+			Boolean isUpdated = this.ordersService.updateOrders(id, orderRequest);
 
 			response.put("status", isUpdated ? 200 : 400);
 			response.put("message",
