@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -431,23 +432,30 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 	}
 
 	@Override
-	public List<FoodMenu> getMostOrderedFood() {
+	public List<FoodMenu> getMostOrderedFoods() {
 		List<Orders> ordersList = this.ordersRepo.findAll();
 
 		Map<UUID, Integer> foodMenuFrequency = new HashMap<>();
 
 		ordersList.forEach(order -> {
 			List<AddOrderDto> items = order.getItems();
-			items.forEach(item -> {
-				UUID foodMenuId = item.getFoodMenuId();
+			if (items != null) {
+				items.forEach(item -> {
+					UUID foodMenuId = item.getFoodMenuId();
 
-				if (foodMenuId != null) {
-					foodMenuFrequency.put(foodMenuId, foodMenuFrequency.getOrDefault(foodMenuId, 0) + 1);
-				}
-			});
+					if (foodMenuId != null) {
+						foodMenuFrequency.put(foodMenuId, foodMenuFrequency.getOrDefault(foodMenuId, 0) + 1);
+						
+					}
+				});
+			}
 		});
+		
 
 		List<UUID> orderedFoodMenuIds = new ArrayList<>(foodMenuFrequency.keySet());
+
+
+
 
 		orderedFoodMenuIds.sort((id1, id2) -> Integer.compare(foodMenuFrequency.get(id2), foodMenuFrequency.get(id1)));
 
@@ -456,10 +464,51 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		orderedFoodMenuIds.forEach(foodMenuId -> {
 			FoodMenu foodMenu = this.foodMenuRepo.findById(foodMenuId)
 					.orElseThrow(() -> new ResourceNotFound("foodmenu", "foodmenu id", foodMenuId));
+			foodMenu.setFrequency(foodMenuFrequency.get(foodMenuId));
 			orderedFoodMenus.add(foodMenu);
+			
 		});
 
-		return orderedFoodMenus;
+		return orderedFoodMenus.size() > 0 ? orderedFoodMenus : null;
+	}
+
+	@Override
+	public List<DrinkMenu> getMostOrderedDrinks() {
+
+		List<Orders> orders = this.ordersRepo.findAll();
+
+		Map<UUID, Integer> drinkMenuFrequency = new HashMap<>();
+
+		orders.stream().forEach((order) -> {
+			List<AddOrderDto> items = order.getItems();
+			if (items != null) {
+				items.stream().forEach((item) -> {
+					UUID drinkMenuId = item.getDrinkMenuId();
+					if (drinkMenuId != null) {
+						drinkMenuFrequency.put(drinkMenuId, drinkMenuFrequency.getOrDefault(drinkMenuId, 0) + 1);
+					}
+				});
+			}
+
+		});
+
+		List<UUID> orderedDrinkMenusIDs = new ArrayList<>(drinkMenuFrequency.keySet());
+
+		orderedDrinkMenusIDs
+				.sort((id1, id2) -> Integer.compare(drinkMenuFrequency.get(id2), drinkMenuFrequency.get(id1)));
+
+		List<DrinkMenu> orderedDrinkMenus = new ArrayList<>();
+
+		orderedDrinkMenusIDs.stream().forEach(id -> {
+			DrinkMenu drinkMenu = this.drinkMenuRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("DrinkMenu", "DrinkMenu id", id));
+			
+			drinkMenu.setFrequency(drinkMenuFrequency.get(id));
+
+			orderedDrinkMenus.add(drinkMenu);
+		});
+
+		return orderedDrinkMenus.size() > 0 ? orderedDrinkMenus : null;
 	}
 
 }
