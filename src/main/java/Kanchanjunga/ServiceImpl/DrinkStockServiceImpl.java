@@ -1,12 +1,17 @@
 package Kanchanjunga.ServiceImpl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import Kanchanjunga.Dto.DrinkStockDto;
@@ -120,5 +125,42 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 			return null;
 		}
 	}
+	
+	@Override
+	public List<Map<String, Object>> getStockDrinkNameAndQuantity() {
+		try {
+			List<DrinkStock> collectedStock = this.drinkStockRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"))
+					.stream().limit(5).map((stock)->new DrinkStock(stock.getName(), stock.getQuantity()))
+					.collect(Collectors.toList());
+			
+			List<Map<String, Object>>stockList=new ArrayList<>();
+			
+			
+			for(int i=0; i<collectedStock.size(); i++) {
+				Map<String, Object> stocks=new HashMap<>();
+				
+				
+				String name = collectedStock.get(i).getName();
+				
+				int quantity = collectedStock.get(i).getQuantity();
+				
+				stocks.put("name", name);
+				stocks.put("quantity", quantity);
+				
+				stockList.add(stocks);
+				
+			}
+			if( stockList.size()>0) {
+				return stockList;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+		
+	}
+	
 
 }

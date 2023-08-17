@@ -2,6 +2,7 @@ package Kanchanjunga.Services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import Kanchanjunga.Dto.DrinkStockDto;
@@ -22,4 +23,6 @@ public interface DrinkStockService {
 	List<DrinkStockDto> getAllDrinksStock();
 
 	DrinkStockDto getDrinkStockByID(UUID id);
+	
+	List<Map<String, Object>> getStockDrinkNameAndQuantity();
 }

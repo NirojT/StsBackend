@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Kanchanjunga.Dto.OrdersDto;
 import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
+import Kanchanjunga.Services.DrinkStockService;
 import Kanchanjunga.Services.FoodStockService;
 import Kanchanjunga.Services.OrdersService;
 import Kanchanjunga.Services.PaymentService;
@@ -32,6 +33,9 @@ public class DashboardDynamicData {
 
 	@Autowired
 	private FoodStockService foodStockService;
+	
+	@Autowired
+	private DrinkStockService drinkStockService;
 
 	// give latest orders up to 12 latest according to date
 	@GetMapping("get-latest")
@@ -254,7 +258,7 @@ public class DashboardDynamicData {
 
 	// expense ends......
 
-	// get stockname and quantity
+	// get stockname and quantity for food
 	@GetMapping("get-stockNameQuantity")
 	public ResponseEntity<?> getStockNameAndQuantity() {
 		Map<String, Object> response = new HashMap<>();
@@ -262,6 +266,22 @@ public class DashboardDynamicData {
 			List<Map<String,Object>> stockNameAndQuantity = this.foodStockService.getStockNameAndQuantity();
 			response.put("status", stockNameAndQuantity!=null ? 200 : 400);
 			response.put("stockNameQuantity",stockNameAndQuantity!=null ? stockNameAndQuantity : "No name found in stock in this year");
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+	// get stockname and quantity for drink
+	@GetMapping("get-stockDrinkNameAndQuantity")
+	public ResponseEntity<?> getStockDrinkNameAndQuantity() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			List<Map<String,Object>> stockNameAndQuantity = this.drinkStockService.getStockDrinkNameAndQuantity();
+			response.put("status", stockNameAndQuantity!=null ? 200 : 400);
+			response.put("stockDrinkNameQuantity",stockNameAndQuantity!=null ? stockNameAndQuantity : "No name found in stock in this year");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();

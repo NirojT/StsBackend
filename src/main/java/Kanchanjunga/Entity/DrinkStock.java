@@ -14,6 +14,12 @@ import lombok.Data;
 @Document
 public class DrinkStock {
 
+	public DrinkStock(String name, int quantity) {
+		this.name=name;
+		this.quantity=quantity;
+	}
+	
+
 	@Id
 	private UUID id;
 	private String name;

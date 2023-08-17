@@ -16,9 +16,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FoodStock {
 	
-	public FoodStock(String name2, int quantity2) {
-		name=name2;
-		quantity=quantity2;
+	public FoodStock(String name, int quantity) {
+		this.name=name;
+		this.quantity=quantity;
 	}
 
 	@Id
