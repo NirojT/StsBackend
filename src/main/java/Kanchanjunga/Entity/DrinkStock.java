@@ -8,10 +8,14 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Document
+@AllArgsConstructor
+@NoArgsConstructor
 public class DrinkStock {
 
 	public DrinkStock(String name, int quantity) {

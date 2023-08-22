@@ -35,6 +35,7 @@ public class DrinkStockController {
     @PostMapping("create")
     public ResponseEntity<?> createDrinkStock(@RequestBody DrinkStockDto drinkStockDto) {
         try {
+        	System.out.println(drinkStockDto.toString());
             Boolean isSaved = this.drinkStockService.createStockDrinks(drinkStockDto);
             HashMap<String, Object> response = new HashMap<>();
             if (isSaved) {

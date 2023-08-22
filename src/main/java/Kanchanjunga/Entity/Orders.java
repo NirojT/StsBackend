@@ -38,6 +38,9 @@ public class Orders {
 
 	@DBRef
 	private List<DrinkMenu> drinkMenus;
+	
+	@DBRef
+	private Table table;
 
 	@CreatedDate
 	private Date createdDate;

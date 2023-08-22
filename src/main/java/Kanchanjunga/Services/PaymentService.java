@@ -16,14 +16,15 @@ public interface PaymentService {
 	Boolean deletePayment(UUID id);
 
 	Boolean updatePayment(UUID id, PaymentDTO payment);
-	
+
 	Double getSellsBy1Day();
 
 	Double getTotalSellAmtWeekly();
-	
+
 	Double getTotalSellAmtMonthly();
-	
+
 	double[] getMonthlySellDataWholeYear();
 
+	double getYearlySalesReport();
 
 }

@@ -29,5 +29,6 @@ public interface FoodStockService {
 	double[] getMonthlyExpenseDataWholeYear();
 
 	List<Map<String, Object>> getStockNameAndQuantity();
+	double getYearlyExpenseReport();
 
 }

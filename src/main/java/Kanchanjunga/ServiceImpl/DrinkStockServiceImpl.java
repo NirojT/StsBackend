@@ -33,9 +33,13 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 	public Boolean createStockDrinks(DrinkStockDto drinkStockDto) {
 		try {
 			drinkStockDto.setId(UUID.randomUUID());
+			drinkStockDto.setCreatedDate(new Date());
+			System.out.println(drinkStockDto.toString());
 			DrinkStock drinkStock = mapper.map(drinkStockDto, DrinkStock.class);
+			
+			System.out.println(drinkStock.toString());
 
-			drinkStock.setCreatedDate(new Date());
+			
 			drinkStockRepo.save(drinkStock);
 			return true;
 		} catch (Exception e) {
@@ -67,11 +71,12 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 				this.drinkStockRepo.save(dbStockDrink);
 				return true;
 			}
-			return false;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
+		return false;
 	}
 
 	@Override

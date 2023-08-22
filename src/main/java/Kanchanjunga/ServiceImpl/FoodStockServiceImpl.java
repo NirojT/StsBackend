@@ -272,6 +272,42 @@ public class FoodStockServiceImpl implements FoodStockService {
 			
 		}
 	}
+	public double getYearlyExpenseReport() {
+		
+		try {
+			int currentYear = YearMonth.now().getYear();
+			
+			double YearlyExpense=0.0;
+			
+			for (int month = 1; month <= 12; month++) {
+				
+				YearMonth currentYearMonth = YearMonth.of(currentYear, month);
+				LocalDate startDate = currentYearMonth.atDay(1);
+				LocalDate endDate = currentYearMonth.atEndOfMonth();
+				
+				double foodExpense = this.foodStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+						.mapToDouble(FoodStock::getPrice).sum();
+				
+				double drinkExpense = this.drinkStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+						.mapToDouble(DrinkStock::getPrice).sum();
+				
+				YearlyExpense += foodExpense + drinkExpense;
+				
+				
+				
+			}
+			
+			if(YearlyExpense!=0.0)return YearlyExpense;
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("iam catch block....");
+			return 0.0;
+			
+		}
+		return 0.0;
+	}
 
 
 	@Override

@@ -33,7 +33,7 @@ public class DashboardDynamicData {
 
 	@Autowired
 	private FoodStockService foodStockService;
-	
+
 	@Autowired
 	private DrinkStockService drinkStockService;
 
@@ -183,6 +183,23 @@ public class DashboardDynamicData {
 		}
 	}
 
+	@GetMapping("get-YearlySalesReport")
+	public ResponseEntity<?> getYearlySalesReport() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			double yearlySalesReport = this.paymentService.getYearlySalesReport();
+
+			response.put("status", yearlySalesReport == 0 ? 400 : 200);
+			response.put("SalesReportAmt", yearlySalesReport == 0 ? "No sell in this year" : yearlySalesReport);
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+
 	// expenses
 	@GetMapping("get-totalExpenseDaily")
 	public ResponseEntity<?> getDailyExpense() {
@@ -232,6 +249,22 @@ public class DashboardDynamicData {
 		}
 	}
 
+	@GetMapping("get-YearlyExpenseReport")
+	public ResponseEntity<?> getYearlyExpenseReport() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			Double totalSellAmt = this.foodStockService.getYearlyExpenseReport();
+			response.put("status", totalSellAmt > 0 ? 200 : 400);
+			response.put("YearlyExpenseReport", totalSellAmt > 0 ? totalSellAmt : "No expense in this year");
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+
 	@GetMapping("get-totalExpenseDataWholeYear")
 	public ResponseEntity<?> getMonthlyExpenseDataWholeYear() {
 		Map<String, Object> response = new HashMap<>();
@@ -263,9 +296,10 @@ public class DashboardDynamicData {
 	public ResponseEntity<?> getStockNameAndQuantity() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			List<Map<String,Object>> stockNameAndQuantity = this.foodStockService.getStockNameAndQuantity();
-			response.put("status", stockNameAndQuantity!=null ? 200 : 400);
-			response.put("stockNameQuantity",stockNameAndQuantity!=null ? stockNameAndQuantity : "No name found in stock in this year");
+			List<Map<String, Object>> stockNameAndQuantity = this.foodStockService.getStockNameAndQuantity();
+			response.put("status", stockNameAndQuantity != null ? 200 : 400);
+			response.put("stockNameQuantity",
+					stockNameAndQuantity != null ? stockNameAndQuantity : "No name found in stock in this year");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -274,14 +308,16 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
+
 	// get stockname and quantity for drink
 	@GetMapping("get-stockDrinkNameAndQuantity")
 	public ResponseEntity<?> getStockDrinkNameAndQuantity() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			List<Map<String,Object>> stockNameAndQuantity = this.drinkStockService.getStockDrinkNameAndQuantity();
-			response.put("status", stockNameAndQuantity!=null ? 200 : 400);
-			response.put("stockDrinkNameQuantity",stockNameAndQuantity!=null ? stockNameAndQuantity : "No name found in stock in this year");
+			List<Map<String, Object>> stockNameAndQuantity = this.drinkStockService.getStockDrinkNameAndQuantity();
+			response.put("status", stockNameAndQuantity != null ? 200 : 400);
+			response.put("stockDrinkNameQuantity",
+					stockNameAndQuantity != null ? stockNameAndQuantity : "No name found in stock in this year");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -290,20 +326,17 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
-	
+
 	@GetMapping("get-MostOrderedFood")
 	public ResponseEntity<?> getMostOrderedFood() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			 List<FoodMenu> mostOrderedFood = this.ordersService.getMostOrderedFoods();
-			 
-		
-				 response.put("status", mostOrderedFood!=null ? 200 : 400);
-					response.put("mostOrderedFood", mostOrderedFood!=null  ? mostOrderedFood : "There are no mostOrderedFood");
-					return ResponseEntity.status(200).body(response); 
-				 
-			 
-			
+			List<FoodMenu> mostOrderedFood = this.ordersService.getMostOrderedFoods();
+
+			response.put("status", mostOrderedFood != null ? 200 : 400);
+			response.put("mostOrderedFood", mostOrderedFood != null ? mostOrderedFood : "There are no mostOrderedFood");
+			return ResponseEntity.status(200).body(response);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.put("status", 500);
@@ -311,20 +344,18 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
-	
+
 	@GetMapping("get-MostOrderedDrinks")
 	public ResponseEntity<?> getMostOrderedDrinks() {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			List<DrinkMenu> mostOrderedDrinks = this.ordersService.getMostOrderedDrinks();
-			
-			
-			response.put("status", mostOrderedDrinks!=null ? 200 : 400);
-			response.put("mostOrderedDrink", mostOrderedDrinks!=null  ? mostOrderedDrinks : "There are no mostOrderedDrinks");
-			return ResponseEntity.status(200).body(response); 
-			
-			
-			
+
+			response.put("status", mostOrderedDrinks != null ? 200 : 400);
+			response.put("mostOrderedDrink",
+					mostOrderedDrinks != null ? mostOrderedDrinks : "There are no mostOrderedDrinks");
+			return ResponseEntity.status(200).body(response);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.put("status", 500);
@@ -332,6 +363,5 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
-	
-	
+
 }

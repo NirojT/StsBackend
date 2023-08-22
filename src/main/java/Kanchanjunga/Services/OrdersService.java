@@ -35,5 +35,7 @@ public interface OrdersService {
 	List<FoodMenu> getMostOrderedFoods();
 	
 	List<DrinkMenu> getMostOrderedDrinks();
+	
+	Boolean updateTableAvailable(UUID id);
 
 }

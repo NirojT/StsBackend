@@ -29,11 +29,13 @@ import Kanchanjunga.Entity.DrinkMenu;
 import Kanchanjunga.Entity.FoodMenu;
 import Kanchanjunga.Entity.Orders;
 import Kanchanjunga.Entity.Payment;
+import Kanchanjunga.Entity.Table;
 import Kanchanjunga.Entity.Users;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.DrinkMenuRepo;
 import Kanchanjunga.Reposioteries.FoodMenuRepo;
 import Kanchanjunga.Reposioteries.OrdersRepo;
+import Kanchanjunga.Reposioteries.TableRepo;
 import Kanchanjunga.Reposioteries.UserRepo;
 
 @Service
@@ -50,6 +52,9 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 	@Autowired
 	private DrinkMenuRepo drinkMenuRepo;
+	
+	@Autowired
+	private TableRepo tableRepo;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -80,6 +85,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 					order.setType(foodMenu.getType());
 					order.setCategory(foodMenu.getCategory());
 					order.setDescription(foodMenu.getDescription());
+					
 				}
 
 				if (drinkMenuId != null) {
@@ -101,12 +107,33 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 			Orders orders = new Orders();
 			orders.setId(UUID.randomUUID());
-			orders.setTableNo(orderRequest.getTableNo());
+			
 			orders.setCreatedDate(new Date());
 			orders.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
 			orders.setItems(item);
 			orders.setRemarks(orderRequest.getRemarks());
+			
+			
+			
+			String tableNo = orderRequest.getTableNo();
+			Table tableFromDB = this.tableRepo.findByTableNo(tableNo).get();
+			
+			if (orderRequest.getTableNo().equalsIgnoreCase("TakeAway")) {
+				
+				tableFromDB.setAvailable(true);
+			
 
+			} else {
+				tableFromDB.setAvailable(false);
+				
+				
+			}
+			
+			this.tableRepo.save(tableFromDB);
+			orders.setTableNo(tableNo);
+			
+			
+			orders.setTable(tableFromDB);
 			orders.setUsers(userFromDb);
 
 			Orders savedOrder = this.ordersRepo.save(orders);
@@ -214,6 +241,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 				ordersDto.getUsers().setPassword(null);
 				ordersDto.setItems(order.getItems());
 				ordersDto.setRemarks(order.getRemarks());
+				ordersDto.setTable(order.getTable());
 				if (order.getDrinkMenus() != null) {
 
 				}
@@ -274,6 +302,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 			ordersDto.getUsers().setImageName(ordersFromDb.getUsers().getImage());
 			ordersDto.getUsers().setPassword("");
 			ordersDto.setItems(ordersFromDb.getItems());
+			ordersDto.setTable(ordersFromDb.getTable());
 
 			if (ordersDto != null) {
 				return ordersDto;
@@ -302,6 +331,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 				ordersDto.getUsers().setPassword(null);
 				ordersDto.setItems(order.getItems());
 				ordersDto.setRemarks(order.getRemarks());
+				ordersDto.setTable(order.getTable());
 				if (order.getDrinkMenus() != null) {
 
 				}
@@ -419,7 +449,29 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		try {
 			Orders ordersFromDb = this.ordersRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
+		
 			ordersFromDb.setStatus(status);
+			 
+		
+			
+			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
+			if (updatedOrder != null) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public Boolean updateTableAvailable(UUID id) {
+		try {
+			Orders ordersFromDb = this.ordersRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
+		
+			Table table = ordersFromDb.getTable();
+			table.setAvailable(true);
+			this.tableRepo.save(table);
+			
 			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
 			if (updatedOrder != null) {
 				return true;

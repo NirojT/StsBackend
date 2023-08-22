@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import Kanchanjunga.Entity.Table;
 import lombok.Data;
 
 @Data
@@ -26,6 +27,8 @@ public class OrdersDto {
 	private List<DrinkMenuDto> drinkMenus;
 
 	private List<FoodMenuDto> foodMenus;
+	
+	private Table table;
 
 	private Date createdDate;
 

@@ -18,9 +18,11 @@ import org.springframework.stereotype.Service;
 import Kanchanjunga.Dto.PaymentDTO;
 import Kanchanjunga.Entity.Orders;
 import Kanchanjunga.Entity.Payment;
+import Kanchanjunga.Entity.Table;
 import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.OrdersRepo;
 import Kanchanjunga.Reposioteries.PaymentRepo;
+import Kanchanjunga.Reposioteries.TableRepo;
 import Kanchanjunga.Services.OrdersService;
 import Kanchanjunga.Services.PaymentService;
 
@@ -37,18 +39,48 @@ public class PaymentServiceImpl implements PaymentService {
 	@Autowired
 	private ModelMapper mapper;
 
+	@Autowired
+	private TableRepo tableRepo;
+
 	@Override
 	public Boolean createPayment(PaymentDTO request) {
 		try {
-			request.setId(UUID.randomUUID());
-			Orders order = this.ordersRepo.findById(UUID.fromString(request.getOrderID())).orElseThrow(
-					() -> new ResourceNotFound("payment", "payment id", UUID.fromString(request.getOrderID())));
-			request.setOrder(order);
-			request.setCreatedDate(new Date());
-			Payment payment = mapper.map(request, Payment.class);
-			paymentRepo.save(payment);
-			Boolean isUpdated = ordersService.updateStatus(UUID.fromString(request.getOrderID()), "paid");
-			return isUpdated;
+			// changing id from string to uuid or u can say type casting
+
+			if (request != null) {
+				request.setId(UUID.randomUUID());
+				request.setCreatedDate(new Date());
+
+				UUID orderId = UUID.fromString(request.getOrderID());
+
+				Orders order = this.ordersRepo.findById(orderId)
+						.orElseThrow(() -> new ResourceNotFound("payment", "payment id", orderId));
+				if (order != null) {
+					order.setStatus("paid");
+
+					// setting table visibility
+					if (order.getTable() != null) {
+						Table table = order.getTable();
+
+						table.setAvailable(true);
+
+						tableRepo.save(table);
+						order.setTable(table);
+					}
+					this.ordersRepo.save(order);
+
+					request.setOrder(order);
+
+				}
+
+				Payment payment = mapper.map(request, Payment.class);
+
+				paymentRepo.save(payment);
+
+				return true;
+
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -210,7 +242,7 @@ public class PaymentServiceImpl implements PaymentService {
 						.mapToDouble(Payment::getTotalPrice).sum();
 
 				monthlySell[month - 1] = totalAmt;
-				
+
 			}
 
 			return monthlySell;
@@ -220,6 +252,36 @@ public class PaymentServiceImpl implements PaymentService {
 			return new double[12];
 
 		}
+	}
+
+	public double getYearlySalesReport() {
+		double YearlySalesAmt = 0.0;
+		try {
+			int currentYear = YearMonth.now().getYear();
+
+			for (int month = 1; month <= 12; month++) {
+
+				YearMonth currentYearMonth = YearMonth.of(currentYear, month);
+				LocalDate startDate = currentYearMonth.atDay(1);
+				LocalDate endDate = currentYearMonth.atEndOfMonth();
+
+				double totalAmt = this.paymentRepo.findPaymentByCurrentMonth(startDate, endDate).stream()
+						.mapToDouble(Payment::getTotalPrice).sum();
+
+				YearlySalesAmt += totalAmt;
+
+			}
+
+			if (YearlySalesAmt != 0.0) {
+				System.out.println(YearlySalesAmt);
+				return YearlySalesAmt;
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 }
