@@ -9,15 +9,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ResourceWebConfig implements WebMvcConfigurer {
 
 	final Environment environment;
+
 	public ResourceWebConfig(Environment env) {
-		environment=env;
+		environment = env;
 	}
-	
-	
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/uploads/**")
-		.addResourceLocations("file:///C:/Users/tmgni/Desktop/SpringBoots/deploy/images/");
+				.addResourceLocations("file:///C:/Users/Acer/Desktop/work/kanchanjunga/sts-backend-images/");
 	}
 
 }
