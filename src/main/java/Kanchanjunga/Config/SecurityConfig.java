@@ -22,7 +22,7 @@ import Kanchanjunga.ServiceImpl.UserDetailServiceImpl;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class SecurityConfig  {
 
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;

@@ -39,6 +39,8 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 			String filename = filesHelper.saveFile(foodMenuDto.getImage());
 
 			createFoodMenu.setImage(filename);
+			
+			
 			createFoodMenu.setCreatedDate(new Date());
 			this.foodMenuRepo.save(createFoodMenu);
 			return true;
@@ -105,14 +107,20 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 			FoodMenu foodMenu = this.foodMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
-			this.foodMenuRepo.delete(foodMenu);
-			Optional<FoodMenu> checking = this.foodMenuRepo.findById(id);
+			
+			Boolean isDeleted = this.filesHelper.deleteExistingFile(foodMenu.getImage());
+			
+			if (isDeleted) {
+				this.foodMenuRepo.delete(foodMenu);
+				Optional<FoodMenu> checking = this.foodMenuRepo.findById(id);
 
-			if (checking.isPresent()) {
-				return false;
+				if (checking.isPresent()) {
+					return false;
+				}
+				return true;
 			}
-			return true;
-
+			
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
