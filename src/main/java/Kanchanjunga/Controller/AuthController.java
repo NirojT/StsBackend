@@ -27,7 +27,8 @@ import Kanchanjunga.Services.UsersService;
 
 @RestController
 @RequestMapping("/api/user/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/" }, allowCredentials = "true")
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
+		"http://192.168.0.128:5173" }, allowCredentials = "true")
 public class AuthController {
 
 	@Autowired
@@ -53,23 +54,6 @@ public class AuthController {
 
 		JwtResponse jwtResponse = JwtResponse.builder().token(token).username(userDetails.getUsername()).build();
 		return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
-
-		// try {
-		// OrdersDto ordersByID = this.ordersService.getOrdersByID(ids);
-		// if (ordersByID != null) {
-		// response.put("status", 200);
-		// response.put("Order", ordersByID);
-		// return ResponseEntity.status(200).body(response);
-
-		// }
-		// response.put("status", 400);
-		// response.put("message", "order is empty 🤢🤢");
-		// return ResponseEntity.status(200).body(response);
-
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// return null;
-		// }
 	}
 
 	public void doAuthenticate(String name, String password) {
@@ -104,5 +88,7 @@ public class AuthController {
 		return ResponseEntity.status(200).body(response);
 
 	}
+	
+
 
 }

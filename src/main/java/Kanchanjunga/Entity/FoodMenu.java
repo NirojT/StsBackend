@@ -1,7 +1,6 @@
 package Kanchanjunga.Entity;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -14,7 +13,7 @@ import lombok.Data;
 @Data
 @Document
 public class FoodMenu {
-
+	
 	@Id
 	private UUID id;
 	private String name;
@@ -23,9 +22,11 @@ public class FoodMenu {
 	private String category;
 	private String description;
 	private String image;
-	
+	private String remarks;
+	private int quantity;
+	private int frequency;
 	@DBRef
-	private List<Orders>  orders;
+	private Orders orders;
 	@CreatedDate
 	private Date createdDate;
 
@@ -33,4 +34,3 @@ public class FoodMenu {
 	private Date lastModifiedDate;
 
 }
-

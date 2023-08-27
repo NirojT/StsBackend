@@ -6,14 +6,25 @@ import java.util.UUID;
 import Kanchanjunga.Dto.PaymentDTO;
 
 public interface PaymentService {
-	
-    Boolean createPayment(PaymentDTO payment);
 
-    List<PaymentDTO> getAllPayments();
+	Boolean createPayment(PaymentDTO payment);
 
-    PaymentDTO getPaymentByID(UUID id);
+	List<PaymentDTO> getAllPayments();
 
-    Boolean deletePayment(UUID id);
+	PaymentDTO getPaymentByID(UUID id);
 
-    Boolean updatePayment(UUID id, PaymentDTO payment);
+	Boolean deletePayment(UUID id);
+
+	Boolean updatePayment(UUID id, PaymentDTO payment);
+
+	Double getSellsBy1Day();
+
+	Double getTotalSellAmtWeekly();
+
+	Double getTotalSellAmtMonthly();
+
+	double[] getMonthlySellDataWholeYear();
+
+	double getYearlySalesReport();
+
 }

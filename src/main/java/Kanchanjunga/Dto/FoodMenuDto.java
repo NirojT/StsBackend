@@ -1,7 +1,6 @@
 package Kanchanjunga.Dto;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -17,11 +16,12 @@ public class FoodMenuDto {
 	private String category;
 	private String description;
 	private String type;
-	
+	private String remarks;
+	private int quantity;
 	private MultipartFile image;
 	private String imageName;
 	
-	private List<Orders>  orders;
+	private Orders orders;
 	private Date createdDate;
 	private Date lastModifiedDate;
 }

@@ -9,11 +9,18 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Document
+@RequiredArgsConstructor
 public class FoodStock {
 	
+	public FoodStock(String name, int quantity) {
+		this.name=name;
+		this.quantity=quantity;
+	}
+
 	@Id
 	private UUID id;
 	private String name;
@@ -24,7 +31,7 @@ public class FoodStock {
 
 	private String category;
 	private String description;
-	private String image;
+	
 	@CreatedDate
 	private Date createdDate;
 

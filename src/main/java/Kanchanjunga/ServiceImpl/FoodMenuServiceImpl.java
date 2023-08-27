@@ -39,6 +39,11 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 			String filename = filesHelper.saveFile(foodMenuDto.getImage());
 
 			createFoodMenu.setImage(filename);
+			
+			// in frontend we are seperating the food and drink item so dont remove this code !!!!!!!!!!!
+			createFoodMenu.setType("Food");
+			
+			
 			createFoodMenu.setCreatedDate(new Date());
 			this.foodMenuRepo.save(createFoodMenu);
 			return true;
@@ -105,14 +110,20 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 			FoodMenu foodMenu = this.foodMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
-			this.foodMenuRepo.delete(foodMenu);
-			Optional<FoodMenu> checking = this.foodMenuRepo.findById(id);
+			
+			Boolean isDeleted = this.filesHelper.deleteExistingFile(foodMenu.getImage());
+			
+			if (isDeleted) {
+				this.foodMenuRepo.delete(foodMenu);
+				Optional<FoodMenu> checking = this.foodMenuRepo.findById(id);
 
-			if (checking.isPresent()) {
-				return false;
+				if (checking.isPresent()) {
+					return false;
+				}
+				return true;
 			}
-			return true;
-
+			
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -126,7 +137,8 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 			List<FoodMenuDto> foodMenuDtos = allFoodMenu.stream().map(food -> {
 				FoodMenuDto foodMenuDto = mapper.map(food, FoodMenuDto.class);
-				foodMenuDto.setImageName(food.getImage()); // Set the image from FoodMenu to FoodMenuDto
+				foodMenuDto.setImageName(food.getImage());
+				foodMenuDto.setOrders(food.getOrders());// Set the image from FoodMenu to FoodMenuDto
 				return foodMenuDto;
 			}).collect(Collectors.toList());
 

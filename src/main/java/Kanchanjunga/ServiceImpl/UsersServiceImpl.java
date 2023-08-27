@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,10 @@ public class UsersServiceImpl implements UsersService {
 
 	@Autowired
 	private UserRepo userRepo;
+	
+	
+	@Autowired
+	private PasswordEncoder encoder;
 
 	@Autowired
 	ModelMapper mapper;
@@ -91,7 +96,9 @@ public class UsersServiceImpl implements UsersService {
 			user.setAddress(address);
 			user.setRole(role);
 			user.setContactNo(contactNo);
-			user.setPassword(password);
+			user.setPassword(encoder.encode(password));
+			
+			System.out.println(user.toString());
 
 			if (image == null) {
 				user.setImage(user.getImage());

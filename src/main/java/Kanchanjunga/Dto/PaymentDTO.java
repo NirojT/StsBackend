@@ -13,11 +13,13 @@ public class PaymentDTO {
 
     private double totalPrice;
     private double receivedPrice;
-    private String netPrice;
+    private double netPrice;
 
     private String orderID;
     private Orders order;
     private Date createdDate;
+    
+   
 
     private Date lastModifiedDate;
 }

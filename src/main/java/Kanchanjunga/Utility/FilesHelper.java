@@ -7,52 +7,78 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.rmi.server.UID;
+import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.KanchanjungaApplication;
+//public String saveFile(MultipartFile file) throws IOException {
+//	
 
-@Component
-public class FilesHelper {
-	public String saveFile(MultipartFile file) throws IOException {
-		// uid for unique name of image
-		UID uid = new UID();
-		String uidString = uid.toString().replace(':', '_');
-		String originalFilename = file.getOriginalFilename();
-		String extension = "";
-		if (originalFilename != null) {
-			int dotIndex = originalFilename.lastIndexOf('.');
-			if (dotIndex >= 0) {
-				extension = originalFilename.substring(dotIndex);
-				originalFilename = originalFilename.substring(0, dotIndex);
+@Service
+public class FilesHelper{
+
+	  private final Path fileStorageLocation;
+
+	  @Autowired
+	  public FilesHelper(Environment env) {
+		  this.fileStorageLocation = Paths.get("C:/Users/tmgni/Desktop/SpringBoots/deploy/images")
+	              .toAbsolutePath().normalize();
+
+	    try {
+	      Files.createDirectories(this.fileStorageLocation);
+	    } catch (Exception ex) {
+	      throw new RuntimeException(
+	          "Could not create the directory where the uploaded files will be stored.", ex);
+	    }
+	  }
+
+	  private String getFileExtension(String fileName) {
+	    if (fileName == null) {
+	      return null;
+	    }
+	    String[] fileNameParts = fileName.split("\\.");
+
+	    return fileNameParts[fileNameParts.length - 1];
+	  }
+	  
+	  public String saveFile(MultipartFile file) {
+	    // Normalize file name
+	    String fileName =
+	        new Date().getTime() + "-file." + getFileExtension(file.getOriginalFilename());
+
+	    try {
+	      // Check if the filename contains invalid characters
+	      if (fileName.contains("..")) {
+	        throw new RuntimeException(
+	            "Sorry! Filename contains invalid path sequence " + fileName);
+	      }
+
+	      Path targetLocation = this.fileStorageLocation.resolve(fileName);
+	      Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+	     
+	      return KanchanjungaApplication.SERVERURL+ fileName;
+	    } catch (IOException ex) {
+	      throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+	    }
+	  }
+	  
+	  
+		public Boolean deleteExistingFile(String fileName) {
+			 String uploadDir = "C:/Users/tmgni/Desktop/SpringBoots/deploy/images";
+			String filePathString = fileName.replace(KanchanjungaApplication.SERVERURL, "");
+			Path filePath = Paths.get(uploadDir, filePathString);
+			try {
+				Files.deleteIfExists(filePath);
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+			return false;
 		}
-		String filename = originalFilename + "_" + uidString + extension;
-		String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static";
-                Path paths = Paths.get(uploadDir);
-		if (!Files.exists(paths)) {
-			Files.createDirectories(paths);
-		}
-		Path imagePath = paths.resolve(filename);
-		try (InputStream inputStream = file.getInputStream()) {
-			Files.copy(inputStream, imagePath, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			throw new RuntimeException("Fail to save file " + filename, e);
-		}
-		return KanchanjungaApplication.SERVERURL + filename;
 	}
-
-	public Boolean deleteExistingFile(String fileName) {
-		String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/static";
-		String filePathString = fileName.replace(KanchanjungaApplication.SERVERURL, "");
-		Path filePath = Paths.get(uploadDirectory, filePathString);
-		try {
-			Files.deleteIfExists(filePath);
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-}

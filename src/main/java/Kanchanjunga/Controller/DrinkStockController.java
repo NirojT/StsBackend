@@ -11,29 +11,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import Kanchanjunga.Dto.DrinkStockDto;
 import Kanchanjunga.Services.DrinkStockService;
 
 @RestController
 @RequestMapping("/api/drinks/stock")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/" }, allowCredentials = "true")
+
+@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }, allowCredentials = "true")
+
 public class DrinkStockController {
 
     @Autowired
     private DrinkStockService drinkStockService;
 
     @PostMapping("create")
-    public ResponseEntity<?> createDrinkStock(@ModelAttribute DrinkStockDto drinkStockDto) {
+    public ResponseEntity<?> createDrinkStock(@RequestBody DrinkStockDto drinkStockDto) {
         try {
+        	System.out.println(drinkStockDto.toString());
             Boolean isSaved = this.drinkStockService.createStockDrinks(drinkStockDto);
             HashMap<String, Object> response = new HashMap<>();
             if (isSaved) {
@@ -54,15 +56,15 @@ public class DrinkStockController {
     public ResponseEntity<?> updateDrinksStock(@PathVariable UUID id,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Double price,
-            @RequestParam(required = false) int quantity,
+            @RequestParam(required = false) Integer quantity,
             @RequestParam(required = false) String supplier,
             @RequestParam(required = false) Date expireDate,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) MultipartFile image) {
+            @RequestParam(required = false) String description) {
         try {
+        	
             Boolean isUpdated = this.drinkStockService.updateStockDrinks(id, name, price, quantity, supplier,
-                    expireDate, category, description, image);
+                    expireDate, category, description);
             HashMap<String, Object> response = new HashMap<>();
 
             if (isUpdated) {

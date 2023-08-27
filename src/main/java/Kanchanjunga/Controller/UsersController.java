@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +23,9 @@ import Kanchanjunga.Services.UsersService;
 
 @RestController
 @RequestMapping("/api/user/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/" }, allowCredentials = "true")
+
+@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }, allowCredentials = "true")
+
 public class UsersController {
 
     @Autowired
@@ -89,8 +92,12 @@ public class UsersController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable UUID id, String name, String role, String contactNo,
-            String address, MultipartFile image) {
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, 
+    		@RequestParam (required=false ) String name,
+    		@RequestParam (required=false ) String role, 
+    		@RequestParam (required=false ) String contactNo,
+    		@RequestParam (required=false ) String address,
+    		@RequestParam (required=false ) MultipartFile image) {
         HashMap<String, Object> response = new HashMap<>();
         Boolean isUpdated = this.usersService.updateUser(id, name, role, contactNo, address, image, address);
         response.put("status", isUpdated ? 200 : 400);

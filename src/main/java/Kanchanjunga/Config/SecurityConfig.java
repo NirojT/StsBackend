@@ -22,7 +22,7 @@ import Kanchanjunga.ServiceImpl.UserDetailServiceImpl;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class SecurityConfig  {
 
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -38,7 +38,11 @@ public class SecurityConfig {
 
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
 
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll())
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/**").permitAll()
+//						.requestMatchers("/api/user/**").hasRole("Admin")
+//						.requestMatchers("/api/order/**").hasRole("Waiter")
+						)
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(jwtAuthentictionFilter, UsernamePasswordAuthenticationFilter.class);

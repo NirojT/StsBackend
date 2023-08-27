@@ -115,6 +115,7 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 					.map((drink) -> {
 						DrinkMenuDto drinkMenuDto = this.mapper.map(drink, DrinkMenuDto.class);
 						drinkMenuDto.setImageName(drink.getImage());
+						drinkMenuDto.setOrders(drink.getOrders());
 						return drinkMenuDto;
 					}).collect(Collectors.toList());
 			if (drinkMenuDtos.size() > 0) {
