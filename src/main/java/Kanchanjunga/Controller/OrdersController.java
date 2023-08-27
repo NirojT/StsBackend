@@ -7,6 +7,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +39,11 @@ public class OrdersController {
 
 	@Autowired
 	private JwtHelper jwtHelper;
+	
+//	 @Autowired
+//	 private SimpMessagingTemplate messagingTemplate;
+	 
+	
 
 	@PostMapping("create")
 	public ResponseEntity<?> createOrders(
@@ -63,6 +71,16 @@ public class OrdersController {
 
 				Boolean isSaved = ordersService.createOrders(orderRequest, username);
 
+				
+//				  if (isSaved) {
+//					  
+//					  List<OrdersDto> allOrders = ordersService.getAllOrders();
+//				      
+//				            messagingTemplate.convertAndSend(destination, allOrders);
+//				        }
+				    
+				
+				
 				response.put("status", isSaved ? 200 : 400);
 				response.put("message", isSaved ? "Orders  saved successfully"
 						: "Orders not saved");
@@ -78,6 +96,7 @@ public class OrdersController {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
+
 
 	@PutMapping("update/{id}")
 	public ResponseEntity<?> updateFoodStock(
@@ -113,6 +132,8 @@ public class OrdersController {
 
 			response.put("status", allOrders != null ? 200 : 400);
 			response.put("Orders", allOrders != null ? allOrders : "Orders not found");
+			
+
 			return ResponseEntity.status(200).body(response);
 
 		} catch (Exception e) {

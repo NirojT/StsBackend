@@ -22,6 +22,7 @@ public class FoodMenu {
 	private String category;
 	private String description;
 	private String image;
+	private String remarks;
 	private int quantity;
 	private int frequency;
 	@DBRef
