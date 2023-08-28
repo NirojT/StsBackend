@@ -39,16 +39,12 @@ public class OrdersController {
 
 	@Autowired
 	private JwtHelper jwtHelper;
-	
-//	 @Autowired
-//	 private SimpMessagingTemplate messagingTemplate;
-	 
-	
+
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
 	@PostMapping("create")
-	public ResponseEntity<?> createOrders(
-			@RequestBody OrderRequest orderRequest,
-			HttpServletRequest request
+	public ResponseEntity<?> createOrders(@RequestBody OrderRequest orderRequest, HttpServletRequest request
 
 	) {
 		HashMap<String, Object> response = new HashMap<>();
@@ -71,19 +67,16 @@ public class OrdersController {
 
 				Boolean isSaved = ordersService.createOrders(orderRequest, username);
 
-				
-//				  if (isSaved) {
-//					  
-//					  List<OrdersDto> allOrders = ordersService.getAllOrders();
-//				      
-//				            messagingTemplate.convertAndSend(destination, allOrders);
-//				        }
-				    
-				
-				
+				if (isSaved) {
+					System.out.println("we are inside boolean");
+					List<OrdersDto> allOrders = ordersService.getAllOrders();
+					messagingTemplate.convertAndSend("/topic/orders", allOrders);
+					System.out.println("we are down boolean");
+
+				}
+
 				response.put("status", isSaved ? 200 : 400);
-				response.put("message", isSaved ? "Orders  saved successfully"
-						: "Orders not saved");
+				response.put("message", isSaved ? "Orders  saved successfully" : "Orders not saved");
 				return ResponseEntity.status(200).body(response);
 
 			}
@@ -97,11 +90,8 @@ public class OrdersController {
 		}
 	}
 
-
 	@PutMapping("update/{id}")
-	public ResponseEntity<?> updateFoodStock(
-			@PathVariable UUID id,
-			@RequestBody OrderRequest orderRequest
+	public ResponseEntity<?> updateFoodStock(@PathVariable UUID id, @RequestBody OrderRequest orderRequest
 
 	) {
 		Map<String, Object> response = new HashMap<>();
@@ -110,8 +100,7 @@ public class OrdersController {
 			Boolean isUpdated = this.ordersService.updateOrders(id, orderRequest);
 
 			response.put("status", isUpdated ? 200 : 400);
-			response.put("message",
-					isUpdated ? "Orders updated successfully" : "Orders update failed");
+			response.put("message", isUpdated ? "Orders updated successfully" : "Orders update failed");
 			return ResponseEntity.status(200).body(response);
 
 		} catch (Exception e) {
@@ -132,7 +121,6 @@ public class OrdersController {
 
 			response.put("status", allOrders != null ? 200 : 400);
 			response.put("Orders", allOrders != null ? allOrders : "Orders not found");
-			
 
 			return ResponseEntity.status(200).body(response);
 
@@ -170,8 +158,7 @@ public class OrdersController {
 			Boolean deleteOrders = this.ordersService.deleteOrders(ids);
 
 			response.put("status", deleteOrders ? 200 : 400);
-			response.put("message", deleteOrders ? "Orders Deleted Succesfully 😁😘"
-					: "Orders not deleted (:");
+			response.put("message", deleteOrders ? "Orders Deleted Succesfully 😁😘" : "Orders not deleted (:");
 			return ResponseEntity.status(200).body(response);
 
 		} catch (Exception e) {
@@ -184,15 +171,12 @@ public class OrdersController {
 	}
 
 	@PatchMapping("update/status/{id}")
-	public ResponseEntity<?> updateOrderStatus(
-			@PathVariable UUID id,
-			@RequestParam String status) {
+	public ResponseEntity<?> updateOrderStatus(@PathVariable UUID id, @RequestParam String status) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Boolean isUpdated = this.ordersService.updateStatus(id, status);
 			response.put("status", isUpdated ? 200 : 400);
-			response.put("message",
-					isUpdated ? "Status updated successfully" : "Orders update failed");
+			response.put("message", isUpdated ? "Status updated successfully" : "Orders update failed");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -203,8 +187,7 @@ public class OrdersController {
 	}
 
 	@GetMapping("get-my-order")
-	public ResponseEntity<?> getMyOrders(
-			HttpServletRequest request
+	public ResponseEntity<?> getMyOrders(HttpServletRequest request
 
 	) {
 		HashMap<String, Object> response = new HashMap<>();
@@ -227,8 +210,7 @@ public class OrdersController {
 
 				List<OrdersDto> orders = this.ordersService.getMyOrders(username);
 				response.put("status", orders.size() > 0 ? 200 : 400);
-				response.put(orders.size() > 0 ? "orders" : "message",
-						orders.size() > 0 ? orders : "no orders found");
+				response.put(orders.size() > 0 ? "orders" : "message", orders.size() > 0 ? orders : "no orders found");
 				return ResponseEntity.status(200).body(response);
 			}
 			return ResponseEntity.status(200).body("fail");

@@ -75,6 +75,9 @@ public class AuthController {
 
 	@PostMapping("register")
 	private ResponseEntity<?> createUser(@ModelAttribute UserDTO user) {
+		
+		System.out.println(user.getAddress());
+		System.out.println(user.getName());
 		user.setPassword(encoder.encode(user.getPassword()));
 		String createUser = usersService.createUser(user);
 		HashMap<String, Object> response = new HashMap<>();
