@@ -39,12 +39,13 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 			String filename = filesHelper.saveFile(foodMenuDto.getImage());
 
 			createFoodMenu.setImage(filename);
-			
-			// in frontend we are seperating the food and drink item so dont remove this code !!!!!!!!!!!
+
+			// in frontend we are seperating the food and drink item so dont remove this
+			// code !!!!!!!!!!!
 			createFoodMenu.setType("Food");
-			
-			
+
 			createFoodMenu.setCreatedDate(new Date());
+			createFoodMenu.setType("food");
 			this.foodMenuRepo.save(createFoodMenu);
 			return true;
 		} catch (Exception e) {
@@ -64,7 +65,7 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 				String filename = filesHelper.saveFile(image);
 
 				// deleting file in project folder too after updating
-				
+
 				Boolean isDeleted = this.filesHelper.deleteExistingFile(foodMenu.getImage());
 
 				if (isDeleted) {
@@ -84,7 +85,6 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 			// if user dont want to update image
 
-		
 			foodMenu.setName(name);
 			foodMenu.setPrice(price);
 			foodMenu.setType(type);
@@ -110,9 +110,9 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 			FoodMenu foodMenu = this.foodMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
-			
+
 			Boolean isDeleted = this.filesHelper.deleteExistingFile(foodMenu.getImage());
-			
+
 			if (isDeleted) {
 				this.foodMenuRepo.delete(foodMenu);
 				Optional<FoodMenu> checking = this.foodMenuRepo.findById(id);
@@ -122,7 +122,7 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 				}
 				return true;
 			}
-			
+
 			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -164,11 +164,10 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 			if (foodMenuDto != null) {
 				return foodMenuDto;
 			}
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 		}
 		return null;
 	}

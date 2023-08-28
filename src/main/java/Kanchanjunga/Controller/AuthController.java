@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import Kanchanjunga.JWT.JwtHelper;
 import Kanchanjunga.JWT.JwtRequest;
 import Kanchanjunga.JWT.JwtResponse;
 import Kanchanjunga.Services.UsersService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/user/")
@@ -88,7 +90,31 @@ public class AuthController {
 		return ResponseEntity.status(200).body(response);
 
 	}
-	
 
+	@GetMapping("check-auth")
+	private ResponseEntity<?> checkAuthentication(HttpServletRequest request) {
+		HashMap<String, Object> response = new HashMap<>();
+		try {
+
+			String requestHeader = request.getHeader("Authorization");
+			String token = null;
+			if (requestHeader != null && requestHeader.startsWith("Bearer")) {
+				token = requestHeader.substring(7);
+
+				Boolean isValid = jwtHelper.validateLoginToken(token);
+				// String username = jwtHelper.extractUsername(token);
+				response.put("status", isValid ? 200 : 400);
+				response.put("message",
+						isValid ? "valid user token" : "invalid user token");
+				return ResponseEntity.status(200).body(response);
+			}
+			return ResponseEntity.status(200).body("fail");
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong...");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
 
 }

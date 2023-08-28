@@ -36,10 +36,9 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 			drinkStockDto.setCreatedDate(new Date());
 			System.out.println(drinkStockDto.toString());
 			DrinkStock drinkStock = mapper.map(drinkStockDto, DrinkStock.class);
-			
+
 			System.out.println(drinkStock.toString());
 
-			
 			drinkStockRepo.save(drinkStock);
 			return true;
 		} catch (Exception e) {
@@ -71,10 +70,8 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 				this.drinkStockRepo.save(dbStockDrink);
 				return true;
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
 		}
 		return false;
 	}
@@ -130,42 +127,38 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public List<Map<String, Object>> getStockDrinkNameAndQuantity() {
 		try {
-			List<DrinkStock> collectedStock = this.drinkStockRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"))
-					.stream().limit(5).map((stock)->new DrinkStock(stock.getName(), stock.getQuantity()))
+			List<DrinkStock> collectedStock = this.drinkStockRepo.findAll(Sort.by(Sort.Direction.DESC, "createdDate"))
+					.stream().limit(5).map((stock) -> new DrinkStock(stock.getName(), stock.getQuantity()))
 					.collect(Collectors.toList());
-			
-			List<Map<String, Object>>stockList=new ArrayList<>();
-			
-			
-			for(int i=0; i<collectedStock.size(); i++) {
-				Map<String, Object> stocks=new HashMap<>();
-				
-				
+
+			List<Map<String, Object>> stockList = new ArrayList<>();
+
+			for (int i = 0; i < collectedStock.size(); i++) {
+				Map<String, Object> stocks = new HashMap<>();
+
 				String name = collectedStock.get(i).getName();
-				
+
 				int quantity = collectedStock.get(i).getQuantity();
-				
+
 				stocks.put("name", name);
 				stocks.put("quantity", quantity);
-				
+
 				stockList.add(stocks);
-				
+
 			}
-			if( stockList.size()>0) {
+			if (stockList.size() > 0) {
 				return stockList;
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		return null;
-		
+
 	}
-	
 
 }

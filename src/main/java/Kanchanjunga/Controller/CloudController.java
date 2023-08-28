@@ -46,7 +46,7 @@ public class CloudController {
 
 				String username = jwtHelper.extractUsername(token);
 				System.out.println(username);
-				Map upload = cloudImageUploadService.upload(file, username);
+				Map<?, ?> upload = cloudImageUploadService.upload(file, username);
 
 				response.put("status", upload.isEmpty() ? 400 : 200);
 				response.put("message", upload.isEmpty() ? "not uploaded" : "uploaded");

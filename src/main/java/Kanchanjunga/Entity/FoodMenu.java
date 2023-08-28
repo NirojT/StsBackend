@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 @Document
 public class FoodMenu {
-	
+
 	@Id
 	private UUID id;
 	private String name;
@@ -21,8 +21,8 @@ public class FoodMenu {
 	private String type;
 	private String category;
 	private String description;
-	private String image;
 	private String remarks;
+	private String image;
 	private int quantity;
 	private int frequency;
 	@DBRef
