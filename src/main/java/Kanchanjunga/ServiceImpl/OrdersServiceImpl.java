@@ -52,87 +52,92 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 	@Autowired
 	private DrinkMenuRepo drinkMenuRepo;
-	
+
 	@Autowired
 	private TableRepo tableRepo;
 
 	@Autowired
 	private ModelMapper mapper;
-
+	
+	
+	
 	@Override
 	public Boolean createOrders(OrderRequest orderRequest, String username) {
 
-		try {
-			List<AddOrderDto> addOrderDtos = orderRequest.getAddOrderDtos();
+		
+	    try {
+	        List<AddOrderDto> addOrderDtos = orderRequest.getAddOrderDtos();
 
-			List<AddOrderDto> item = addOrderDtos.stream().map((order) -> {
-				UUID foodMenuId = order.getFoodMenuId();
-				UUID drinkMenuId = order.getDrinkMenuId();
+	        if (addOrderDtos.isEmpty()) {
+	            throw new IllegalArgumentException("No items in the order.");
+	        }
 
-				int quantity = order.getQuantity();
+	        List<AddOrderDto> items = new ArrayList<>();
 
-				FoodMenu foodMenu;
-				DrinkMenu drinkMenu;
+	        for (AddOrderDto order : addOrderDtos) {
+	            UUID foodMenuId = order.getFoodMenuId();
+	            UUID drinkMenuId = order.getDrinkMenuId();
 
-				if (foodMenuId != null) {
-					foodMenu = this.foodMenuRepo.findById(foodMenuId)
-							.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", foodMenuId));
+	            
+	            System.out.println("foodid"+foodMenuId);
+	            System.out.println("Drinkid"+drinkMenuId);
+	            if (foodMenuId == null && drinkMenuId == null) {
+	                throw new IllegalArgumentException("Item must have either foodMenuId or drinkMenuId.");
+	            }
 
-					foodMenu.setQuantity(quantity);
-					order.setImageName(foodMenu.getImage());
-					order.setName(foodMenu.getName());
-					order.setPrice(foodMenu.getPrice());
-					order.setType(foodMenu.getType());
-					order.setCategory(foodMenu.getCategory());
-					order.setDescription(foodMenu.getDescription());
-					
-				}
+	            int quantity = order.getQuantity();
+	            AddOrderDto processedOrder = new AddOrderDto();
 
-				if (drinkMenuId != null) {
-					drinkMenu = this.drinkMenuRepo.findById(drinkMenuId)
-							.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", drinkMenuId));
-					drinkMenu.setQuantity(quantity);
-					order.setImageName(drinkMenu.getImage());
-					order.setName(drinkMenu.getName());
-					order.setPrice(drinkMenu.getPrice());
-					order.setCategory(drinkMenu.getCategory());
-					order.setDescription(drinkMenu.getDescription());
+	            if (foodMenuId != null) {
+	                FoodMenu foodMenu = this.foodMenuRepo.findById(foodMenuId)
+	                        .orElseThrow(() -> new ResourceNotFound("Food", "Food Id", foodMenuId));
+	                processedOrder.setImageName(foodMenu.getImage());
+	                processedOrder.setName(foodMenu.getName());
+	                processedOrder.setPrice(foodMenu.getPrice());
+	                processedOrder.setType(foodMenu.getType());
+	                processedOrder.setCategory(foodMenu.getCategory());
+	                processedOrder.setDescription(foodMenu.getDescription());
+	            }
 
-				}
+	            if (drinkMenuId != null) {
+	                DrinkMenu drinkMenu = this.drinkMenuRepo.findById(drinkMenuId)
+	                        .orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", drinkMenuId));
+	                processedOrder.setImageName(drinkMenu.getImage());
+	                processedOrder.setName(drinkMenu.getName());
+	                processedOrder.setPrice(drinkMenu.getPrice());
+	                processedOrder.setCategory(drinkMenu.getCategory());
+	                processedOrder.setDescription(drinkMenu.getDescription());
+	            }
 
-				return order;
-			}).collect(Collectors.toList());
+	            processedOrder.setQuantity(quantity);
+	            items.add(processedOrder);
+	        }
 
-			Users userFromDb = this.userRepo.findByName(username).get();
-
-			Orders orders = new Orders();
+	        // Rest of the code for saving the order...
+	        Users userFromDb = this.userRepo.findByName(username).get();
+	    	Orders orders = new Orders();
 			orders.setId(UUID.randomUUID());
-			
+
 			orders.setCreatedDate(new Date());
 			orders.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
-			orders.setItems(item);
+			orders.setItems(items);
 			orders.setRemarks(orderRequest.getRemarks());
-			
-			
-			
+
 			String tableNo = orderRequest.getTableNo();
 			Table tableFromDB = this.tableRepo.findByTableNo(tableNo).get();
-			
+
 			if (orderRequest.getTableNo().equalsIgnoreCase("TakeAway")) {
-				
+
 				tableFromDB.setAvailable(true);
-			
 
 			} else {
 				tableFromDB.setAvailable(false);
-				
-				
+
 			}
-			
+
 			this.tableRepo.save(tableFromDB);
 			orders.setTableNo(tableNo);
-			
-			
+
 			orders.setTable(tableFromDB);
 			orders.setUsers(userFromDb);
 
@@ -147,6 +152,101 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 		return false;
 	}
+
+	
+	
+//	@Override
+//	public Boolean createOrders(OrderRequest orderRequest, String username) {
+//
+//		try {
+//			List<AddOrderDto> addOrderDtos = orderRequest.getAddOrderDtos();
+//
+//			List<AddOrderDto> item = addOrderDtos.stream().map((order) -> {
+//				UUID foodMenuId = null;
+//				UUID drinkMenuId = null;
+//				
+//				if (order.getFoodMenuId() != null) {
+//					 foodMenuId = order.getFoodMenuId();
+//				}
+//				
+//				if (order.getDrinkMenuId() != null) {
+//					 drinkMenuId = order.getDrinkMenuId();
+//				}
+//				
+//
+//				int quantity = order.getQuantity();
+//
+//				FoodMenu foodMenu;
+//				DrinkMenu drinkMenu;
+//
+//				if (foodMenuId != null) {
+//					foodMenu = this.foodMenuRepo.findById(foodMenuId)
+//							.orElseThrow(() -> new ResourceNotFound("Food", "Food Id",foodMenuId ));
+//
+//					foodMenu.setQuantity(quantity);
+//					order.setImageName(foodMenu.getImage());
+//					order.setName(foodMenu.getName());
+//					order.setPrice(foodMenu.getPrice());
+//					order.setType(foodMenu.getType());
+//					order.setCategory(foodMenu.getCategory());
+//					order.setDescription(foodMenu.getDescription());
+//
+//				}
+//
+//				if (drinkMenuId != null) {
+//					drinkMenu = this.drinkMenuRepo.findById(drinkMenuId)
+//							.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", drinkMenuId));
+//					drinkMenu.setQuantity(quantity);
+//					order.setImageName(drinkMenu.getImage());
+//					order.setName(drinkMenu.getName());
+//					order.setPrice(drinkMenu.getPrice());
+//					order.setCategory(drinkMenu.getCategory());
+//					order.setDescription(drinkMenu.getDescription());
+//
+//				}
+//
+//				return order;
+//			}).collect(Collectors.toList());
+//
+//			Users userFromDb = this.userRepo.findByName(username).get();
+//
+//			Orders orders = new Orders();
+//			orders.setId(UUID.randomUUID());
+//
+//			orders.setCreatedDate(new Date());
+//			orders.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
+//			orders.setItems(item);
+//			orders.setRemarks(orderRequest.getRemarks());
+//
+//			String tableNo = orderRequest.getTableNo();
+//			Table tableFromDB = this.tableRepo.findByTableNo(tableNo).get();
+//
+//			if (orderRequest.getTableNo().equalsIgnoreCase("TakeAway")) {
+//
+//				tableFromDB.setAvailable(true);
+//
+//			} else {
+//				tableFromDB.setAvailable(false);
+//
+//			}
+//
+//			this.tableRepo.save(tableFromDB);
+//			orders.setTableNo(tableNo);
+//
+//			orders.setTable(tableFromDB);
+//			orders.setUsers(userFromDb);
+//
+//			Orders savedOrder = this.ordersRepo.save(orders);
+//			if (savedOrder != null) {
+//				return true;
+//			}
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		return false;
+//	}
 
 	@Override
 	public Boolean updateOrders(UUID id, OrderRequest orderRequest) {
@@ -449,11 +549,9 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		try {
 			Orders ordersFromDb = this.ordersRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
-		
+
 			ordersFromDb.setStatus(status);
-			 
-		
-			
+
 			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
 			if (updatedOrder != null) {
 				return true;
@@ -463,15 +561,16 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		}
 		return false;
 	}
+
 	public Boolean updateTableAvailable(UUID id) {
 		try {
 			Orders ordersFromDb = this.ordersRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
-		
+
 			Table table = ordersFromDb.getTable();
 			table.setAvailable(true);
 			this.tableRepo.save(table);
-			
+
 			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
 			if (updatedOrder != null) {
 				return true;
@@ -496,17 +595,13 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 
 					if (foodMenuId != null) {
 						foodMenuFrequency.put(foodMenuId, foodMenuFrequency.getOrDefault(foodMenuId, 0) + 1);
-						
+
 					}
 				});
 			}
 		});
-		
 
 		List<UUID> orderedFoodMenuIds = new ArrayList<>(foodMenuFrequency.keySet());
-
-
-
 
 		orderedFoodMenuIds.sort((id1, id2) -> Integer.compare(foodMenuFrequency.get(id2), foodMenuFrequency.get(id1)));
 
@@ -517,7 +612,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 					.orElseThrow(() -> new ResourceNotFound("foodmenu", "foodmenu id", foodMenuId));
 			foodMenu.setFrequency(foodMenuFrequency.get(foodMenuId));
 			orderedFoodMenus.add(foodMenu);
-			
+
 		});
 
 		return orderedFoodMenus.size() > 0 ? orderedFoodMenus : null;
@@ -553,7 +648,7 @@ public class OrdersServiceImpl implements Kanchanjunga.Services.OrdersService {
 		orderedDrinkMenusIDs.stream().forEach(id -> {
 			DrinkMenu drinkMenu = this.drinkMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("DrinkMenu", "DrinkMenu id", id));
-			
+
 			drinkMenu.setFrequency(drinkMenuFrequency.get(id));
 
 			orderedDrinkMenus.add(drinkMenu);

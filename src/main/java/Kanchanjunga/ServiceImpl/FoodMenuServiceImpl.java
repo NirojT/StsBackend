@@ -40,6 +40,10 @@ public class FoodMenuServiceImpl implements Kanchanjunga.Services.FoodMenuServic
 
 			createFoodMenu.setImage(filename);
 
+			// in frontend we are seperating the food and drink item so dont remove this
+			// code !!!!!!!!!!!
+			createFoodMenu.setType("Food");
+
 			createFoodMenu.setCreatedDate(new Date());
 			createFoodMenu.setType("food");
 			this.foodMenuRepo.save(createFoodMenu);

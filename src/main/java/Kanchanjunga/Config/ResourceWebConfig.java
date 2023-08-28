@@ -1,9 +1,15 @@
 package Kanchanjunga.Config;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.cloudinary.Cloudinary;
 
 @Configuration
 public class ResourceWebConfig implements WebMvcConfigurer {
@@ -20,4 +26,21 @@ public class ResourceWebConfig implements WebMvcConfigurer {
 				.addResourceLocations("file:///C:/Users/Acer/Desktop/work/kanchanjunga/sts-backend-images/");
 	}
 
+	
+	
+	//upload at cloud file service
+	@Bean
+	public Cloudinary getCloudinary() {
+		
+		Map map=new HashMap();
+		map.put("cloud_name", "dndmly1jg");
+		map.put("api_key", "689366123252814");
+		map.put("api_secret", "XhiF2qbC2x0MgcH10sibjc0Tr4g");
+		map.put("secure", true);
+		
+		
+		
+		return new Cloudinary(map);
+	}
+	
 }
