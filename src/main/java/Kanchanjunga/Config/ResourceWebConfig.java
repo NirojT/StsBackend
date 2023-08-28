@@ -26,21 +26,17 @@ public class ResourceWebConfig implements WebMvcConfigurer {
 				.addResourceLocations("file:///C:/Users/Acer/Desktop/work/kanchanjunga/sts-backend-images/");
 	}
 
-	
-	
-	//upload at cloud file service
+	// upload at cloud file service
 	@Bean
 	public Cloudinary getCloudinary() {
-		
-		Map map=new HashMap();
+
+		Map<String, Object> map = new HashMap<>();
 		map.put("cloud_name", "dndmly1jg");
 		map.put("api_key", "689366123252814");
 		map.put("api_secret", "XhiF2qbC2x0MgcH10sibjc0Tr4g");
 		map.put("secure", true);
-		
-		
-		
+
 		return new Cloudinary(map);
 	}
-	
+
 }

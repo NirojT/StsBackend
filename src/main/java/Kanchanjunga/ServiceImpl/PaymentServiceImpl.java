@@ -23,7 +23,6 @@ import Kanchanjunga.ErrorHandlers.ResourceNotFound;
 import Kanchanjunga.Reposioteries.OrdersRepo;
 import Kanchanjunga.Reposioteries.PaymentRepo;
 import Kanchanjunga.Reposioteries.TableRepo;
-import Kanchanjunga.Services.OrdersService;
 import Kanchanjunga.Services.PaymentService;
 
 @Service
@@ -33,8 +32,6 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Autowired
 	private OrdersRepo ordersRepo;
-	@Autowired
-	private OrdersService ordersService;
 
 	@Autowired
 	private ModelMapper mapper;
