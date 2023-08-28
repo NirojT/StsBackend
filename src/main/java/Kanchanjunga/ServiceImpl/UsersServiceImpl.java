@@ -53,6 +53,7 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public String createUser(UserDTO users) {
 		try {
+			System.out.println(users.getAddress());
 			Users user = this.mapper.map(users, Users.class);
 			if (checkData(user)) {
 				user.setId(UUID.randomUUID());
