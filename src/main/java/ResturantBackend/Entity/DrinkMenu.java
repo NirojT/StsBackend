@@ -25,7 +25,7 @@ public class DrinkMenu {
 	private String image;
 	private int quantity;
 	private int frequency;
-	private boolean fakeDelete;
+	private boolean visible;
 
 	@DBRef
 	private Orders orders;

@@ -60,17 +60,17 @@ public class UsersController {
         return ResponseEntity.status(200).body(response);
 
     }
-    @DeleteMapping("fake-delete/{id}")
+    @PutMapping("activate/{id}")
     public ResponseEntity<?> fakeDeleteUser(@PathVariable("id") UUID userId) {
-    	boolean result = this.usersService.fakeDeleteUser(userId);
+    	boolean result = this.usersService.isActive(userId);
     	HashMap<String, Object> response = new HashMap<>();
     	if (result) {
     		response.put("status", 200);
-    		response.put("message", "user deleted successfully");
+    		response.put("message", "user Activated successfully");
     		return ResponseEntity.status(200).body(response);
     	}
     	response.put("status", 400);
-    	response.put("message", "user deletion failed");
+    	response.put("message", "user Activate failed");
     	return ResponseEntity.status(200).body(response);
     	
     }

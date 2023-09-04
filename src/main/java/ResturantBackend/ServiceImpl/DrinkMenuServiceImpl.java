@@ -39,6 +39,7 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 			String filename = fileHelper.saveFile(data.getImage());
 			drinkMenu.setImage(filename);
 			drinkMenu.setCreatedDate(new Date());
+			drinkMenu.setVisible(true);
 			drinkMenuRepo.save(drinkMenu);
 			return true;
 		} catch (Exception e) {
@@ -144,11 +145,11 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 	}
 
 	@Override
-	public Boolean fakeDeleteMenuDrinks(UUID id) {
+	public Boolean isVisible(UUID id) {
 		try {
 			DrinkMenu drinkFromDb = this.drinkMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
-			drinkFromDb.setFakeDelete(true);
+			drinkFromDb.setVisible(!drinkFromDb.isVisible());
 			this.drinkMenuRepo.save(drinkFromDb);
 			return true;
 		} catch (Exception e) {

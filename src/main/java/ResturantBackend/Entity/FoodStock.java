@@ -31,7 +31,6 @@ public class FoodStock {
 
 	private String category;
 	private String description;
-	private boolean fakeDelete;
 	
 	@CreatedDate
 	private Date createdDate;

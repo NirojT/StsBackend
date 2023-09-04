@@ -15,7 +15,6 @@ public interface FoodStockService {
 			String category, String description);
 
 	Boolean deleteStockFood(UUID id);
-	Boolean fakeDeleteStockFood(UUID id);
 
 	List<FoodStockDto> getAllFoodStock();
 

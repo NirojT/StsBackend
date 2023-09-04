@@ -31,7 +31,7 @@ public class Users implements UserDetails {
 	private String address;
 	private String image;
 	private String password;
-	private boolean fakeDelete;
+	private boolean isActive;
 
 	@CreatedDate
 	private Date createdDate;

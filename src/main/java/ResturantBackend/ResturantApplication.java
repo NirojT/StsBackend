@@ -20,9 +20,11 @@ public class ResturantApplication implements CommandLineRunner {
 	}
 
 	public static final String SERVERURL = "http://localhost:9000/uploads/";
+//	public static final String FilePath="C:/Users/POS/Desktop/Server/images";
+//	public static final String configFilePath="file:///C:/Users/POS/Desktop/Server/images/";
 	public static final String FilePath="C:/Users/tmgni/Desktop/SpringBoots/deploy/images";
 	public static final String configFilePath="file:///C:/Users/tmgni/Desktop/SpringBoots/deploy/images/";
-	
+//	
 
 	
 	

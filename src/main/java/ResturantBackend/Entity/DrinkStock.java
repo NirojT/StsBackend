@@ -34,7 +34,7 @@ public class DrinkStock {
 
 	private String category;
 	private String description;
-	private boolean fakeDelete;
+	
 
 	@CreatedDate
 	private Date createdDate;

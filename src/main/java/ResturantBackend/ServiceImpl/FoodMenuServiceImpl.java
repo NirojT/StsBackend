@@ -46,6 +46,7 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 			
 			
 			createFoodMenu.setCreatedDate(new Date());
+			createFoodMenu.setVisible(true);
 			this.foodMenuRepo.save(createFoodMenu);
 			return true;
 		} catch (Exception e) {
@@ -175,11 +176,11 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 	}
 
 	@Override
-	public Boolean fakeDeleteFoodMenu(UUID id) {
+	public Boolean isVisible(UUID id) {
 		try {
 			FoodMenu foodMenu = this.foodMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
-			foodMenu.setFakeDelete(true);
+			foodMenu.setVisible(!foodMenu.isVisible());
 			this.foodMenuRepo.save(foodMenu);
 			return true;
 		} catch (Exception e) {

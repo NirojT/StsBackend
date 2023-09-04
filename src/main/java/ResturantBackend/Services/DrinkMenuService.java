@@ -14,7 +14,7 @@ public interface DrinkMenuService {
 			MultipartFile image);
 
 	Boolean deleteMenuDrinks(UUID id);
-	Boolean fakeDeleteMenuDrinks(UUID id);
+	Boolean isVisible(UUID id);
 
 	List<DrinkMenuDto> getAllDrinksMenu();
 

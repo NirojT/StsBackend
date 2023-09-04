@@ -143,13 +143,13 @@ public class DrinkMenuController {
 		}
 
 	}
-	@DeleteMapping("fake-delete/{id}")
-	public ResponseEntity<?> fakeDeleteDrinksMenu(@PathVariable("id") UUID ids) {
+	@PutMapping("visible/{id}")
+	public ResponseEntity<?> available(@PathVariable("id") UUID ids) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			Boolean deleteMenuDrinks = this.drinkMenuService.fakeDeleteMenuDrinks(ids);
+			Boolean deleteMenuDrinks = this.drinkMenuService.isVisible(ids);
 			response.put("status", deleteMenuDrinks ? 200 : 400);
-			response.put("message", deleteMenuDrinks ? "drink menu deleted successfully" : "drink menu not deleted (:");
+			response.put("message", deleteMenuDrinks ? "drink menu displayed successfully" : "drink menu not displayed (:");
 			return ResponseEntity.status(200).body(response);
 			
 		} catch (Exception e) {

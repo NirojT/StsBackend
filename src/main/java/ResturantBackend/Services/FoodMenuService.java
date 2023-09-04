@@ -14,7 +14,8 @@ public interface FoodMenuService {
 	Boolean updateFoodMenu(UUID id, String name, Double price, String category, String description,String type, MultipartFile image);
 
 	Boolean deleteFoodMenu(UUID id);
-	Boolean fakeDeleteFoodMenu(UUID id);
+	
+	Boolean isVisible(UUID id);
 
 	List<FoodMenuDto> getAllFoodMenu();
 

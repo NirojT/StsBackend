@@ -19,7 +19,6 @@ public interface DrinkStockService {
 			);
 
 	Boolean deleteStockDrinks(UUID id);
-	Boolean fakeDeleteStockDrinks(UUID id);
 
 	List<DrinkStockDto> getAllDrinksStock();
 

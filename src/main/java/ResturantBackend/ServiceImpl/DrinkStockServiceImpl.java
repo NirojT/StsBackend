@@ -167,19 +167,6 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 		
 	}
 
-	@Override
-	public Boolean fakeDeleteStockDrinks(UUID id) {
-		try {
-			DrinkStock dbStockDrink = this.drinkStockRepo.findById(id)
-					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
-			dbStockDrink.setFakeDelete(true);
-			this.drinkStockRepo.save(dbStockDrink);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
 	
 	
 

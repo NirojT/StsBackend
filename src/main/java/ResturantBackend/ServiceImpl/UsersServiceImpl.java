@@ -69,6 +69,7 @@ public class UsersServiceImpl implements UsersService {
 				user.setCreatedDate(new Date());
 				String filename = this.filesHelper.saveFile(users.getImage());
 				user.setImage(filename);
+				user.setActive(true);
 				Users savedUser = userRepo.save(user);
 				if (savedUser != null) {
 					return "saved";
@@ -167,13 +168,12 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public boolean fakeDeleteUser(UUID id) {
+	public boolean isActive(UUID id) {
 		try {
 			Users user = this.userRepo.findById(id).orElseThrow(() -> new ResourceNotFound("users", "userId", id));
 
-			user.setFakeDelete(true);
+			user.setActive(!user.isActive());
 			this.userRepo.save(user);
-			System.out.println("fakely deleted user");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

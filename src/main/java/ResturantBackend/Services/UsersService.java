@@ -11,7 +11,7 @@ public interface UsersService {
     String createUser(UserDTO users);
 
     boolean deleteUser(UUID id);
-    boolean fakeDeleteUser(UUID id);
+    boolean isActive(UUID id);
 
     boolean updateUser(UUID id, String name,
             String role,
