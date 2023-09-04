@@ -25,6 +25,7 @@ public class FoodMenu {
 	private String remarks;
 	private int quantity;
 	private int frequency;
+	private boolean fakeDelete;
 	@DBRef
 	private Orders orders;
 	@CreatedDate

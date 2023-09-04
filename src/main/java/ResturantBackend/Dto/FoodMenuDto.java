@@ -20,6 +20,7 @@ public class FoodMenuDto {
 	private int quantity;
 	private MultipartFile image;
 	private String imageName;
+	private boolean fakeDelete;
 	
 	private Orders orders;
 	private Date createdDate;

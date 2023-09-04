@@ -342,6 +342,20 @@ public class FoodStockServiceImpl implements FoodStockService {
 		}
 	
 	}
+
+	@Override
+	public Boolean fakeDeleteStockFood(UUID id) {
+		try {
+			FoodStock foodStock = this.foodStockRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
+			foodStock.setFakeDelete(true);
+			this.foodStockRepo.save(foodStock);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	
 
 }

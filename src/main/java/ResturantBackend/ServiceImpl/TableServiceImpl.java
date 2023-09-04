@@ -22,8 +22,10 @@ public class TableServiceImpl implements TableService {
 	public boolean createTable(Table table) {
 		try {
 			table.setId(UUID.randomUUID());
+			table.setAvailable(true);
 		System.out.println(	table.getTableNo());
 			Table savedTable = this.tableRepo.save(table);
+			
 
 			if (savedTable != null) {
 				return true;

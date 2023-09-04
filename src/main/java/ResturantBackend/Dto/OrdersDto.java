@@ -15,6 +15,7 @@ public class OrdersDto {
 	private String remarks;
 	private Double price;
 	private int quantity;
+	private boolean fakeDelete;
 
 	private String status = "pending";
 

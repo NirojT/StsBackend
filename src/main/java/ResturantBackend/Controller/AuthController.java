@@ -32,6 +32,9 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/user/")
 @CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
+
+		"http://192.168.16.101://64f1a1ae3172de413ab9674b--cute-taiyaki-355152.netlify.app",
+		"https://64f1a1ae3172de413ab9674b--cute-taiyaki-355152.netlify.app",
 		"http://192.168.0.128:5173" }, allowCredentials = "true")
 public class AuthController {
 
@@ -46,7 +49,7 @@ public class AuthController {
 
 	@Autowired
 	private UsersService usersService;
-	
+
 	@Autowired
 	private UserRepo userRepo;
 
@@ -60,13 +63,13 @@ public class AuthController {
 		String token = this.jwtHelper.generateToken(jwtRequest.getName());
 
 		String username = "";
-		if(jwtRequest.getName()!=null) {
-			 username = jwtRequest.getName();
+		if (jwtRequest.getName() != null) {
+			username = jwtRequest.getName();
 		}
 		System.out.println(username);
-		
+
 		Users users = this.userRepo.findByName(username).get();
-		
+
 		JwtResponse jwtResponse = JwtResponse.builder().token(token).userRole(users.getRole()).build();
 		return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
 	}
@@ -90,11 +93,10 @@ public class AuthController {
 
 	@PostMapping("register")
 	private ResponseEntity<?> createUser(@ModelAttribute UserDTO user) {
-		
-		System.out.println(user.getAddress());
-		System.out.println(user.getName());
+
 		user.setPassword(encoder.encode(user.getPassword()));
 		String createUser = usersService.createUser(user);
+
 		HashMap<String, Object> response = new HashMap<>();
 		if (createUser.equalsIgnoreCase("saved")) {
 			response.put("status", 200);
@@ -106,7 +108,7 @@ public class AuthController {
 		return ResponseEntity.status(200).body(response);
 
 	}
-	
+
 	@GetMapping("check-auth")
 	private ResponseEntity<?> checkAuthentication(HttpServletRequest request) {
 		HashMap<String, Object> response = new HashMap<>();
@@ -120,8 +122,7 @@ public class AuthController {
 				Boolean isValid = jwtHelper.validateLoginToken(token);
 				// String username = jwtHelper.extractUsername(token);
 				response.put("status", isValid ? 200 : 400);
-				response.put("message",
-						isValid ? "valid user token" : "invalid user token");
+				response.put("message", isValid ? "valid user token" : "invalid user token");
 				return ResponseEntity.status(200).body(response);
 			}
 			return ResponseEntity.status(200).body("fail");

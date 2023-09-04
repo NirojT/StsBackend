@@ -24,13 +24,14 @@ public class Users implements UserDetails {
 	@Id
 	private UUID id;
 
-	@Indexed(unique = true)
+	
 	private String name;
 	private String role;
 	private String contactNo;
 	private String address;
 	private String image;
 	private String password;
+	private boolean fakeDelete;
 
 	@CreatedDate
 	private Date createdDate;

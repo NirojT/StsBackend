@@ -23,6 +23,7 @@ public class Orders {
 	private Double price;
 	private int quantity;
 	private String remarks;
+	private boolean fakeDelete;
 
 	private List<AddOrderDto> items;
 	private String status = "pending";

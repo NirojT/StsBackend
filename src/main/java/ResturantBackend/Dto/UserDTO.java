@@ -25,6 +25,7 @@ public class UserDTO {
     private String imageName;
     private MultipartFile image;
     private String password;
+    private boolean fakeDelete;
 
     private Date createdDate;
 

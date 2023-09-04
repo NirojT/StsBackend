@@ -15,6 +15,7 @@ public interface OrdersService {
 	Boolean updateOrders(UUID id, OrderRequest orderRequest);
 
 	Boolean deleteOrders(UUID id);
+	Boolean fakeDeleteOrders(UUID id);
 
 	List<OrdersDto> getAllOrders();
 

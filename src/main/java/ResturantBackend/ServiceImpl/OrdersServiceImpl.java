@@ -325,10 +325,16 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 
 			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
 
+				
 				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
-				ordersDto.getUsers().setImageName(order.getUsers().getImage());
+				
+				if(order.getUsers()!=null) {
+					ordersDto.getUsers().setImageName(order.getUsers().getImage());
+					ordersDto.getUsers().setPassword(null);
+				}
+				
 
-				ordersDto.getUsers().setPassword(null);
+				
 				ordersDto.setItems(order.getItems());
 				ordersDto.setRemarks(order.getRemarks());
 				ordersDto.setTable(order.getTable());
@@ -646,6 +652,20 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 
 		System.out.println(orderedDrinkMenus.toString());
 		return orderedDrinkMenus.size() > 0 ? orderedDrinkMenus : null;
+	}
+
+	@Override
+	public Boolean fakeDeleteOrders(UUID id) {
+		try {
+			Orders ordersFromDb = this.ordersRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
+			ordersFromDb.setFakeDelete(true);
+			this.ordersRepo.save(ordersFromDb);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

@@ -19,6 +19,7 @@ public class DrinkMenuDto {
 	private MultipartFile image;
 	private String imageName;
 	private int quantity;
+	private boolean fakeDelete;
 
 	private Orders orders;
 	private Date createdDate;

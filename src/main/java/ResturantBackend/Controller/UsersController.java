@@ -24,8 +24,9 @@ import ResturantBackend.Services.UsersService;
 @RestController
 @RequestMapping("/api/user/")
 
-@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }, allowCredentials = "true")
-
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
+		"https://64f1a1ae3172de413ab9674b--cute-taiyaki-355152.netlify.app/",
+		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class UsersController {
 
     @Autowired
@@ -58,6 +59,20 @@ public class UsersController {
         response.put("message", "user deletion failed");
         return ResponseEntity.status(200).body(response);
 
+    }
+    @DeleteMapping("fake-delete/{id}")
+    public ResponseEntity<?> fakeDeleteUser(@PathVariable("id") UUID userId) {
+    	boolean result = this.usersService.fakeDeleteUser(userId);
+    	HashMap<String, Object> response = new HashMap<>();
+    	if (result) {
+    		response.put("status", 200);
+    		response.put("message", "user deleted successfully");
+    		return ResponseEntity.status(200).body(response);
+    	}
+    	response.put("status", 400);
+    	response.put("message", "user deletion failed");
+    	return ResponseEntity.status(200).body(response);
+    	
     }
 
     @GetMapping("get-all")

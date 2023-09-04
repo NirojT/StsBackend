@@ -20,7 +20,7 @@ public class Table {
 	@Id
 	private UUID id;
 	private String tableNo;
-	private boolean isAvailable = true;
+	private boolean isAvailable;
 
 	@DBRef
 	private Orders orders;

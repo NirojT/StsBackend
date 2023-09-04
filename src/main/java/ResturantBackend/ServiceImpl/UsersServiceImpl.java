@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.naming.NameNotFoundException;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,8 +26,7 @@ public class UsersServiceImpl implements UsersService {
 
 	@Autowired
 	private UserRepo userRepo;
-	
-	
+
 	@Autowired
 	private PasswordEncoder encoder;
 
@@ -53,9 +54,17 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public String createUser(UserDTO users) {
 		try {
-			System.out.println(users.getAddress());
+
 			Users user = this.mapper.map(users, Users.class);
 			if (checkData(user)) {
+
+				// Check for duplicate name before inserting
+				Optional<Users> userChecking = userRepo.findByName(users.getName());
+				if (userChecking.isPresent()) {
+					throw new Exception("Name already exists");
+//	                return "Name already exists";
+				}
+
 				user.setId(UUID.randomUUID());
 				user.setCreatedDate(new Date());
 				String filename = this.filesHelper.saveFile(users.getImage());
@@ -74,8 +83,7 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public boolean deleteUser(UUID id) {
 		try {
-			Users user = this.userRepo.findById(id)
-					.orElseThrow(() -> new ResourceNotFound("users", "userId", id));
+			Users user = this.userRepo.findById(id).orElseThrow(() -> new ResourceNotFound("users", "userId", id));
 			this.userRepo.delete(user);
 			Optional<Users> isDeleted = this.userRepo.findById(id);
 			if (isDeleted.isPresent()) {
@@ -90,16 +98,13 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public boolean updateUser(UUID id, String name, String role, String contactNo, String address, MultipartFile image,
 			String password) {
-		Users user = this.userRepo.findById(id)
-				.orElseThrow(() -> new ResourceNotFound("users", "userId", id));
+		Users user = this.userRepo.findById(id).orElseThrow(() -> new ResourceNotFound("users", "userId", id));
 		try {
 			user.setName(name);
 			user.setAddress(address);
 			user.setRole(role);
 			user.setContactNo(contactNo);
 			user.setPassword(encoder.encode(password));
-			
-			System.out.println(user.toString());
 
 			if (image == null) {
 				user.setImage(user.getImage());
@@ -149,8 +154,7 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public UserDTO getUserByID(UUID id) {
 		try {
-			Users user = this.userRepo.findById(id)
-					.orElseThrow(() -> new ResourceNotFound("users", "userId", id));
+			Users user = this.userRepo.findById(id).orElseThrow(() -> new ResourceNotFound("users", "userId", id));
 			UserDTO userDTO = this.mapper.map(user, UserDTO.class);
 			userDTO.setImageName(user.getImage());
 			userDTO.setOrders(user.getOrders());
@@ -160,6 +164,21 @@ public class UsersServiceImpl implements UsersService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public boolean fakeDeleteUser(UUID id) {
+		try {
+			Users user = this.userRepo.findById(id).orElseThrow(() -> new ResourceNotFound("users", "userId", id));
+
+			user.setFakeDelete(true);
+			this.userRepo.save(user);
+			System.out.println("fakely deleted user");
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ResturantBackend.Dto.DrinkMenuDto;
 import ResturantBackend.Entity.DrinkMenu;
+import ResturantBackend.Entity.Users;
 import ResturantBackend.ErrorHandlers.ResourceNotFound;
 import ResturantBackend.Reposioteries.DrinkMenuRepo;
 import ResturantBackend.Services.DrinkMenuService;
@@ -142,4 +143,19 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 		}
 	}
 
-}
+	@Override
+	public Boolean fakeDeleteMenuDrinks(UUID id) {
+		try {
+			DrinkMenu drinkFromDb = this.drinkMenuRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
+			drinkFromDb.setFakeDelete(true);
+			this.drinkMenuRepo.save(drinkFromDb);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	}
+
+

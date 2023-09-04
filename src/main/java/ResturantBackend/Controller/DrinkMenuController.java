@@ -25,9 +25,9 @@ import ResturantBackend.Services.DrinkMenuService;
 @RestController
 @RequestMapping("/api/drinks/menu/")
 
-@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://localhost:5173/", "http://192.168.0.102:5173/" }
-, allowCredentials = "true")
-
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
+		"https://64f1a1ae3172de413ab9674b--cute-taiyaki-355152.netlify.app/",
+		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class DrinkMenuController {
 
 	@Autowired
@@ -142,6 +142,23 @@ public class DrinkMenuController {
 			return ResponseEntity.status(500).body(response);
 		}
 
+	}
+	@DeleteMapping("fake-delete/{id}")
+	public ResponseEntity<?> fakeDeleteDrinksMenu(@PathVariable("id") UUID ids) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			Boolean deleteMenuDrinks = this.drinkMenuService.fakeDeleteMenuDrinks(ids);
+			response.put("status", deleteMenuDrinks ? 200 : 400);
+			response.put("message", deleteMenuDrinks ? "drink menu deleted successfully" : "drink menu not deleted (:");
+			return ResponseEntity.status(200).body(response);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong");
+			return ResponseEntity.status(500).body(response);
+		}
+		
 	}
 
 }

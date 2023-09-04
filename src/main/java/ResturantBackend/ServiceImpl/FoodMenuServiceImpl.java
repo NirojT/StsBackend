@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import ResturantBackend.Dto.FoodMenuDto;
+import ResturantBackend.Entity.DrinkStock;
 import ResturantBackend.Entity.FoodMenu;
 import ResturantBackend.ErrorHandlers.ResourceNotFound;
 import ResturantBackend.Reposioteries.FoodMenuRepo;
@@ -171,6 +172,20 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 			
 		}
 		return null;
+	}
+
+	@Override
+	public Boolean fakeDeleteFoodMenu(UUID id) {
+		try {
+			FoodMenu foodMenu = this.foodMenuRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
+			foodMenu.setFakeDelete(true);
+			this.foodMenuRepo.save(foodMenu);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

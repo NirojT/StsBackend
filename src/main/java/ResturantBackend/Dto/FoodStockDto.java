@@ -14,6 +14,7 @@ public class FoodStockDto {
 	private int quantity;
 	private String supplier;
 	private Date expireDate;
+	private boolean fakeDelete;
 
 	private String category;
 	private String description;
