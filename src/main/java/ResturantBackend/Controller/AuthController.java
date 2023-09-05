@@ -66,7 +66,6 @@ public class AuthController {
 		if (jwtRequest.getName() != null) {
 			username = jwtRequest.getName();
 		}
-		System.out.println(username);
 
 		Users users = this.userRepo.findByName(username).get();
 

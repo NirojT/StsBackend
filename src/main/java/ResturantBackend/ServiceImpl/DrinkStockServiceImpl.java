@@ -34,10 +34,8 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 		try {
 			drinkStockDto.setId(UUID.randomUUID());
 			drinkStockDto.setCreatedDate(new Date());
-			System.out.println(drinkStockDto.toString());
 			DrinkStock drinkStock = mapper.map(drinkStockDto, DrinkStock.class);
 			
-			System.out.println(drinkStock.toString());
 
 			
 			drinkStockRepo.save(drinkStock);

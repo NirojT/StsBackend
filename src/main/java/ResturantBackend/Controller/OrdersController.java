@@ -90,7 +90,6 @@ public class OrdersController {
 	}
 	@SendTo("/topic/message")
 	public List<OrdersDto> broadcastMessage(@Payload List<OrdersDto> OrdersDto) {
-		System.out.println("sended");
 		return OrdersDto;
 	}
 
@@ -100,7 +99,6 @@ public class OrdersController {
 	) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			System.out.println(orderRequest.toString());
 			Boolean isUpdated = this.ordersService.updateOrders(id, orderRequest);
 
 			response.put("status", isUpdated ? 200 : 400);

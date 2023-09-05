@@ -422,9 +422,13 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
 
 				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
-				ordersDto.getUsers().setImageName(order.getUsers().getImage());
+				if(ordersDto.getUsers()!=null) {
+					ordersDto.getUsers().setImageName(order.getUsers().getImage());
+					ordersDto.getUsers().setPassword(null);
+				}
+				
 
-				ordersDto.getUsers().setPassword(null);
+				
 				ordersDto.setItems(order.getItems());
 				ordersDto.setRemarks(order.getRemarks());
 				ordersDto.setTable(order.getTable());
@@ -496,10 +500,6 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 
 			int noOfOrders = payments.size();
 
-			System.out.println(noOfOrders);
-			System.out.println(value);
-			System.out.println(startOfWeekDateTime);
-			System.out.println(endOfWeekDateTime);
 			return noOfOrders;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -519,7 +519,7 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 			List<Orders> ordersWithinCurrentMonth = this.ordersRepo.findOrdersByCurrentMonth(startDate, endDate);
 
 			int numberOfOrders = ordersWithinCurrentMonth.size();
-			System.out.println(numberOfOrders);
+			
 			return numberOfOrders;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -650,7 +650,6 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 			orderedDrinkMenus.add(drinkMenu);
 		});
 
-		System.out.println(orderedDrinkMenus.toString());
 		return orderedDrinkMenus.size() > 0 ? orderedDrinkMenus : null;
 	}
 

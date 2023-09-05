@@ -79,7 +79,6 @@ public class UsersController {
     public ResponseEntity<?> getAllUsers() {
         HashMap<String, Object> response = new HashMap<>();
         List<UserDTO> users = this.usersService.getAllUsers();
-        System.out.println(users);
         if (users.size() > 0 && users != null) {
             response.put("status", 200);
             response.put("message", "users fetched successfully");

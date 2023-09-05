@@ -23,7 +23,6 @@ public class TableServiceImpl implements TableService {
 		try {
 			table.setId(UUID.randomUUID());
 			table.setAvailable(true);
-		System.out.println(	table.getTableNo());
 			Table savedTable = this.tableRepo.save(table);
 			
 

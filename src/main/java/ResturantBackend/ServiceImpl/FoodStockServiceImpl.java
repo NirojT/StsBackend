@@ -164,7 +164,6 @@ public class FoodStockServiceImpl implements FoodStockService {
 			if (foodExpense != 0.0 || drinkExpense != 0.0) {
 				totalExpenses = foodExpense + drinkExpense;
 			}
-			System.out.println("totalExpenses is " + totalExpenses);
 			return totalExpenses;
 
 		} catch (Exception e) {
@@ -183,7 +182,6 @@ public class FoodStockServiceImpl implements FoodStockService {
 
 			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
 
-			System.out.println(daysUntilFirstDay);
 
 			LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
 			LocalDate endOfWeek = startOfWeek.plusDays(6);
@@ -202,7 +200,6 @@ public class FoodStockServiceImpl implements FoodStockService {
 			if (foodExpense != 0.0 || drinkExpense != 0.0) {
 				totalExpenses = foodExpense + drinkExpense;
 			}
-			System.out.println("totalExpenses is " + totalExpenses);
 			return totalExpenses;
 
 		} catch (Exception e) {
@@ -232,7 +229,6 @@ public class FoodStockServiceImpl implements FoodStockService {
 			if (foodExpense != 0.0 || drinkExpense != 0.0) {
 				totalExpenses = foodExpense + drinkExpense;
 			}
-			System.out.println("totalExpenses is " + totalExpenses);
 			return totalExpenses;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -267,7 +263,6 @@ public class FoodStockServiceImpl implements FoodStockService {
 			return monthlyExpense;
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("iam catch block....");
 			return new double[12];
 			
 		}
@@ -302,8 +297,6 @@ public class FoodStockServiceImpl implements FoodStockService {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("iam catch block....");
-			return 0.0;
 			
 		}
 		return 0.0;

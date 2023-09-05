@@ -192,10 +192,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 			double totalAmt = payments.stream().mapToDouble(Payment::getTotalPrice).sum();
 
-			System.out.println(totalAmt);
 
-			System.out.println(startOfWeek);
-			System.out.println(endOfWeek);
 			return totalAmt;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -273,7 +270,6 @@ public class PaymentServiceImpl implements PaymentService {
 			}
 
 			if (YearlySalesAmt != 0.0) {
-				System.out.println(YearlySalesAmt);
 				return YearlySalesAmt;
 
 			}
