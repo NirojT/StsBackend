@@ -176,6 +176,8 @@ public class OrdersController {
 	public ResponseEntity<?> updateOrderStatus(@PathVariable UUID id, @RequestParam String status) {
 		Map<String, Object> response = new HashMap<>();
 		try {
+			
+			
 			Boolean isUpdated = this.ordersService.updateStatus(id, status);
 			response.put("status", isUpdated ? 200 : 400);
 			response.put("message", isUpdated ? "Status updated successfully" : "Orders update failed");
@@ -223,4 +225,23 @@ public class OrdersController {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
+	
+	@GetMapping("get-latestTable")
+	public ResponseEntity<?> getLatestOrders() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			List<OrdersDto> allOrders = this.ordersService.getLatestOrdersInTable();
+			System.out.println(allOrders.toString());
+			response.put("status", allOrders != null ? 200 : 400);
+			response.put("orders", allOrders != null ? allOrders : "Orders not found");
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+	
+
 }

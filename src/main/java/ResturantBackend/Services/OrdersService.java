@@ -15,11 +15,14 @@ public interface OrdersService {
 	Boolean updateOrders(UUID id, OrderRequest orderRequest);
 
 	Boolean deleteOrders(UUID id);
+
 	Boolean fakeDeleteOrders(UUID id);
 
 	List<OrdersDto> getAllOrders();
 
 	List<OrdersDto> getLatestOrders();
+
+	List<OrdersDto> getLatestOrdersInTable();
 
 	OrdersDto getOrdersByID(UUID id);
 
@@ -32,11 +35,11 @@ public interface OrdersService {
 	int getNoOfOrdersByCurrentMonth();
 
 	Boolean updateStatus(UUID id, String status);
-	
+
 	List<FoodMenu> getMostOrderedFoods();
-	
+
 	List<DrinkMenu> getMostOrderedDrinks();
-	
+
 	Boolean updateTableAvailable(UUID id);
 
 }

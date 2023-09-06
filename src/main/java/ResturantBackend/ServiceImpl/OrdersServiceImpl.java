@@ -63,97 +63,6 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
 
-//	@Override
-//	public Boolean createOrders(OrderRequest orderRequest, String username) {
-//
-//		try {
-//			List<AddOrderDto> addOrderDtos = orderRequest.getAddOrderDtos();
-//
-//			if (addOrderDtos.isEmpty()) {
-//				throw new IllegalArgumentException("No items in the order.");
-//			}
-//
-//			List<AddOrderDto> items = new ArrayList<>();
-//
-//			for (AddOrderDto order : addOrderDtos) {
-//				UUID foodMenuId = order.getFoodMenuId();
-//				UUID drinkMenuId = order.getDrinkMenuId();
-//
-//				System.out.println("foodid" + foodMenuId);
-//				System.out.println("Drinkid" + drinkMenuId);
-//				if (foodMenuId == null && drinkMenuId == null) {
-//					throw new IllegalArgumentException("Item must have either foodMenuId or drinkMenuId.");
-//				}
-//
-//				int quantity = order.getQuantity();
-//				AddOrderDto processedOrder = new AddOrderDto();
-//
-//				if (foodMenuId != null) {
-//					FoodMenu foodMenu = this.foodMenuRepo.findById(foodMenuId)
-//							.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", foodMenuId));
-//					processedOrder.setImageName(foodMenu.getImage());
-//					processedOrder.setName(foodMenu.getName());
-//					processedOrder.setPrice(foodMenu.getPrice());
-//					processedOrder.setType(foodMenu.getType());
-//					processedOrder.setCategory(foodMenu.getCategory());
-//					processedOrder.setDescription(foodMenu.getDescription());
-//				}
-//
-//				if (drinkMenuId != null) {
-//					DrinkMenu drinkMenu = this.drinkMenuRepo.findById(drinkMenuId)
-//							.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", drinkMenuId));
-//					processedOrder.setImageName(drinkMenu.getImage());
-//					processedOrder.setName(drinkMenu.getName());
-//					processedOrder.setPrice(drinkMenu.getPrice());
-//					processedOrder.setCategory(drinkMenu.getCategory());
-//					processedOrder.setDescription(drinkMenu.getDescription());
-//				}
-//
-//				processedOrder.setQuantity(quantity);
-//				items.add(processedOrder);
-//			}
-//
-//			// Rest of the code for saving the order...
-//			Users userFromDb = this.userRepo.findByName(username).get();
-//			Orders orders = new Orders();
-//			orders.setId(UUID.randomUUID());
-//
-//			orders.setCreatedDate(new Date());
-//			orders.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
-//			orders.setItems(items);
-//			orders.setRemarks(orderRequest.getRemarks());
-//
-//			String tableNo = orderRequest.getTableNo();
-//			Table tableFromDB = this.tableRepo.findByTableNo(tableNo).get();
-//
-//			if (orderRequest.getTableNo().equalsIgnoreCase("TakeAway")) {
-//
-//				tableFromDB.setAvailable(true);
-//
-//			} else {
-//				tableFromDB.setAvailable(false);
-//
-//			}
-//
-//			this.tableRepo.save(tableFromDB);
-//			orders.setTableNo(tableNo);
-//
-//			orders.setTable(tableFromDB);
-//			orders.setUsers(userFromDb);
-//
-//			Orders savedOrder = this.ordersRepo.save(orders);
-//			if (savedOrder != null) {
-//			 messagingTemplate.convertAndSendToUser(username, "/topic/orders", savedOrder);
-//				return true;
-//			}
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//		return false;
-//	}
-
 	@Override
 	public Boolean createOrders(OrderRequest orderRequest, String username) {
 
@@ -325,16 +234,13 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 
 			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
 
-				
 				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
-				
-				if(order.getUsers()!=null) {
+
+				if (order.getUsers() != null) {
 					ordersDto.getUsers().setImageName(order.getUsers().getImage());
 					ordersDto.getUsers().setPassword(null);
 				}
-				
 
-				
 				ordersDto.setItems(order.getItems());
 				ordersDto.setRemarks(order.getRemarks());
 				ordersDto.setTable(order.getTable());
@@ -422,13 +328,11 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
 
 				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
-				if(ordersDto.getUsers()!=null) {
+				if (ordersDto.getUsers() != null) {
 					ordersDto.getUsers().setImageName(order.getUsers().getImage());
 					ordersDto.getUsers().setPassword(null);
 				}
-				
 
-				
 				ordersDto.setItems(order.getItems());
 				ordersDto.setRemarks(order.getRemarks());
 				ordersDto.setTable(order.getTable());
@@ -458,6 +362,51 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 			e.printStackTrace();
 		}
 
+		return Collections.emptyList();
+	}
+	@Override
+	public List<OrdersDto> getLatestOrdersInTable() {
+		try {
+			List<Orders> allOrders = this.ordersRepo.findAll(Sort.by(Sort.Direction.DESC, "createdDate")).stream()
+					.collect(Collectors.toList());
+			
+			List<OrdersDto> allOrdersDto = allOrders.stream().map((order) -> {
+				
+				OrdersDto ordersDto = this.mapper.map(order, OrdersDto.class);
+				if (ordersDto.getUsers() != null) {
+					ordersDto.getUsers().setImageName(order.getUsers().getImage());
+					ordersDto.getUsers().setPassword(null);
+				}
+				
+				ordersDto.setItems(order.getItems());
+				ordersDto.setRemarks(order.getRemarks());
+				ordersDto.setTable(order.getTable());
+				if (order.getDrinkMenus() != null) {
+					
+				}
+				
+				if (order.getFoodMenus() != null) {
+					List<FoodMenuDto> foodMenuDtos = order.getFoodMenus().stream().map(menu -> {
+						FoodMenuDto foodMenuDto = mapper.map(menu, FoodMenuDto.class);
+						foodMenuDto.setImageName(menu.getImage());
+						foodMenuDto.setPrice(menu.getPrice());
+						return foodMenuDto;
+						
+					}).collect(Collectors.toList());
+					ordersDto.setFoodMenus(foodMenuDtos);
+				}
+				
+				return ordersDto;
+			}).collect(Collectors.toList());
+			
+			return allOrdersDto;
+			
+		}
+		
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return Collections.emptyList();
 	}
 
@@ -519,7 +468,7 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 			List<Orders> ordersWithinCurrentMonth = this.ordersRepo.findOrdersByCurrentMonth(startDate, endDate);
 
 			int numberOfOrders = ordersWithinCurrentMonth.size();
-			
+
 			return numberOfOrders;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -543,10 +492,16 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 
 	public Boolean updateStatus(UUID id, String status) {
 		try {
+
 			Orders ordersFromDb = this.ordersRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("order", "order id", id));
 
 			ordersFromDb.setStatus(status);
+			if (status.equalsIgnoreCase("canceled") && ordersFromDb.getTable() != null) {
+				Table table = ordersFromDb.getTable();
+				table.setAvailable(true);
+				tableRepo.save(table);
+			}
 
 			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
 			if (updatedOrder != null) {
