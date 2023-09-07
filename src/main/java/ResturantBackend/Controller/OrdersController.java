@@ -32,7 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/orders/")
 @CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
-		"https://64f1a1ae3172de413ab9674b--cute-taiyaki-355152.netlify.app/",
+		"https://cute-taiyaki-355152.netlify.app",
 		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class OrdersController {
 

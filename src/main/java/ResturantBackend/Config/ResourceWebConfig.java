@@ -14,6 +14,7 @@ import com.cloudinary.Cloudinary;
 
 
 import ResturantBackend.ResturantApplication;
+import ResturantBackend.Utility.FilesHelper;
 
 @Configuration
 public class ResourceWebConfig implements WebMvcConfigurer {
@@ -27,7 +28,7 @@ public class ResourceWebConfig implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/uploads/**")
-		.addResourceLocations(ResturantApplication.configFilePath);
+		.addResourceLocations(FilesHelper.configFilePath);
 	}
 
 	

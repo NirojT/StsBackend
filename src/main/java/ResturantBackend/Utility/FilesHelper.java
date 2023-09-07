@@ -2,6 +2,7 @@ package ResturantBackend.Utility;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,13 +21,36 @@ import ResturantBackend.ResturantApplication;
 
 @Service
 public class FilesHelper{
-
+	// for file 
 	  private final Path fileStorageLocation;
+	  public static  String configFilePath;
+		
+	  
+	  //for server
+	//get ip address dynamically
+		static InetAddress localHost;
+		 static String ipAddress;
+		 public  String SERVERURL;
+	  
 
 	  @Autowired
 	  public FilesHelper(Environment env) {
-		  this.fileStorageLocation = Paths.get(ResturantApplication.FilePath)
-	              .toAbsolutePath().normalize();
+		  //for server
+		   try {
+			   localHost = InetAddress.getLocalHost();
+	           ipAddress = localHost.getHostAddress();
+	           // ipAddress=192.168.0.107
+	           SERVERURL = "http://"+ipAddress+":9000/uploads/";
+	           
+		} catch (Exception e) {
+			
+		}
+		  
+		  //for file
+		  String filePathString = "C:/Server/images"; 
+		 this.fileStorageLocation = Paths.get(filePathString).toAbsolutePath().normalize();
+	        configFilePath="file:///"+fileStorageLocation+"/";
+		 
 
 	    try {
 	      Files.createDirectories(this.fileStorageLocation);
@@ -34,6 +58,9 @@ public class FilesHelper{
 	      throw new RuntimeException(
 	          "Could not create the directory where the uploaded files will be stored.", ex);
 	    }
+	    
+	    
+	  
 	  }
 
 	  private String getFileExtension(String fileName) {
@@ -61,7 +88,7 @@ public class FilesHelper{
 	      Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
 	     
-	      return ResturantApplication.SERVERURL+ fileName;
+	      return SERVERURL+ fileName;
 	    } catch (IOException ex) {
 	      throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
 	    }
@@ -70,7 +97,7 @@ public class FilesHelper{
 	  
 		public Boolean deleteExistingFile(String fileName) {
 			 String uploadDir = "C:/Users/tmgni/Desktop/SpringBoots/deploy/images";
-			String filePathString = fileName.replace(ResturantApplication.SERVERURL, "");
+			String filePathString = fileName.replace(SERVERURL, "");
 			Path filePath = Paths.get(uploadDir, filePathString);
 			try {
 				Files.deleteIfExists(filePath);
