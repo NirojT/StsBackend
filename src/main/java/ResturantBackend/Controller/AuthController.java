@@ -31,8 +31,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/user/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
-		"https://cute-taiyaki-355152.netlify.app",
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://192.168.0.107:5173/", "http://192.168.16.104:5173/",
+		"http://localhost:5173/", "https://cute-taiyaki-355152.netlify.app",
 		"http://192.168.0.128:5173" }, allowCredentials = "true")
 public class AuthController {
 
@@ -90,7 +90,7 @@ public class AuthController {
 
 	@PostMapping("register")
 	private ResponseEntity<?> createUser(@ModelAttribute UserDTO user) {
-
+		System.out.println(user.getName());
 		user.setPassword(encoder.encode(user.getPassword()));
 		String createUser = usersService.createUser(user);
 

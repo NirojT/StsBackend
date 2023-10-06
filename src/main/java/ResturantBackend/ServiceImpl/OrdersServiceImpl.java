@@ -60,8 +60,7 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 	@Autowired
 	private ModelMapper mapper;
 
-	@Autowired
-	private SimpMessagingTemplate messagingTemplate;
+	
 
 	@Override
 	public Boolean createOrders(OrderRequest orderRequest, String username) {
@@ -479,7 +478,7 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 	@Override
 	public List<OrdersDto> getMyOrders(String name) {
 		try {
-			List<Orders> orders = this.ordersRepo.findAll();
+			List<Orders> orders = this.ordersRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
 			List<OrdersDto> data = orders.stream().map(order -> {
 				return this.mapper.map(order, OrdersDto.class);
 			}).collect(Collectors.toList());

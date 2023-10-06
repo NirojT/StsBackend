@@ -23,7 +23,7 @@ import ResturantBackend.Services.TableService;
 @RestController
 @RequestMapping("api/table/")
 @CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
-		"https://cute-taiyaki-355152.netlify.app",
+		"https://cute-taiyaki-355152.netlify.app","http://192.168.0.107:5173/","http://192.168.16.104:5173/",
 		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class TableController {
 

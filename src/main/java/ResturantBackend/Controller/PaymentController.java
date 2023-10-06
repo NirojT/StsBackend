@@ -21,8 +21,8 @@ import ResturantBackend.Services.PaymentService;
 
 @RestController
 @RequestMapping("/api/payment/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
-		"https://cute-taiyaki-355152.netlify.app",
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/","http://192.168.0.107:5173/",
+		"https://cute-taiyaki-355152.netlify.app","http://192.168.16.104:5173/",
 		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class PaymentController {
 
@@ -45,11 +45,12 @@ public class PaymentController {
 		}
 	}
 
-	@GetMapping("get-all")
-	private ResponseEntity<?> getAllPayment() {
+
+	@GetMapping("get-latest")
+	private ResponseEntity<?> getAllPaymentsLatest() {
 		HashMap<String, Object> response = new HashMap<>();
 		try {
-			List<PaymentDTO> payments = this.paymentService.getAllPayments();
+			List<PaymentDTO> payments = this.paymentService.getAllPaymentsLatest();
 			response.put("status", payments != null ? 200 : 400);
 			response.put(payments != null ? "payments" : "message", payments != null ? payments : "payments not found");
 			response.put("data", payments);
@@ -61,7 +62,6 @@ public class PaymentController {
 			return ResponseEntity.status(500).body(response);
 		}
 	}
-
 	@GetMapping("get/{id}")
 	private ResponseEntity<?> getPaymentById(@PathVariable UUID id) {
 		HashMap<String, Object> response = new HashMap<>();

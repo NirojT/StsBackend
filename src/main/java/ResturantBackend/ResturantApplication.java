@@ -1,5 +1,7 @@
 package ResturantBackend;
 
+import java.net.InetAddress;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,6 +28,9 @@ public class ResturantApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
+		 InetAddress localHost=InetAddress.getLocalHost();
+		  String ipAddress =localHost.getHostAddress();
+		   System.out.println("Ip address of this net is :"+ipAddress);
 	}
 
 }

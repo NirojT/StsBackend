@@ -97,10 +97,15 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 	@Override
-	public boolean updateUser(UUID id, String name, String role, String contactNo, String address, MultipartFile image,
-			String password) {
+	public boolean updateUser(UUID id, String name,
+            String password,
+            String role,
+            String contactNo,
+            String address,
+            MultipartFile image) {
 		Users user = this.userRepo.findById(id).orElseThrow(() -> new ResourceNotFound("users", "userId", id));
 		try {
+			
 			user.setName(name);
 			user.setAddress(address);
 			user.setRole(role);

@@ -25,7 +25,7 @@ import ResturantBackend.Services.UsersService;
 @RequestMapping("/api/user/")
 
 @CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
-		"https://cute-taiyaki-355152.netlify.app",
+		"https://cute-taiyaki-355152.netlify.app","http://192.168.0.107:5173/","http://192.168.16.104:5173/",
 		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class UsersController {
 
@@ -108,12 +108,14 @@ public class UsersController {
     @PutMapping("update/{id}")
     public ResponseEntity<?> updateUser(@PathVariable UUID id, 
     		@RequestParam (required=false ) String name,
+    		@RequestParam (required=false ) String password,
     		@RequestParam (required=false ) String role, 
     		@RequestParam (required=false ) String contactNo,
     		@RequestParam (required=false ) String address,
     		@RequestParam (required=false ) MultipartFile image) {
         HashMap<String, Object> response = new HashMap<>();
-        Boolean isUpdated = this.usersService.updateUser(id, name, role, contactNo, address, image, address);
+        Boolean isUpdated = this.usersService.updateUser(id, name, password, role, contactNo, address, image);
+        		
         response.put("status", isUpdated ? 200 : 400);
         response.put("message", isUpdated ? "user updated successfully" : "user details update fail");
         return ResponseEntity.status(200).body(response);

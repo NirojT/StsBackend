@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import ResturantBackend.Dto.PaymentDTO;
@@ -59,17 +61,21 @@ public class PaymentServiceImpl implements PaymentService {
 					order.setStatus("paid");
 
 					// setting table visibility
-					if (order.getTable() != null) {
+					if (order.getTable() != null) {	
 						Table table = order.getTable();
 
 						table.setAvailable(true);
 
 						tableRepo.save(table);
 						order.setTable(table);
+						//System.out.println(order.getItems().toString());
 					}
 					this.ordersRepo.save(order);
+					
+					request.setOrderedItems(order.getItems());
 
 					request.setOrder(order);
+					request.setTableNo(order.getTableNo());
 
 				}
 
@@ -91,9 +97,11 @@ public class PaymentServiceImpl implements PaymentService {
 	public List<PaymentDTO> getAllPayments() {
 		try {
 			List<Payment> payments = paymentRepo.findAll();
-			List<PaymentDTO> paymentsDTO = payments.stream().map(order -> {
-				PaymentDTO paymentDTO = this.mapper.map(order, PaymentDTO.class);
-				paymentDTO.setOrder(order.getOrders());
+			List<PaymentDTO> paymentsDTO = payments.stream().map(payment -> {
+				
+				PaymentDTO paymentDTO = this.mapper.map(payment, PaymentDTO.class);
+				
+				
 				return paymentDTO;
 			}).collect(Collectors.toList());
 			return paymentsDTO.size() > 0 ? paymentsDTO : null;
@@ -278,6 +286,24 @@ public class PaymentServiceImpl implements PaymentService {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	@Override
+	public List<PaymentDTO> getAllPaymentsLatest() {
+		try {
+			List<Payment> payments = paymentRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
+			List<PaymentDTO> paymentsDTO = payments.stream().map(payment -> {
+				
+				PaymentDTO paymentDTO = this.mapper.map(payment, PaymentDTO.class);
+				
+				
+				return paymentDTO;
+			}).collect(Collectors.toList());
+			return paymentsDTO.size() > 0 ? paymentsDTO : null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

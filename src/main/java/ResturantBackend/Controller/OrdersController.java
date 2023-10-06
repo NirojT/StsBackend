@@ -31,8 +31,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/orders/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
-		"https://cute-taiyaki-355152.netlify.app",
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/","http://192.168.0.107:5173/",
+		"https://cute-taiyaki-355152.netlify.app","http://192.168.16.104:5173/",
 		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class OrdersController {
 
@@ -42,8 +42,8 @@ public class OrdersController {
 	@Autowired
 	private JwtHelper jwtHelper;
 
-	@Autowired
-	private SimpMessagingTemplate messagingTemplate;
+//	@Autowired
+//	private SimpMessagingTemplate messagingTemplate;
 
 	@PostMapping("create")
 	public ResponseEntity<?> createOrders(@RequestBody OrderRequest orderRequest, HttpServletRequest request
@@ -69,11 +69,10 @@ public class OrdersController {
 
 				Boolean isSaved = ordersService.createOrders(orderRequest, username);
 
-			if(isSaved) {
-				List<OrdersDto> allOrders = this.ordersService.getAllOrders();
-				messagingTemplate.convertAndSend("/topic/message", allOrders);
-			}
-
+				 // Send a WebSocket message when the order is created
+//		        if (isSaved) {
+//		            messagingTemplate.convertAndSend("/topic/orders", "New order created");
+//		        }
 				response.put("status", isSaved ? 200 : 400);
 				response.put("message", isSaved ? "Orders  saved successfully" : "Orders not saved");
 				return ResponseEntity.status(200).body(response);
@@ -88,10 +87,10 @@ public class OrdersController {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
-	@SendTo("/topic/message")
-	public List<OrdersDto> broadcastMessage(@Payload List<OrdersDto> OrdersDto) {
-		return OrdersDto;
-	}
+//	@SendTo("/topic/message")
+//	public List<OrdersDto> broadcastMessage(@Payload List<OrdersDto> OrdersDto) {
+//		return OrdersDto;
+//	}
 
 	@PutMapping("update/{id}")
 	public ResponseEntity<?> updateFoodStock(@PathVariable UUID id, @RequestBody OrderRequest orderRequest
@@ -231,7 +230,6 @@ public class OrdersController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			List<OrdersDto> allOrders = this.ordersService.getLatestOrdersInTable();
-			System.out.println(allOrders.toString());
 			response.put("status", allOrders != null ? 200 : 400);
 			response.put("orders", allOrders != null ? allOrders : "Orders not found");
 			return ResponseEntity.status(200).body(response);

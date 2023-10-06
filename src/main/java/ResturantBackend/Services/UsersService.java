@@ -14,11 +14,11 @@ public interface UsersService {
     boolean isActive(UUID id);
 
     boolean updateUser(UUID id, String name,
+            String password,
             String role,
             String contactNo,
             String address,
-            MultipartFile image,
-            String password);
+            MultipartFile image);
 
     List<UserDTO> getAllUsers();
 

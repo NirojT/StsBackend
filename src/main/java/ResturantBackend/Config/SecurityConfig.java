@@ -39,8 +39,10 @@ public class SecurityConfig  {
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
 
 				.authorizeHttpRequests(auth -> auth
+//						.requestMatchers("/api/user/login").permitAll()
+//						.requestMatchers("/api/user/register").permitAll()
+//						.requestMatchers("/api/user/**").authenticated()
 						.requestMatchers("/**").permitAll()
-//						.requestMatchers("/api/user/**").hasRole("Admin")
 //						.requestMatchers("/api/order/**").hasRole("Waiter")
 						)
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))

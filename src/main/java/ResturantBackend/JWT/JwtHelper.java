@@ -69,7 +69,7 @@ public class JwtHelper {
 	private String createToken(Map<String, Object> claims, String userName) {
 
 		long nowMillis = System.currentTimeMillis();
-		long expMillis = nowMillis + (30L * 24L * 60L * 60L * 1000L); // 30 days in milliseconds
+		long expMillis = nowMillis + (1L * 24L * 60L * 60L * 1000L); // 1 days in milliseconds
 		Date exp = new Date(expMillis);
 		  
 		return Jwts.builder().setClaims(claims).setSubject(userName).setIssuedAt(new Date(System.currentTimeMillis()))

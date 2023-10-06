@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import ResturantBackend.ResturantApplication;
+
 
 @Service
 public class FilesHelper{
@@ -26,7 +26,7 @@ public class FilesHelper{
 	  public static  String configFilePath;
 		
 	  
-	  //for server
+	  //for server url
 	//get ip address dynamically
 		static InetAddress localHost;
 		 static String ipAddress;
@@ -40,7 +40,8 @@ public class FilesHelper{
 			   localHost = InetAddress.getLocalHost();
 	           ipAddress = localHost.getHostAddress();
 	           // ipAddress=192.168.0.107
-	           SERVERURL = "http://"+ipAddress+":9000/uploads/";
+	          // SERVERURL = "http://"+ipAddress+":9000/uploads/";
+		   SERVERURL = "http://localhost:9000/uploads/";
 	           
 		} catch (Exception e) {
 			
@@ -93,10 +94,8 @@ public class FilesHelper{
 	      throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
 	    }
 	  }
-	  
-	  
-		public Boolean deleteExistingFile(String fileName) {
-			 String uploadDir = "C:/Users/tmgni/Desktop/SpringBoots/deploy/images";
+	  public Boolean deleteExistingFile(String fileName) {
+			 String uploadDir = "C:/Server/images";
 			String filePathString = fileName.replace(SERVERURL, "");
 			Path filePath = Paths.get(uploadDir, filePathString);
 			try {
