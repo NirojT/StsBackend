@@ -42,6 +42,15 @@ public class PaymentServiceImpl implements PaymentService {
 	@Autowired
 	private TableRepo tableRepo;
 
+	private int count = 1;
+
+	private String generateBill() {
+		String formatted = String.format("%03d", count);
+		return formatted;
+	}
+
+
+
 	@Override
 	public Boolean createPayment(PaymentDTO request) {
 		try {
@@ -50,6 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
 			if (request != null) {
 				request.setId(UUID.randomUUID());
 				request.setCreatedDate(new Date());
+				request.setBillNo(generateBill());
 
 				UUID orderId = UUID.fromString(request.getOrderID());
 
@@ -87,21 +97,38 @@ public class PaymentServiceImpl implements PaymentService {
 		return false;
 	}
 
+
+
 	@Override
 	public List<PaymentDTO> getAllPayments() {
 		try {
 			List<Payment> payments = paymentRepo.findAll();
+			System.out.println(payments.toString());
 			List<PaymentDTO> paymentsDTO = payments.stream().map(order -> {
 				PaymentDTO paymentDTO = this.mapper.map(order, PaymentDTO.class);
 				paymentDTO.setOrder(order.getOrders());
+
+				if (order.getOrders() != null) {
+					if (order.getOrders().getTableNo() != null) {
+						paymentDTO.setTableNo(order.getOrders().getTableNo());
+					}
+					if (order.getOrders().getItems() != null) {
+						paymentDTO.setItems(order.getOrders().getItems());
+					}
+				}
+
 				return paymentDTO;
 			}).collect(Collectors.toList());
-			return paymentsDTO.size() > 0 ? paymentsDTO : null;
+
+			return paymentsDTO;
 		} catch (Exception e) {
 			e.printStackTrace();
+			// You might want to handle the exception better, such as logging it.
+			// In this example, we're rethrowing the exception.
+			throw new RuntimeException("Error retrieving payments", e);
 		}
-		return null;
 	}
+
 
 	@Override
 	public PaymentDTO getPaymentByID(UUID id) {
