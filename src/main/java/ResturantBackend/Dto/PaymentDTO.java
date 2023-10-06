@@ -11,6 +11,9 @@ import lombok.Data;
 public class PaymentDTO {
 
     private UUID id;
+    private String tableNo;
+
+    private String billNo;
 
     private double totalPrice;
     private double receivedPrice;
@@ -19,7 +22,7 @@ public class PaymentDTO {
     private String orderID;
     private Orders order;
     private Date createdDate;
-    private String tableNo;
+
    
 
     private Date lastModifiedDate;

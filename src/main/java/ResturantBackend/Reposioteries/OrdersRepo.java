@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -20,8 +21,10 @@ public interface OrdersRepo extends MongoRepository<Orders, UUID>{
 	 @Query("{ 'createdDate' : { $gte: ?0, $lte: ?1 } }")
     List<Orders> findOrdersBy1Day(LocalDateTime start, LocalDateTime end);
 
-	 
-	 @Query("{ 'createdDate' : { $gte: ?0, $lte: ?1 } }")
+	@Query("{ 'createdDate' : { $gte: ?0, $lte: ?1 } }")
+	List<Orders> findOrdersByDateRange(LocalDateTime start, LocalDateTime end, Sort sort);
+
+	@Query("{ 'createdDate' : { $gte: ?0, $lte: ?1 } }")
 	 List<Payment> findOrderNoBy1Week(LocalDateTime start, LocalDateTime end);
 
     

@@ -5,10 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -44,6 +41,18 @@ public class PaymentServiceImpl implements PaymentService {
 	@Autowired
 	private TableRepo tableRepo;
 
+
+	int counter = 1;
+
+	public String autoGenerateBillNo() {
+		// Implement your logic here to generate a unique bill number
+		String formattedNumber = String.format("%03d", counter);
+		counter++;
+		return formattedNumber;
+	}
+
+
+
 	@Override
 	public Boolean createPayment(PaymentDTO request) {
 		try {
@@ -52,6 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
 			if (request != null) {
 				request.setId(UUID.randomUUID());
 				request.setCreatedDate(new Date());
+				request.setBillNo(autoGenerateBillNo());
 
 				UUID orderId = UUID.fromString(request.getOrderID());
 
@@ -93,23 +103,33 @@ public class PaymentServiceImpl implements PaymentService {
 		return false;
 	}
 
+
+
 	@Override
 	public List<PaymentDTO> getAllPayments() {
 		try {
 			List<Payment> payments = paymentRepo.findAll();
+
 			List<PaymentDTO> paymentsDTO = payments.stream().map(payment -> {
-				
+				System.out.println(payment.getOrders().getItems().toString());
 				PaymentDTO paymentDTO = this.mapper.map(payment, PaymentDTO.class);
-				
-				
+				paymentDTO.setOrder(payment.getOrders());
 				return paymentDTO;
 			}).collect(Collectors.toList());
-			return paymentsDTO.size() > 0 ? paymentsDTO : null;
-		} catch (Exception e) {
-			e.printStackTrace();
+			return  paymentsDTO;
+
 		}
-		return null;
+
+		catch (Exception e) {
+			e.printStackTrace();
+			// You might want to handle the exception better, such as logging it.
+			// In this example, we're rethrowing the exception.
+			throw new RuntimeException("Error retrieving payments", e);
+
+		}
+
 	}
+
 
 	@Override
 	public PaymentDTO getPaymentByID(UUID id) {
@@ -292,7 +312,12 @@ public class PaymentServiceImpl implements PaymentService {
 	public List<PaymentDTO> getAllPaymentsLatest() {
 		try {
 			List<Payment> payments = paymentRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
+
+
+
+
 			List<PaymentDTO> paymentsDTO = payments.stream().map(payment -> {
+
 				
 				PaymentDTO paymentDTO = this.mapper.map(payment, PaymentDTO.class);
 				

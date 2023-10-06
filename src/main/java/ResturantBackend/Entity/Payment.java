@@ -19,6 +19,8 @@ public class Payment {
 	@Id
 	private UUID id;
 
+	private String billNo;
+
 	private double totalPrice;
 	private double receivedPrice;
 	private double netPrice;

@@ -478,16 +478,23 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 	@Override
 	public List<OrdersDto> getMyOrders(String name) {
 		try {
-			List<Orders> orders = this.ordersRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
+			LocalDate currentDate = LocalDate.now();
+			LocalDateTime startOfDay = currentDate.atStartOfDay();
+			LocalDateTime endOfDay = currentDate.atTime(LocalTime.MAX);
+
+			List<Orders> orders = this.ordersRepo.findOrdersByDateRange(startOfDay, endOfDay, Sort.by(Sort.Direction.DESC, "createdDate"));
+
 			List<OrdersDto> data = orders.stream().map(order -> {
 				return this.mapper.map(order, OrdersDto.class);
 			}).collect(Collectors.toList());
+
 			return orders.size() > 0 ? data : Collections.emptyList();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Collections.emptyList();
 		}
 	}
+
 
 	public Boolean updateStatus(UUID id, String status) {
 		try {
