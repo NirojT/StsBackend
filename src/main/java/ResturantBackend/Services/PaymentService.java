@@ -26,5 +26,6 @@ public interface PaymentService {
 	double[] getMonthlySellDataWholeYear();
 
 	double getYearlySalesReport();
+	List<PaymentDTO> getLatestPayments();
 
 }

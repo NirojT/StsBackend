@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import ResturantBackend.Dto.PaymentDTO;
@@ -46,6 +47,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 	private String generateBill() {
 		String formatted = String.format("%03d", count);
+		count++;
 		return formatted;
 	}
 
@@ -63,6 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 				UUID orderId = UUID.fromString(request.getOrderID());
 
+
 				Orders order = this.ordersRepo.findById(orderId)
 						.orElseThrow(() -> new ResourceNotFound("payment", "payment id", orderId));
 				if (order != null) {
@@ -79,7 +82,7 @@ public class PaymentServiceImpl implements PaymentService {
 					}
 					this.ordersRepo.save(order);
 
-					request.setOrder(order);
+					request.setOrders(order);
 
 				}
 
@@ -103,10 +106,10 @@ public class PaymentServiceImpl implements PaymentService {
 	public List<PaymentDTO> getAllPayments() {
 		try {
 			List<Payment> payments = paymentRepo.findAll();
-			System.out.println(payments.toString());
+
 			List<PaymentDTO> paymentsDTO = payments.stream().map(order -> {
 				PaymentDTO paymentDTO = this.mapper.map(order, PaymentDTO.class);
-				paymentDTO.setOrder(order.getOrders());
+				paymentDTO.setOrders(order.getOrders());
 
 				if (order.getOrders() != null) {
 					if (order.getOrders().getTableNo() != null) {
@@ -129,14 +132,42 @@ public class PaymentServiceImpl implements PaymentService {
 		}
 	}
 
+	@Override
+	public List<PaymentDTO> getLatestPayments() {
+		try {
+			List<Payment> payments = paymentRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
 
+			List<PaymentDTO> paymentsDTO = payments.stream().map(order -> {
+				PaymentDTO paymentDTO = this.mapper.map(order, PaymentDTO.class);
+				paymentDTO.setOrders(order.getOrders());
+
+				if (order.getOrders() != null) {
+					if (order.getOrders().getTableNo() != null) {
+						paymentDTO.setTableNo(order.getOrders().getTableNo());
+					}
+					if (order.getOrders().getItems() != null) {
+						paymentDTO.setItems(order.getOrders().getItems());
+					}
+				}
+
+				return paymentDTO;
+			}).collect(Collectors.toList());
+
+			return paymentsDTO;
+		} catch (Exception e) {
+			e.printStackTrace();
+			// You might want to handle the exception better, such as logging it.
+			// In this example, we're rethrowing the exception.
+			throw new RuntimeException("Error retrieving payments", e);
+		}
+	}
 	@Override
 	public PaymentDTO getPaymentByID(UUID id) {
 		try {
 			Payment payment = this.paymentRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
 			PaymentDTO paymentDTO = this.mapper.map(payment, PaymentDTO.class);
-			paymentDTO.setOrder(payment.getOrders());
+			paymentDTO.setOrders(payment.getOrders());
 			return paymentDTO != null ? paymentDTO : null;
 		} catch (Exception e) {
 			e.printStackTrace();

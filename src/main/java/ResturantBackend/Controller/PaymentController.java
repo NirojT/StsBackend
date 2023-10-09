@@ -61,6 +61,22 @@ public class PaymentController {
 			return ResponseEntity.status(500).body(response);
 		}
 	}
+	@GetMapping("get-latest")
+	private ResponseEntity<?> getLatestPayments() {
+		HashMap<String, Object> response = new HashMap<>();
+		try {
+			List<PaymentDTO> payments = this.paymentService.getLatestPayments();
+			response.put("status", payments != null ? 200 : 400);
+			response.put(payments != null ? "payments" : "message", payments != null ? payments : "payments not found");
+			response.put("data", payments);
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong");
+			return ResponseEntity.status(500).body(response);
+		}
+	}
 
 	@GetMapping("get/{id}")
 	private ResponseEntity<?> getPaymentById(@PathVariable UUID id) {
