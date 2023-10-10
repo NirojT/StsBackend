@@ -20,7 +20,7 @@ public class PaymentDTO {
     private double netPrice;
     private List<?> orderedItems ;
     private String orderID;
-    private Orders order;
+    private Orders orders;
     private Date createdDate;
 
    

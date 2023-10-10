@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import ResturantBackend.Dto.PaymentDTO;
@@ -41,17 +40,11 @@ public class PaymentServiceImpl implements PaymentService {
 	@Autowired
 	private TableRepo tableRepo;
 
-
-	int counter = 1;
-
-	public String autoGenerateBillNo() {
-		// Implement your logic here to generate a unique bill number
-		String formattedNumber = String.format("%03d", counter);
-		counter++;
-		return formattedNumber;
+	private String generateBill() {
+		String formatted = String.format("%03d", count);
+		count++;
+		return formatted;
 	}
-
-
 
 	@Override
 	public Boolean createPayment(PaymentDTO request) {
@@ -61,31 +54,31 @@ public class PaymentServiceImpl implements PaymentService {
 			if (request != null) {
 				request.setId(UUID.randomUUID());
 				request.setCreatedDate(new Date());
-				request.setBillNo(autoGenerateBillNo());
+				request.setBillNo(generateBill());
 
 				UUID orderId = UUID.fromString(request.getOrderID());
 
 				Orders order = this.ordersRepo.findById(orderId)
-						.orElseThrow(() -> new ResourceNotFound("payment", "payment id", orderId));
+						.orElseThrow(() -> new ResourceNotFound("payment",
+								"payment id", orderId));
 				if (order != null) {
 					order.setStatus("paid");
 
 					// setting table visibility
-					if (order.getTable() != null) {	
+					if (order.getTable() != null) {
 						Table table = order.getTable();
 
 						table.setAvailable(true);
 
 						tableRepo.save(table);
 						order.setTable(table);
-						//System.out.println(order.getItems().toString());
+						// System.out.println(order.getItems().toString());
 					}
 					this.ordersRepo.save(order);
-					
+
 					request.setOrderedItems(order.getItems());
 
-					request.setOrder(order);
-					request.setTableNo(order.getTableNo());
+					request.setOrders(order);
 
 				}
 
@@ -103,12 +96,23 @@ public class PaymentServiceImpl implements PaymentService {
 		return false;
 	}
 
-
-
 	@Override
 	public List<PaymentDTO> getAllPayments() {
 		try {
 			List<Payment> payments = paymentRepo.findAll();
+
+			List<PaymentDTO> paymentsDTO = payments.stream().map(order -> {
+				PaymentDTO paymentDTO = this.mapper.map(order, PaymentDTO.class);
+				paymentDTO.setOrders(order.getOrders());
+
+				if (order.getOrders() != null) {
+					if (order.getOrders().getTableNo() != null) {
+						paymentDTO.setTableNo(order.getOrders().getTableNo());
+					}
+					if (order.getOrders().getItems() != null) {
+						paymentDTO.setItems(order.getOrders().getItems());
+					}
+				}
 
 			List<PaymentDTO> paymentsDTO = payments.stream().map(payment -> {
 				System.out.println(payment.getOrders().getItems().toString());
@@ -130,6 +134,35 @@ public class PaymentServiceImpl implements PaymentService {
 
 	}
 
+	@Override
+	public List<PaymentDTO> getLatestPayments() {
+		try {
+			List<Payment> payments = paymentRepo.findAll(Sort.by(Sort.Direction.DESC, "createdDate"));
+
+			List<PaymentDTO> paymentsDTO = payments.stream().map(order -> {
+				PaymentDTO paymentDTO = this.mapper.map(order, PaymentDTO.class);
+				paymentDTO.setOrders(order.getOrders());
+
+				if (order.getOrders() != null) {
+					if (order.getOrders().getTableNo() != null) {
+						paymentDTO.setTableNo(order.getOrders().getTableNo());
+					}
+					if (order.getOrders().getItems() != null) {
+						paymentDTO.setItems(order.getOrders().getItems());
+					}
+				}
+
+				return paymentDTO;
+			}).collect(Collectors.toList());
+
+			return paymentsDTO;
+		} catch (Exception e) {
+			e.printStackTrace();
+			// You might want to handle the exception better, such as logging it.
+			// In this example, we're rethrowing the exception.
+			throw new RuntimeException("Error retrieving payments", e);
+		}
+	}
 
 	@Override
 	public PaymentDTO getPaymentByID(UUID id) {
@@ -137,7 +170,7 @@ public class PaymentServiceImpl implements PaymentService {
 			Payment payment = this.paymentRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
 			PaymentDTO paymentDTO = this.mapper.map(payment, PaymentDTO.class);
-			paymentDTO.setOrder(payment.getOrders());
+			paymentDTO.setOrders(payment.getOrders());
 			return paymentDTO != null ? paymentDTO : null;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -165,8 +198,12 @@ public class PaymentServiceImpl implements PaymentService {
 		try {
 			Payment payment = this.paymentRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
-			Orders order = this.ordersRepo.findById(UUID.fromString(request.getOrderID())).orElseThrow(
-					() -> new ResourceNotFound("payment", "payment id", UUID.fromString(request.getOrderID())));
+			Orders order = this.ordersRepo.findById(UUID.fromString(request.getOrderID()))
+					.orElseThrow(
+							() -> new ResourceNotFound("payment",
+									"payment id",
+									UUID.fromString(request
+											.getOrderID())));
 			payment.setNetPrice(request.getNetPrice());
 			payment.setReceivedPrice(request.getReceivedPrice());
 			payment.setTotalPrice(request.getTotalPrice());
@@ -192,7 +229,8 @@ public class PaymentServiceImpl implements PaymentService {
 
 			List<Payment> payments = this.paymentRepo.findPaymentBy1Day(startOfDay, endOfDay);
 
-			double TotalAmt = payments.stream().mapToDouble((payment) -> payment.getTotalPrice()).sum();
+			double TotalAmt = payments.stream().mapToDouble((payment) -> payment.getTotalPrice())
+					.sum();
 
 			return TotalAmt;
 		} catch (Exception e) {
@@ -209,17 +247,18 @@ public class PaymentServiceImpl implements PaymentService {
 
 			DayOfWeek firstDayOfWeek = DayOfWeek.SUNDAY; // Define the first day of the week
 
-			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7 - firstDayOfWeek.getValue()) % 7;
+			int daysUntilFirstDay = (currentDate.getDayOfWeek().getValue() + 7
+					- firstDayOfWeek.getValue()) % 7;
 
 			LocalDate startOfWeek = currentDate.minusDays(daysUntilFirstDay);
 			LocalDate endOfWeek = startOfWeek.plusDays(6);
 
 			LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
 			LocalDateTime endOfWeekDateTime = endOfWeek.atTime(LocalTime.MAX);
-			List<Payment> payments = this.paymentRepo.findPaymentBy1Week(startOfWeekDateTime, endOfWeekDateTime);
+			List<Payment> payments = this.paymentRepo.findPaymentBy1Week(startOfWeekDateTime,
+					endOfWeekDateTime);
 
 			double totalAmt = payments.stream().mapToDouble(Payment::getTotalPrice).sum();
-
 
 			return totalAmt;
 		} catch (Exception e) {
@@ -237,9 +276,11 @@ public class PaymentServiceImpl implements PaymentService {
 			LocalDate startDate = currentYearMonth.atDay(1);
 			LocalDate endDate = currentYearMonth.atEndOfMonth();
 
-			List<Payment> sellsWithinCurrentMonth = this.paymentRepo.findPaymentByCurrentMonth(startDate, endDate);
+			List<Payment> sellsWithinCurrentMonth = this.paymentRepo
+					.findPaymentByCurrentMonth(startDate, endDate);
 
-			double totalAmt = sellsWithinCurrentMonth.stream().mapToDouble(Payment::getTotalPrice).sum();
+			double totalAmt = sellsWithinCurrentMonth.stream().mapToDouble(Payment::getTotalPrice)
+					.sum();
 
 			return totalAmt;
 		} catch (Exception e) {
@@ -263,7 +304,8 @@ public class PaymentServiceImpl implements PaymentService {
 				LocalDate startDate = currentYearMonth.atDay(1);
 				LocalDate endDate = currentYearMonth.atEndOfMonth();
 
-				double totalAmt = this.paymentRepo.findPaymentByCurrentMonth(startDate, endDate).stream()
+				double totalAmt = this.paymentRepo.findPaymentByCurrentMonth(startDate, endDate)
+						.stream()
 						.mapToDouble(Payment::getTotalPrice).sum();
 
 				monthlySell[month - 1] = totalAmt;
@@ -273,7 +315,7 @@ public class PaymentServiceImpl implements PaymentService {
 			return monthlySell;
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 			return new double[12];
 
 		}
@@ -290,7 +332,8 @@ public class PaymentServiceImpl implements PaymentService {
 				LocalDate startDate = currentYearMonth.atDay(1);
 				LocalDate endDate = currentYearMonth.atEndOfMonth();
 
-				double totalAmt = this.paymentRepo.findPaymentByCurrentMonth(startDate, endDate).stream()
+				double totalAmt = this.paymentRepo.findPaymentByCurrentMonth(startDate, endDate)
+						.stream()
 						.mapToDouble(Payment::getTotalPrice).sum();
 
 				YearlySalesAmt += totalAmt;
@@ -311,17 +354,12 @@ public class PaymentServiceImpl implements PaymentService {
 	@Override
 	public List<PaymentDTO> getAllPaymentsLatest() {
 		try {
-			List<Payment> payments = paymentRepo.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
-
-
-
+			List<Payment> payments = paymentRepo.findAll(Sort.by(Sort.Direction.DESC, "createdDate"));
 
 			List<PaymentDTO> paymentsDTO = payments.stream().map(payment -> {
 
-				
 				PaymentDTO paymentDTO = this.mapper.map(payment, PaymentDTO.class);
-				
-				
+
 				return paymentDTO;
 			}).collect(Collectors.toList());
 			return paymentsDTO.size() > 0 ? paymentsDTO : null;
