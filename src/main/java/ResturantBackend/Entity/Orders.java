@@ -39,7 +39,7 @@ public class Orders {
 
 	@DBRef
 	private List<DrinkMenu> drinkMenus;
-	
+
 	@DBRef
 	private Table table;
 

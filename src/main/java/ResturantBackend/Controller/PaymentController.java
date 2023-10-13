@@ -21,8 +21,8 @@ import ResturantBackend.Services.PaymentService;
 
 @RestController
 @RequestMapping("/api/payment/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/", "http://192.168.0.107:5173/",
-		"https://cute-taiyaki-355152.netlify.app", "http://192.168.16.104:5173/",
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
+		"https://cute-taiyaki-355152.netlify.app",
 		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class PaymentController {
 
@@ -45,14 +45,13 @@ public class PaymentController {
 		}
 	}
 
-	@GetMapping("get-latest")
-	private ResponseEntity<?> getAllPaymentsLatest() {
+	@GetMapping("get-all")
+	private ResponseEntity<?> getAllPayment() {
 		HashMap<String, Object> response = new HashMap<>();
 		try {
-			List<PaymentDTO> payments = this.paymentService.getAllPaymentsLatest();
+			List<PaymentDTO> payments = this.paymentService.getAllPayments();
 			response.put("status", payments != null ? 200 : 400);
-			response.put(payments != null ? "payments" : "message",
-					payments != null ? payments : "payments not found");
+			response.put(payments != null ? "payments" : "message", payments != null ? payments : "payments not found");
 			response.put("data", payments);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
@@ -62,15 +61,13 @@ public class PaymentController {
 			return ResponseEntity.status(500).body(response);
 		}
 	}
-
 	@GetMapping("get-latest")
 	private ResponseEntity<?> getLatestPayments() {
 		HashMap<String, Object> response = new HashMap<>();
 		try {
 			List<PaymentDTO> payments = this.paymentService.getLatestPayments();
 			response.put("status", payments != null ? 200 : 400);
-			response.put(payments != null ? "payments" : "message",
-					payments != null ? payments : "payments not found");
+			response.put(payments != null ? "payments" : "message", payments != null ? payments : "payments not found");
 			response.put("data", payments);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
@@ -87,8 +84,7 @@ public class PaymentController {
 		try {
 			PaymentDTO payment = this.paymentService.getPaymentByID(id);
 			response.put("status", payment != null ? 200 : 400);
-			response.put(payment != null ? "payment" : "message",
-					payment != null ? payment : "payment not found");
+			response.put(payment != null ? "payment" : "message", payment != null ? payment : "payment not found");
 			response.put("data", payment);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
@@ -106,8 +102,7 @@ public class PaymentController {
 		try {
 			Boolean isDeleted = this.paymentService.deletePayment(id);
 			response.put("status", isDeleted ? 200 : 400);
-			response.put("message",
-					isDeleted ? "payment deleted successfully" : "payment not deleted");
+			response.put("message", isDeleted ? "payment deleted successfully" : "payment not deleted");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,8 +118,7 @@ public class PaymentController {
 		try {
 			Boolean isUpdated = this.paymentService.updatePayment(id, request);
 			response.put("status", isUpdated ? 200 : 400);
-			response.put("message",
-					isUpdated ? "payment updated successfully" : "payment not updated");
+			response.put("message", isUpdated ? "payment updated successfully" : "payment not updated");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();

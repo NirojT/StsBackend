@@ -1,7 +1,6 @@
 package ResturantBackend.Entity;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -24,15 +23,12 @@ public class Payment {
 	private double totalPrice;
 	private double receivedPrice;
 	private double netPrice;
-	 private String tableNo;
-	
-	private List<?> orderedItems ;
 
 	@DBRef
 	private Orders orders;
 
-	
-	
+
+
 	@CreatedDate
 	private Date createdDate;
 

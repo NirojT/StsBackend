@@ -14,16 +14,16 @@ public class PaymentDTO {
     private String tableNo;
 
     private String billNo;
-
+    private List<AddOrderDto> items;
     private double totalPrice;
     private double receivedPrice;
     private double netPrice;
-    private List<?> orderedItems ;
+
     private String orderID;
     private Orders orders;
     private Date createdDate;
 
-   
+
 
     private Date lastModifiedDate;
 }

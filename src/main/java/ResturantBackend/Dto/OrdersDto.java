@@ -27,7 +27,7 @@ public class OrdersDto {
 	private List<DrinkMenuDto> drinkMenus;
 
 	private List<FoodMenuDto> foodMenus;
-	
+
 	private Table table;
 
 	private Date createdDate;

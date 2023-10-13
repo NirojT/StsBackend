@@ -10,8 +10,6 @@ public interface PaymentService {
 	Boolean createPayment(PaymentDTO payment);
 
 	List<PaymentDTO> getAllPayments();
-	
-	List<PaymentDTO> getAllPaymentsLatest();
 
 	PaymentDTO getPaymentByID(UUID id);
 
