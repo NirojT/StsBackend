@@ -25,6 +25,7 @@ import ResturantBackend.Services.PaymentService;
 		"http://192.168.0.107:5173/",
 		"http://192.168.16.104:5173/",
 		"http://localhost:5173/",
+		"http://192.168.0.116",
 		"https://cute-taiyaki-355152.netlify.app",
 		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class DashboardDynamicData {
@@ -177,7 +178,7 @@ public class DashboardDynamicData {
 			}
 
 			response.put("status", allZero ? 400 : 200);
-			response.put("SellAmtYearly", allZero ? "No sell in this year" : monthlySellWholeYear);
+			response.put("SellAmtYearly", allZero ? 0 : monthlySellWholeYear);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -203,15 +204,33 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
+	@GetMapping("get-MonthlyMaxSell")
+	public ResponseEntity<?> getMonthlyMaxSell() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			double monthlyMaxSell = this.paymentService.getMonthlyMaxSell();
+
+
+
+			response.put("status", monthlyMaxSell==0 ? 400 : 200);
+			response.put("SellMAxAmt", monthlyMaxSell==0 ? 0 : monthlyMaxSell);
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
 
 	// expenses
 	@GetMapping("get-totalExpenseDaily")
 	public ResponseEntity<?> getDailyExpense() {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			Double totalSellAmt = this.foodStockService.getExpenseBy1Day();
-			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("ExpenseAmtDaily", totalSellAmt > 0 ? totalSellAmt : "No expense today");
+			Double totalExpAmt = this.foodStockService.getExpenseBy1Day();
+			response.put("status", totalExpAmt > 0 ? 200 : 400);
+			response.put("ExpenseAmtDaily", totalExpAmt > 0 ? totalExpAmt : "No expense today");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -243,7 +262,7 @@ public class DashboardDynamicData {
 		try {
 			Double totalSellAmt = this.foodStockService.getMonthlyExpense();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("ExpenseAmtMonthly", totalSellAmt > 0 ? totalSellAmt : "No expense in this month");
+			response.put("ExpenseAmtMonthly", totalSellAmt > 0 ? totalSellAmt : 0);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -259,7 +278,7 @@ public class DashboardDynamicData {
 		try {
 			Double totalSellAmt = this.foodStockService.getYearlyExpenseReport();
 			response.put("status", totalSellAmt > 0 ? 200 : 400);
-			response.put("YearlyExpenseReport", totalSellAmt > 0 ? totalSellAmt : "No expense in this year");
+			response.put("YearlyExpenseReport", totalSellAmt > 0 ? totalSellAmt : 0);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -283,7 +302,25 @@ public class DashboardDynamicData {
 			}
 
 			response.put("status", allZero ? 400 : 200);
-			response.put("ExpenseAmtYearly", allZero ? "No expense in this year" : monthlyExpenseWholeYear);
+			response.put("ExpenseAmtYearly", allZero ? 0 : monthlyExpenseWholeYear);
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong... ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+	@GetMapping("get-MonthlyMaxExpense")
+	public ResponseEntity<?> getMonthlyMaxExpense() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			double monthlyMaxExpense = this.foodStockService.getMonthlyMaxExpense();
+
+
+
+			response.put("status", monthlyMaxExpense==0 ? 400 : 200);
+			response.put("SellMAxAmt", monthlyMaxExpense==0 ? 0 : monthlyMaxExpense);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -367,5 +404,6 @@ public class DashboardDynamicData {
 			return ResponseEntity.status(200).body(response);
 		}
 	}
+
 
 }

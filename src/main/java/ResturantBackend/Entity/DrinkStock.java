@@ -38,6 +38,7 @@ public class DrinkStock {
 
 	@CreatedDate
 	private Date createdDate;
+	private String createdNepDate;
 
 	@LastModifiedDate
 	private Date lastModifiedDate;

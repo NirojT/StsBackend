@@ -30,5 +30,6 @@ public interface FoodStockService {
 
 	List<Map<String, Object>> getStockNameAndQuantity();
 	double getYearlyExpenseReport();
+	double getMonthlyMaxExpense();
 
 }

@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import ResturantBackend.Utility.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -39,6 +40,21 @@ public class FoodStockServiceImpl implements FoodStockService {
 	@Autowired
 	private ModelMapper mapper;
 
+	@Autowired
+	EnglishToNepaliDateConverter6 dateConverter6;
+
+	@Autowired
+	EnglishToNepaliDateConverter7 dateConverter7;
+	@Autowired
+	EnglishToNepaliDateConverter8 dateConverter8;
+
+	@Autowired
+	EnglishToNepaliDateConverter9 dateConverter9;
+
+	@Autowired
+	EnglishToNepaliDateConverter14 dateConverter14;
+
+
 	@Override
 	public Boolean createStockFood(FoodStockDto foodStockDto) {
 		try {
@@ -46,6 +62,7 @@ public class FoodStockServiceImpl implements FoodStockService {
 			FoodStock foodStock = this.mapper.map(foodStockDto, FoodStock.class);
 
 			foodStock.setCreatedDate(new Date());
+			foodStock.setCreatedNepDate(dateConverter6.convertToNepaliDate(new Date()));
 			foodStockRepo.save(foodStock);
 			return true;
 		} catch (Exception e) {
@@ -215,15 +232,22 @@ public class FoodStockServiceImpl implements FoodStockService {
 	public double getMonthlyExpense() {
 
 		try {
-			YearMonth currentYearMonth = YearMonth.now();
-			LocalDate startDate = currentYearMonth.atDay(1);
-			LocalDate endDate = currentYearMonth.atEndOfMonth();
+			String nepaliMonth=dateConverter7.getCurrentNepaliYearMonth();
 
-			double foodExpense = this.foodStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
-					.mapToDouble(FoodStock::getPrice).sum();
 
-			double drinkExpense = this.drinkStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
-					.mapToDouble(DrinkStock::getPrice).sum();
+			double foodExpense = this.foodStockRepo.findAll().stream().filter(item->{
+				String nepaliDate=item.getCreatedNepDate();
+				return nepaliDate.startsWith(nepaliMonth);
+			}).mapToDouble(FoodStock::getPrice).sum();
+
+			double drinkExpense = this.drinkStockRepo.findAll().stream().filter(item->{
+				String nepaliDate=item.getCreatedNepDate();
+				return nepaliDate.startsWith(nepaliMonth);
+			}).mapToDouble(DrinkStock::getPrice).sum();
+
+
+
+
 
 			double totalExpenses = 0.0;
 			if (foodExpense != 0.0 || drinkExpense != 0.0) {
@@ -239,20 +263,25 @@ public class FoodStockServiceImpl implements FoodStockService {
 	public double[] getMonthlyExpenseDataWholeYear() {
 
 		try {
-			int currentYear = YearMonth.now().getYear();
+			//2080
+			int currentNepaliYear = dateConverter8.getCurrentNepaliYear();
 
 			double monthlyExpense[] = new double[12];
+		List<FoodStock> foodStocks	= this.foodStockRepo.findAll();
+			List<DrinkStock> drinkStocks	= this.drinkStockRepo.findAll();
 
 			for (int month = 1; month <= 12; month++) {
 
-				YearMonth currentYearMonth = YearMonth.of(currentYear, month);
-				LocalDate startDate = currentYearMonth.atDay(1);
-				LocalDate endDate = currentYearMonth.atEndOfMonth();
+				String nepaliMonthPrefix = String.format("%04d/%02d", currentNepaliYear, month);
 
-				double foodExpense = this.foodStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+
+
+				double foodExpense = foodStocks.stream().filter(item->item.getCreatedNepDate()
+						.startsWith(nepaliMonthPrefix))
 						.mapToDouble(FoodStock::getPrice).sum();
 
-				double drinkExpense = this.drinkStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+				double drinkExpense = drinkStocks.stream().filter(item->item.getCreatedNepDate()
+								.startsWith(nepaliMonthPrefix))
 						.mapToDouble(DrinkStock::getPrice).sum();
 
 				monthlyExpense[month - 1] = foodExpense + drinkExpense;
@@ -268,39 +297,93 @@ public class FoodStockServiceImpl implements FoodStockService {
 		}
 	}
 	public double getYearlyExpenseReport() {
-		
+		double yearlyExpenseAmt = 0.0;
 		try {
-			int currentYear = YearMonth.now().getYear();
-			
-			double YearlyExpense=0.0;
-			
+
+			//2080
+			int currentNepaliYear = dateConverter9.getCurrentNepaliYear();
+
+
+			List<FoodStock> foodStocks	= this.foodStockRepo.findAll();
+			List<DrinkStock> drinkStocks	= this.drinkStockRepo.findAll();
+
 			for (int month = 1; month <= 12; month++) {
-				
-				YearMonth currentYearMonth = YearMonth.of(currentYear, month);
-				LocalDate startDate = currentYearMonth.atDay(1);
-				LocalDate endDate = currentYearMonth.atEndOfMonth();
-				
-				double foodExpense = this.foodStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+
+				String nepaliMonthPrefix = String.format("%04d/%02d", currentNepaliYear, month);
+
+
+
+				double foodExpense = foodStocks.stream().filter(item->item.getCreatedNepDate()
+								.startsWith(nepaliMonthPrefix))
 						.mapToDouble(FoodStock::getPrice).sum();
-				
-				double drinkExpense = this.drinkStockRepo.findExpenseByCurrentMonth(startDate, endDate).stream()
+
+				double drinkExpense = drinkStocks.stream().filter(item->item.getCreatedNepDate()
+								.startsWith(nepaliMonthPrefix))
 						.mapToDouble(DrinkStock::getPrice).sum();
-				
-				YearlyExpense += foodExpense + drinkExpense;
-				
-				
-				
+
+			double	totalAmt= foodExpense + drinkExpense;
+				yearlyExpenseAmt+=totalAmt;
+
 			}
-			
-			if(YearlyExpense!=0.0)return YearlyExpense;
-			
-			
+
+
+			return yearlyExpenseAmt;
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+			return 0.0;
+
 		}
-		return 0.0;
 	}
+
+	@Override
+	public double getMonthlyMaxExpense() {
+		try {
+			//2080
+			int currentNepaliYear = dateConverter14.getCurrentNepaliYear();
+			double[] monthlyExp = new double[12];
+			List<FoodStock> foodStocks	= this.foodStockRepo.findAll();
+			List<DrinkStock> drinkStocks	= this.drinkStockRepo.findAll();
+
+			for (int month = 1; month <= 12; month++) {
+
+
+				String nepaliMonthPrefix = String.format("%04d/%02d", currentNepaliYear, month);
+
+				double foodExpense = foodStocks.stream().filter(item->item.getCreatedNepDate()
+								.startsWith(nepaliMonthPrefix))
+						.mapToDouble(FoodStock::getPrice).sum();
+
+				double drinkExpense = drinkStocks.stream().filter(item->item.getCreatedNepDate()
+								.startsWith(nepaliMonthPrefix))
+						.mapToDouble(DrinkStock::getPrice).sum();
+
+				double	totalAmt= foodExpense + drinkExpense;
+				monthlyExp[month - 1] = totalAmt;
+
+			}
+			double maxAmt =0;
+			for(double amt:monthlyExp){
+				if (amt > maxAmt){
+					maxAmt=amt;
+				}
+			}
+
+			return maxAmt;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0.00;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
 
 
 	@Override

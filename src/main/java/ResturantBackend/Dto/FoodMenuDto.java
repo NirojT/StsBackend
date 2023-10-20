@@ -24,5 +24,6 @@ public class FoodMenuDto {
 	
 	private Orders orders;
 	private Date createdDate;
+	private String createdNepDate;
 	private Date lastModifiedDate;
 }

@@ -6,8 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.naming.NameNotFoundException;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +32,7 @@ public class UsersServiceImpl implements UsersService {
 	ModelMapper mapper;
 
 	@Autowired
-	FilesHelper filesHelper;
+	FilesHelper fileHelper;
 
 	// checks for empty data -> Users data
 	public static boolean checkData(Users users) {
@@ -67,7 +65,7 @@ public class UsersServiceImpl implements UsersService {
 
 				user.setId(UUID.randomUUID());
 				user.setCreatedDate(new Date());
-				String filename = this.filesHelper.saveFile(users.getImage());
+				String filename = this.fileHelper.saveFile(users.getImage());
 				user.setImage(filename);
 				user.setActive(true);
 				Users savedUser = userRepo.save(user);
@@ -119,8 +117,8 @@ public class UsersServiceImpl implements UsersService {
 					return true;
 				}
 			}
-			String filename = this.filesHelper.saveFile(image);
-			Boolean isDeleted = this.filesHelper.deleteExistingFile(user.getImage());
+			String filename = this.fileHelper.saveFile(image);
+			Boolean isDeleted = this.fileHelper.deleteExistingFile(user.getImage());
 			if (isDeleted) {
 				user.setImage(filename);
 				Users updatedUser = this.userRepo.save(user);

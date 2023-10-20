@@ -31,6 +31,7 @@ public class Payment {
 
 	@CreatedDate
 	private Date createdDate;
+	private String createdNepDate;
 
 	@LastModifiedDate
 	private Date lastModifiedDate;

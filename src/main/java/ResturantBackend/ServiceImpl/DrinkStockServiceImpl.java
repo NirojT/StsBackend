@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import ResturantBackend.Utility.EnglishToNepaliDateConverter10;
+import ResturantBackend.Utility.EnglishToNepaliDateConverter11;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -29,12 +31,18 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 	@Autowired
 	private ModelMapper mapper;
 
+	@Autowired
+	EnglishToNepaliDateConverter10 dateConverter10;
+
+
+
 	@Override
 	public Boolean createStockDrinks(DrinkStockDto drinkStockDto) {
 		try {
 			drinkStockDto.setId(UUID.randomUUID());
 			drinkStockDto.setCreatedDate(new Date());
 			DrinkStock drinkStock = mapper.map(drinkStockDto, DrinkStock.class);
+			drinkStock.setCreatedNepDate(dateConverter10.convertToNepaliDate(new Date()));
 			
 
 			

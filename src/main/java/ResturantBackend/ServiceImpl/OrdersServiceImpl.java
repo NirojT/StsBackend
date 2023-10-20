@@ -15,6 +15,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import ResturantBackend.Utility.EnglishToNepaliDateConverter4;
+import ResturantBackend.Utility.EnglishToNepaliDateConverter5;
+import ResturantBackend.Utility.EnglishToNepaliDateConverter6;
+import ResturantBackend.Utility.EnglishToNepaliDateConverter7;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -59,6 +63,16 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 
 	@Autowired
 	private ModelMapper mapper;
+
+	@Autowired
+	EnglishToNepaliDateConverter4 dateConverter4;
+	@Autowired
+	EnglishToNepaliDateConverter5 dateConverter5;
+	@Autowired
+	EnglishToNepaliDateConverter6 dateConverter6;
+
+	@Autowired
+	EnglishToNepaliDateConverter7 dateConverter7;
 
 	
 
@@ -133,6 +147,7 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 
 			orders.setTable(tableFromDB);
 			orders.setUsers(userFromDb);
+			orders.setCreatedNepDate(dateConverter4.convertToNepaliDate(new Date()));
 
 			Orders savedOrder = this.ordersRepo.save(orders);
 			if (savedOrder != null) {
@@ -460,15 +475,21 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 	public int getNoOfOrdersByCurrentMonth() {
 
 		try {
-			YearMonth currentYearMonth = YearMonth.now();
-			LocalDate startDate = currentYearMonth.atDay(1);
-			LocalDate endDate = currentYearMonth.atEndOfMonth();
+			String currentNepaliMonthString = dateConverter5.getCurrentNepaliYearMonth();
 
-			List<Orders> ordersWithinCurrentMonth = this.ordersRepo.findOrdersByCurrentMonth(startDate, endDate);
 
-			int numberOfOrders = ordersWithinCurrentMonth.size();
+			List<Orders> orders = this.ordersRepo.findAll();
 
-			return numberOfOrders;
+			List<Orders> ordersInCurrentNepaliMonth = orders.stream()
+					.filter(order -> {
+						String createdNepDate= order.getCreatedNepDate();
+						// Check if the Nepali payment date matches the current Nepali month
+						return createdNepDate.startsWith(currentNepaliMonthString);
+					})
+					.collect(Collectors.toList());
+
+
+			return ordersInCurrentNepaliMonth.size();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0;

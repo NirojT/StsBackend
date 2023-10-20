@@ -24,5 +24,6 @@ public class DrinkStockDto {
 
 
 	private Date createdDate;
+	private String createdNepDate;
 	private Date lastModifiedDate;
 }

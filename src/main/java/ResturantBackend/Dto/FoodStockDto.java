@@ -19,5 +19,6 @@ public class FoodStockDto {
 	private String description;
 	
 	private Date createdDate;
+	private String createdNepDate;
 	private Date lastModifiedDate;
 }

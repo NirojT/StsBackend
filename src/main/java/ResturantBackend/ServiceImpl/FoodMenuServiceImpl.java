@@ -7,13 +7,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import ResturantBackend.Utility.EnglishToNepaliDateConverter11;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import ResturantBackend.Dto.FoodMenuDto;
-import ResturantBackend.Entity.DrinkStock;
 import ResturantBackend.Entity.FoodMenu;
 import ResturantBackend.ErrorHandlers.ResourceNotFound;
 import ResturantBackend.Reposioteries.FoodMenuRepo;
@@ -29,7 +29,10 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 	private ModelMapper mapper;
 
 	@Autowired
-	private FilesHelper filesHelper;
+	private FilesHelper fileHelper;
+
+	@Autowired
+	EnglishToNepaliDateConverter11 dateConverter11;
 
 	@Override
 	public Boolean createFoodMenu(FoodMenuDto foodMenuDto) {
@@ -37,7 +40,7 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 			foodMenuDto.setId(UUID.randomUUID());
 			FoodMenu createFoodMenu = this.mapper.map(foodMenuDto, FoodMenu.class);
 
-			String filename = filesHelper.saveFile(foodMenuDto.getImage());
+			String filename = fileHelper.saveFile(foodMenuDto.getImage());
 
 			createFoodMenu.setImage(filename);
 			
@@ -47,6 +50,7 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 			
 			createFoodMenu.setCreatedDate(new Date());
 			createFoodMenu.setVisible(true);
+			createFoodMenu.setCreatedNepDate(dateConverter11.convertToNepaliDate(new Date()));
 			this.foodMenuRepo.save(createFoodMenu);
 			return true;
 		} catch (Exception e) {
@@ -63,11 +67,11 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 					.orElseThrow(() -> new ResourceNotFound("Drink", "Drink Id", id));
 			// if user wants to update image
 			if (image != null) {
-				String filename = filesHelper.saveFile(image);
+				String filename = fileHelper.saveFile(image);
 
 				// deleting file in project folder too after updating
 				
-				Boolean isDeleted = this.filesHelper.deleteExistingFile(foodMenu.getImage());
+				Boolean isDeleted = this.fileHelper.deleteExistingFile(foodMenu.getImage());
 
 				if (isDeleted) {
 					foodMenu.setName(name);
@@ -113,7 +117,7 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 			FoodMenu foodMenu = this.foodMenuRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("Food", "Food Id", id));
 			
-			Boolean isDeleted = this.filesHelper.deleteExistingFile(foodMenu.getImage());
+			Boolean isDeleted = this.fileHelper.deleteExistingFile(foodMenu.getImage());
 			
 			if (isDeleted) {
 				this.foodMenuRepo.delete(foodMenu);

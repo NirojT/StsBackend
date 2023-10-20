@@ -2,6 +2,7 @@ package ResturantBackend.Controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import ResturantBackend.Services.PaymentService;
 @RequestMapping("/api/payment/")
 @CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://localhost:5173/",
 		"https://cute-taiyaki-355152.netlify.app",
+		"http://192.168.0.116",
 		"http://192.168.0.102:5173/" }, allowCredentials = "true")
 public class PaymentController {
 
@@ -125,6 +127,23 @@ public class PaymentController {
 			response.put("status", 500);
 			response.put("message", "something went wrong");
 			return ResponseEntity.status(500).body(response);
+		}
+	}
+
+	@GetMapping("get-EveryMonths")
+	private ResponseEntity<?> getMonthlyPaymentDetailsWholeYear() {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			List<List<PaymentDTO>> allPayments = this.paymentService.getMonthlyPaymentWholeYear();
+
+			response.put("allPayments", allPayments.size() > 0 ? allPayments : "cannot get Payments");
+			response.put("status", allPayments.size() > 0 ? 200 : 400);
+			return ResponseEntity.status(200).body(response);
+
+		} catch (Exception e) {
+			response.put("message", "Server problem, something went wrong");
+			response.put("status", 500);
+			return ResponseEntity.status(200).body(response);
 		}
 	}
 }

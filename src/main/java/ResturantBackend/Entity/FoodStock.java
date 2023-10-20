@@ -34,6 +34,7 @@ public class FoodStock {
 	
 	@CreatedDate
 	private Date createdDate;
+	private String createdNepDate;
 
 	@LastModifiedDate
 	private Date lastModifiedDate;

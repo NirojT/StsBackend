@@ -3,13 +3,10 @@ package ResturantBackend.Controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import ResturantBackend.test.NepaliCalendarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import ResturantBackend.JWT.JwtHelper;
@@ -25,6 +22,9 @@ public class CloudController {
 
 	@Autowired
 	CloudImageUploadService cloudImageUploadService;
+
+	@Autowired
+	NepaliCalendarService s;
 
 	@Autowired
 	private JwtHelper jwtHelper;
@@ -66,5 +66,10 @@ public class CloudController {
 			return ResponseEntity.status(200).body(response);
 		}
 
+	}
+	@GetMapping("get-all")
+	public ResponseEntity<?> get(){
+
+		return ResponseEntity.status(200).body(s.getALl());
 	}
 }

@@ -28,6 +28,7 @@ import ResturantBackend.Services.FoodMenuService;
 		"http://localhost:5173/", "http://192.168.0.102:5173/",
 		"http://192.168.0.107:5173/",
 		"http://192.168.16.104:5173/",
+		"http://192.168.0.116",
 		"https://cute-taiyaki-355152.netlify.app"
 		}, allowCredentials = "true")
 public class FoodMenuController {

@@ -31,6 +31,7 @@ public class OrdersDto {
 	private Table table;
 
 	private Date createdDate;
+	private String createdNepDate;
 
 	private Date lastModifiedDate;
 }

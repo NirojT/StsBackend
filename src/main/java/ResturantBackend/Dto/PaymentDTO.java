@@ -22,6 +22,7 @@ public class PaymentDTO {
     private String orderID;
     private Orders orders;
     private Date createdDate;
+    private String createdNepDate;
 
 
 

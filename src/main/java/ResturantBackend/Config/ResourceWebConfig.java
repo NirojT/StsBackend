@@ -3,6 +3,7 @@ package ResturantBackend.Config;
 import java.util.HashMap;
 import java.util.Map;
 
+import ResturantBackend.Utility.FilesHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -11,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.cloudinary.Cloudinary;
 
-import ResturantBackend.Utility.FilesHelper;
+
 
 @Configuration
 public class ResourceWebConfig implements WebMvcConfigurer {
@@ -20,8 +21,8 @@ public class ResourceWebConfig implements WebMvcConfigurer {
 	public ResourceWebConfig(Environment env) {
 		environment=env;
 	}
-	
-	
+
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/uploads/**")
