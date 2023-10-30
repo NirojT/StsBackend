@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import ResturantBackend.ResturantApplication;
 import ResturantBackend.Dto.PaymentDTO;
 import ResturantBackend.Entity.Orders;
 import ResturantBackend.Entity.Payment;
@@ -41,18 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
 	@Autowired
 	private TableRepo tableRepo;
 
-	@Autowired
-	EnglishToNepaliDateConverter1 dateConverter1;
-	@Autowired
-	EnglishToNepaliDateConverter2 dateConverter2;
-	@Autowired
-	EnglishToNepaliDateConverter3 dateConverter3;
-
-	@Autowired
-	EnglishToNepaliDateConverter13 dateConverter13;
-
-	@Autowired
-	EnglishToNepaliDateConverter14 dateConverter14;
+	
 
 
 
@@ -99,7 +89,7 @@ public class PaymentServiceImpl implements PaymentService {
 				}
 
 				Payment payment = mapper.map(request, Payment.class);
-				payment.setCreatedNepDate(dateConverter1.convertToNepaliDate(new Date()));
+				payment.setCreatedNepDate(ResturantApplication.CurrentNepaliDate);
 				paymentRepo.save(payment);
 
 				return true;
@@ -275,18 +265,14 @@ public class PaymentServiceImpl implements PaymentService {
 	public Double getTotalSellAmtMonthly() {
 
 		try {
-			String currentNepaliMonthString = dateConverter1.getCurrentNepaliYearMonth();
+			String currentNepaliMonthString = ResturantApplication.CurrentNepaliYearMonth;
 
 
-			List<Payment> payments = this.paymentRepo.findAll();
+			List<Payment> payments = this.paymentRepo.findPaymentsByNepaliMonth(currentNepaliMonthString);
 
-			List<Payment> paymentsOfCurrentMonth = payments.stream().filter(payment -> {
-				String createdNepDate = payment.getCreatedNepDate();
+			
 
-				return createdNepDate.startsWith(currentNepaliMonthString);
-			}).collect(Collectors.toList());
-
-			return paymentsOfCurrentMonth.stream().mapToDouble(Payment::getTotalPrice).sum();
+			return payments.stream().mapToDouble(Payment::getTotalPrice).sum();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -300,7 +286,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 		try {
 			//2080
-			int currentNepaliYear = dateConverter2.getCurrentNepaliYear();
+			int currentNepaliYear = ResturantApplication.CurrentNepaliYear;
 			double[] monthlySell = new double[12];
 			List<Payment> payments = this.paymentRepo.findAll();
 
@@ -328,7 +314,7 @@ public class PaymentServiceImpl implements PaymentService {
 		double YearlySalesAmt = 0.0;
 		try {
 			//2080
-			int currentNepaliYear = dateConverter3.getCurrentNepaliYear();
+			int currentNepaliYear = ResturantApplication.CurrentNepaliYear;
 
 			List<Payment> payments = this.paymentRepo.findAll();
 			for (int month = 1; month <= 12; month++) {
@@ -360,7 +346,7 @@ public class PaymentServiceImpl implements PaymentService {
 	public double getMonthlyMaxSell() {
 		try {
 			//2080
-			int currentNepaliYear = dateConverter13.getCurrentNepaliYear();
+			int currentNepaliYear = ResturantApplication.CurrentNepaliYear;
 			double[] monthlySell = new double[12];
 			List<Payment> payments = this.paymentRepo.findAll();
 
@@ -396,7 +382,7 @@ public class PaymentServiceImpl implements PaymentService {
 		try {
 //			int currentYear = YearMonth.now().getYear();
 			//2080
-			int currentNepaliYear = dateConverter14.getCurrentNepaliYear();
+			int currentNepaliYear = ResturantApplication.CurrentNepaliYear;
 
 			List<List<PaymentDTO>> monthlyPayments = new ArrayList<>();
 			List<Payment> payments = this.paymentRepo.findAll();

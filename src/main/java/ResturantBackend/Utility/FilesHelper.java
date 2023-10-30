@@ -37,8 +37,8 @@ public class FilesHelper{
 			localHost = InetAddress.getLocalHost();
 			ipAddress = localHost.getHostAddress();
 			// ipAddress=192.168.0.107
-			 SERVERURL = "http://"+ipAddress+":9000/uploads/";
-//			SERVERURL = "http://localhost:9000/uploads/";
+			//  SERVERURL = "http://"+ipAddress+":9000/uploads/";
+			SERVERURL = "http://localhost:9000/uploads/";
 
 		} catch (Exception e) {
 

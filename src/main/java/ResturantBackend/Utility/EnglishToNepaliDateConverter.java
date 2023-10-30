@@ -5,29 +5,24 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class EnglishToNepaliDateConverter9 {
+public class EnglishToNepaliDateConverter {
     private static final Map<Integer, int[]> nepaliMap = new HashMap<>();
-    private static long totalEngDaysCount;
-    private int nepaliYear;
-    private int nepaliMonth;
-    private int nepaliDay;
+    private static int nepaliYear;
+    private static int nepaliMonth;
+    private static int nepaliDay;
 
-    private final int startingEngYear = 1944;
-    private final int startingEngMonth = 1;
-    private final int startingEngDay = 1;
-    private final int dayOfWeek = Calendar.SATURDAY; // 1944/1/1 is Saturday
-    private final int startingNepYear = 2000;
-    private final int startingNepMonth = 9;
-    private final int startingNepDay = 17;
+    private static final int startingEngYear = 1944;
+    private static final int startingEngMonth = 1;
+    private static final int startingEngDay = 1;
+    private static final int startingNepYear = 2000;
+    private static final int startingNepMonth = 9;
+    private static final int startingNepDay = 17;
 
-    public EnglishToNepaliDateConverter9() {
-
+    public EnglishToNepaliDateConverter() {
         initializeNepaliMap();
     }
 
-
-
-    public String getCurrentNepaliYearMonth() {
+    public static String getCurrentNepaliYearMonth() {
         Date currentDate = new Date();
         String nepaliDate = convertToNepaliDate(currentDate);
         String[] parts = nepaliDate.split("/");
@@ -36,14 +31,14 @@ public class EnglishToNepaliDateConverter9 {
         return String.format("%04d/%02d", nepaliYear, nepaliMonth);
     }
 
-    public int getCurrentNepaliYear() {
+    public static int getCurrentNepaliYear() {
         Date currentDate = new Date();
         String nepaliDate = convertToNepaliDate(currentDate);
         String[] parts = nepaliDate.split("/");
         return Integer.parseInt(parts[0]);
     }
 
-    public String convertToNepaliDate(Date date) {
+    public static String convertToNepaliDate(Date date) {
         int engYear = date.getYear() + 1900;
         int engMonth = date.getMonth() + 1;
         int engDay = date.getDate();
@@ -58,23 +53,28 @@ public class EnglishToNepaliDateConverter9 {
         Calendar baseEngDate = new GregorianCalendar();
         baseEngDate.set(startingEngYear, startingEngMonth - 1, startingEngDay);
 
-        totalEngDaysCount = daysBetween(baseEngDate, currentEngDate);
+        long totalEngDaysCount = daysBetween(baseEngDate, currentEngDate);
 
         while (totalEngDaysCount != 0) {
-            int daysInIthMonth = nepaliMap.get(nepaliYear)[nepaliMonth];
+            int[] nepaliMonthData = nepaliMap.get(nepaliYear);
+            if (nepaliMonthData != null) {
+                int daysInIthMonth = nepaliMonthData[nepaliMonth];
 
-            nepaliDay++;
+                nepaliDay++;
 
-            if (nepaliDay > daysInIthMonth) {
-                nepaliMonth++;
-                nepaliDay = 1;
+                if (nepaliDay > daysInIthMonth) {
+                    nepaliMonth++;
+                    nepaliDay = 1;
+                }
+                if (nepaliMonth > 12) {
+                    nepaliYear++;
+                    nepaliMonth = 1;
+                }
+
+                totalEngDaysCount--;
+            } else {
+                break; // Exit the loop if the data for a year is missing in the map
             }
-            if (nepaliMonth > 12) {
-                nepaliYear++;
-                nepaliMonth = 1;
-            }
-
-            totalEngDaysCount--;
         }
 
         return String.format("%04d/%02d/%02d", nepaliYear, nepaliMonth, nepaliDay);

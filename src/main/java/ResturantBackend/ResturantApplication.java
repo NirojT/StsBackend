@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import ResturantBackend.Utility.EnglishToNepaliDateConverter1;
-import ResturantBackend.Utility.EnglishToNepaliDateConverter8;
+import ResturantBackend.Utility.EnglishToNepaliDateConverter;
+
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,8 @@ public class ResturantApplication implements CommandLineRunner {
 	}
 
 	@Autowired
-	EnglishToNepaliDateConverter1 englishToNepaliDateConverter;
+	static	EnglishToNepaliDateConverter englishToNepaliDateConverter;
+
 
 
 	
@@ -35,6 +36,10 @@ public class ResturantApplication implements CommandLineRunner {
 		SpringApplication.run(ResturantApplication.class, args);
 
 	}
+	
+	public  static String CurrentNepaliDate="";
+	public  static String CurrentNepaliYearMonth="";
+	public  static int CurrentNepaliYear=0;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -42,8 +47,13 @@ public class ResturantApplication implements CommandLineRunner {
 		 InetAddress localHost=InetAddress.getLocalHost();
 		  String ipAddress =localHost.getHostAddress();
 		   System.out.println("Ip address of this net is :"+ipAddress);
-		System.out.println(englishToNepaliDateConverter.convertToNepaliDate(new Date()));
-
+		   CurrentNepaliDate=englishToNepaliDateConverter.convertToNepaliDate(new Date());
+		   CurrentNepaliYearMonth=englishToNepaliDateConverter.getCurrentNepaliYearMonth();
+		   CurrentNepaliYear=englishToNepaliDateConverter.getCurrentNepaliYear();
+   
+		   System.out.println("from 1 "+CurrentNepaliDate);
+		   System.out.println("from 1 "+CurrentNepaliYearMonth);
+		   System.out.println("from 1 "+CurrentNepaliYear);
 
 	}
 

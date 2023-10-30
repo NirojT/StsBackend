@@ -4,7 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.YearMonth;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,16 +15,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import ResturantBackend.Utility.EnglishToNepaliDateConverter4;
-import ResturantBackend.Utility.EnglishToNepaliDateConverter5;
-import ResturantBackend.Utility.EnglishToNepaliDateConverter6;
-import ResturantBackend.Utility.EnglishToNepaliDateConverter7;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 import org.springframework.stereotype.Service;
 
+import ResturantBackend.ResturantApplication;
 import ResturantBackend.Dto.AddOrderDto;
 import ResturantBackend.Dto.DrinkMenuDto;
 import ResturantBackend.Dto.FoodMenuDto;
@@ -64,15 +62,7 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 	@Autowired
 	private ModelMapper mapper;
 
-	@Autowired
-	EnglishToNepaliDateConverter4 dateConverter4;
-	@Autowired
-	EnglishToNepaliDateConverter5 dateConverter5;
-	@Autowired
-	EnglishToNepaliDateConverter6 dateConverter6;
-
-	@Autowired
-	EnglishToNepaliDateConverter7 dateConverter7;
+	
 
 	
 
@@ -147,7 +137,7 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 
 			orders.setTable(tableFromDB);
 			orders.setUsers(userFromDb);
-			orders.setCreatedNepDate(dateConverter4.convertToNepaliDate(new Date()));
+			orders.setCreatedNepDate(ResturantApplication.CurrentNepaliDate);
 
 			Orders savedOrder = this.ordersRepo.save(orders);
 			if (savedOrder != null) {
@@ -475,21 +465,15 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 	public int getNoOfOrdersByCurrentMonth() {
 
 		try {
-			String currentNepaliMonthString = dateConverter5.getCurrentNepaliYearMonth();
+			String currentNepaliMonthString = ResturantApplication.CurrentNepaliYearMonth;
 
 
-			List<Orders> orders = this.ordersRepo.findAll();
+			List<Orders> orders = this.ordersRepo.findOrdersByNepaliMonth(currentNepaliMonthString);
 
-			List<Orders> ordersInCurrentNepaliMonth = orders.stream()
-					.filter(order -> {
-						String createdNepDate= order.getCreatedNepDate();
-						// Check if the Nepali payment date matches the current Nepali month
-						return createdNepDate.startsWith(currentNepaliMonthString);
-					})
-					.collect(Collectors.toList());
+			
 
 
-			return ordersInCurrentNepaliMonth.size();
+			return orders.size();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0;

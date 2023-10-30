@@ -9,13 +9,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import ResturantBackend.Utility.EnglishToNepaliDateConverter10;
-import ResturantBackend.Utility.EnglishToNepaliDateConverter11;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import ResturantBackend.ResturantApplication;
 import ResturantBackend.Dto.DrinkStockDto;
 import ResturantBackend.Entity.DrinkStock;
 import ResturantBackend.ErrorHandlers.ResourceNotFound;
@@ -31,8 +31,7 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 	@Autowired
 	private ModelMapper mapper;
 
-	@Autowired
-	EnglishToNepaliDateConverter10 dateConverter10;
+
 
 
 
@@ -42,7 +41,7 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 			drinkStockDto.setId(UUID.randomUUID());
 			drinkStockDto.setCreatedDate(new Date());
 			DrinkStock drinkStock = mapper.map(drinkStockDto, DrinkStock.class);
-			drinkStock.setCreatedNepDate(dateConverter10.convertToNepaliDate(new Date()));
+			drinkStock.setCreatedNepDate(ResturantApplication.CurrentNepaliDate);
 			
 
 			
@@ -80,7 +79,7 @@ public class DrinkStockServiceImpl implements DrinkStockService {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			
 		}
 		return false;
 	}

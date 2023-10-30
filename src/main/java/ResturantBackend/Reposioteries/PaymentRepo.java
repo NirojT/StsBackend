@@ -11,7 +11,9 @@ import org.springframework.data.mongodb.repository.Query;
 import ResturantBackend.Entity.Payment;
 
 public interface PaymentRepo extends MongoRepository<Payment, UUID> {
-
+	
+	@Query("{'createdNepDate':{ $regex: ?0}}")
+	List<Payment> findPaymentsByNepaliMonth(String nepaliMonth);
 	
 	 @Query("{ 'createdDate' : { $gte: ?0, $lte: ?1 } }")
 	    List<Payment> findPaymentBy1Day(LocalDateTime start, LocalDateTime end);

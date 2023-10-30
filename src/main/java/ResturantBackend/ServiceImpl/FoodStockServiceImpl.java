@@ -4,7 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.YearMonth;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,12 +14,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import ResturantBackend.Utility.*;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import ResturantBackend.ResturantApplication;
 import ResturantBackend.Dto.FoodStockDto;
 import ResturantBackend.Entity.DrinkStock;
 import ResturantBackend.Entity.FoodStock;
@@ -40,19 +41,7 @@ public class FoodStockServiceImpl implements FoodStockService {
 	@Autowired
 	private ModelMapper mapper;
 
-	@Autowired
-	EnglishToNepaliDateConverter6 dateConverter6;
-
-	@Autowired
-	EnglishToNepaliDateConverter7 dateConverter7;
-	@Autowired
-	EnglishToNepaliDateConverter8 dateConverter8;
-
-	@Autowired
-	EnglishToNepaliDateConverter9 dateConverter9;
-
-	@Autowired
-	EnglishToNepaliDateConverter14 dateConverter14;
+	
 
 
 	@Override
@@ -62,7 +51,7 @@ public class FoodStockServiceImpl implements FoodStockService {
 			FoodStock foodStock = this.mapper.map(foodStockDto, FoodStock.class);
 
 			foodStock.setCreatedDate(new Date());
-			foodStock.setCreatedNepDate(dateConverter6.convertToNepaliDate(new Date()));
+			foodStock.setCreatedNepDate(ResturantApplication.CurrentNepaliDate);
 			foodStockRepo.save(foodStock);
 			return true;
 		} catch (Exception e) {
@@ -232,18 +221,23 @@ public class FoodStockServiceImpl implements FoodStockService {
 	public double getMonthlyExpense() {
 
 		try {
-			String nepaliMonth=dateConverter7.getCurrentNepaliYearMonth();
+			String nepaliMonth=ResturantApplication.CurrentNepaliYearMonth;
 
+	double foodExpense = this.foodStockRepo.findFoodStockByNepaliMonth(nepaliMonth)
+	.stream().mapToDouble(FoodStock::getPrice).sum();
 
-			double foodExpense = this.foodStockRepo.findAll().stream().filter(item->{
-				String nepaliDate=item.getCreatedNepDate();
-				return nepaliDate.startsWith(nepaliMonth);
-			}).mapToDouble(FoodStock::getPrice).sum();
+		double drinkExpense = this.drinkStockRepo.findDrinkStockNepaliMonth(nepaliMonth)
+		.stream().mapToDouble(DrinkStock::getPrice).sum();
 
-			double drinkExpense = this.drinkStockRepo.findAll().stream().filter(item->{
-				String nepaliDate=item.getCreatedNepDate();
-				return nepaliDate.startsWith(nepaliMonth);
-			}).mapToDouble(DrinkStock::getPrice).sum();
+			// double foodExpense = this.foodStockRepo.findAll().stream().filter(item->{
+			// 	String nepaliDate=item.getCreatedNepDate();
+			// 	return nepaliDate.startsWith(nepaliMonth);
+			// }).mapToDouble(FoodStock::getPrice).sum();
+
+			// double drinkExpense = this.drinkStockRepo.findAll().stream().filter(item->{
+			// 	String nepaliDate=item.getCreatedNepDate();
+			// 	return nepaliDate.startsWith(nepaliMonth);
+			// }).mapToDouble(DrinkStock::getPrice).sum();
 
 
 
@@ -264,11 +258,13 @@ public class FoodStockServiceImpl implements FoodStockService {
 
 		try {
 			//2080
-			int currentNepaliYear = dateConverter8.getCurrentNepaliYear();
+			int currentNepaliYear =ResturantApplication.CurrentNepaliYear;
 
 			double monthlyExpense[] = new double[12];
 		List<FoodStock> foodStocks	= this.foodStockRepo.findAll();
 			List<DrinkStock> drinkStocks	= this.drinkStockRepo.findAll();
+
+			
 
 			for (int month = 1; month <= 12; month++) {
 
@@ -301,7 +297,7 @@ public class FoodStockServiceImpl implements FoodStockService {
 		try {
 
 			//2080
-			int currentNepaliYear = dateConverter9.getCurrentNepaliYear();
+			int currentNepaliYear = ResturantApplication.CurrentNepaliYear;
 
 
 			List<FoodStock> foodStocks	= this.foodStockRepo.findAll();
@@ -339,7 +335,7 @@ public class FoodStockServiceImpl implements FoodStockService {
 	public double getMonthlyMaxExpense() {
 		try {
 			//2080
-			int currentNepaliYear = dateConverter14.getCurrentNepaliYear();
+			int currentNepaliYear = ResturantApplication.CurrentNepaliYear;
 			double[] monthlyExp = new double[12];
 			List<FoodStock> foodStocks	= this.foodStockRepo.findAll();
 			List<DrinkStock> drinkStocks	= this.drinkStockRepo.findAll();

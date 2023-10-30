@@ -14,7 +14,8 @@ import ResturantBackend.Entity.Payment;
 
 public interface OrdersRepo extends MongoRepository<Orders, UUID>{
 	
-   
+	@Query("{'createdNepDate':{ $regex: ?0}}")
+	List<Orders> findOrdersByNepaliMonth(String nepaliMonth);
     // Custom query to fetch orders within a specific time range
 
 

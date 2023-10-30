@@ -6,13 +6,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import ResturantBackend.Utility.EnglishToNepaliDateConverter12;
-import ResturantBackend.Utility.EnglishToNepaliDateConverter13;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import ResturantBackend.ResturantApplication;
 import ResturantBackend.Dto.DrinkMenuDto;
 import ResturantBackend.Entity.DrinkMenu;
 import ResturantBackend.ErrorHandlers.ResourceNotFound;
@@ -33,8 +33,7 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 	private FilesHelper fileHelper;
 
 
-	@Autowired
-	EnglishToNepaliDateConverter12 dateConverter12;
+
 
 
 
@@ -50,7 +49,7 @@ public class DrinkMenuServiceImpl implements DrinkMenuService {
 			String filename = fileHelper.saveFile(data.getImage());
 			drinkMenu.setImage(filename);
 			drinkMenu.setCreatedDate(new Date());
-			drinkMenu.setCreatedNepDate(dateConverter12.convertToNepaliDate(new Date()));
+			drinkMenu.setCreatedNepDate(ResturantApplication.CurrentNepaliDate);
 			drinkMenu.setVisible(true);
 			drinkMenuRepo.save(drinkMenu);
 			return true;

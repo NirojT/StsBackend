@@ -7,12 +7,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import ResturantBackend.Utility.EnglishToNepaliDateConverter11;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import ResturantBackend.ResturantApplication;
 import ResturantBackend.Dto.FoodMenuDto;
 import ResturantBackend.Entity.FoodMenu;
 import ResturantBackend.ErrorHandlers.ResourceNotFound;
@@ -31,8 +32,6 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 	@Autowired
 	private FilesHelper fileHelper;
 
-	@Autowired
-	EnglishToNepaliDateConverter11 dateConverter11;
 
 	@Override
 	public Boolean createFoodMenu(FoodMenuDto foodMenuDto) {
@@ -50,7 +49,7 @@ public class FoodMenuServiceImpl implements ResturantBackend.Services.FoodMenuSe
 			
 			createFoodMenu.setCreatedDate(new Date());
 			createFoodMenu.setVisible(true);
-			createFoodMenu.setCreatedNepDate(dateConverter11.convertToNepaliDate(new Date()));
+			createFoodMenu.setCreatedNepDate(ResturantApplication.CurrentNepaliDate);
 			this.foodMenuRepo.save(createFoodMenu);
 			return true;
 		} catch (Exception e) {
