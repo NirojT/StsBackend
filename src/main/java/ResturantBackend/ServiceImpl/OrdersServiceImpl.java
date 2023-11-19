@@ -198,7 +198,9 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 			ordersFromDb.setItems(item);
 			ordersFromDb.setTableNo(orderRequest.getTableNo());
 			ordersFromDb.setPrice(Double.parseDouble(orderRequest.getTotalPrice()));
-			ordersFromDb.setStatus(ordersFromDb.getStatus());
+
+			ordersFromDb.setStatus("updated");
+			ordersFromDb.setRemarks(orderRequest.getRemarks());
 			Orders updatedOrder = this.ordersRepo.save(ordersFromDb);
 			if (updatedOrder != null) {
 				return true;

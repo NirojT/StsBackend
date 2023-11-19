@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 @EnableMongoAuditing
 public class ResturantApplication implements CommandLineRunner {
 
+	public static String hello;
 	
 	@Bean
 	public ModelMapper modelMapper() {

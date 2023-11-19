@@ -1,25 +1,5 @@
 package ResturantBackend.Controller;
 
-import java.util.HashMap;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import ResturantBackend.Dto.UserDTO;
 import ResturantBackend.Entity.Users;
 import ResturantBackend.JWT.JwtHelper;
@@ -28,12 +8,24 @@ import ResturantBackend.JWT.JwtResponse;
 import ResturantBackend.Reposioteries.UserRepo;
 import ResturantBackend.Services.UsersService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user/")
 @CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://192.168.0.107:5173/", "http://192.168.16.104:5173/",
 		"http://localhost:5173/", "https://cute-taiyaki-355152.netlify.app",
-		"http://192.168.0.116/",
+		"http://192.168.0.116/","http://192.168.0.124/","http://192.168.0.122/",
 		"http://192.168.0.128:5173" }, allowCredentials = "true")
 public class AuthController {
 
@@ -58,7 +50,7 @@ public class AuthController {
 	@PostMapping("login")
 	public ResponseEntity<?> loginUser(@RequestBody JwtRequest jwtRequest) {
 		doAuthenticate(jwtRequest.getName(), jwtRequest.getPassword());
-		UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getName());
+		//UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getName());
 		String token = this.jwtHelper.generateToken(jwtRequest.getName());
 
 		String username = "";
@@ -66,10 +58,16 @@ public class AuthController {
 			username = jwtRequest.getName();
 		}
 
-		Users users = this.userRepo.findByName(username).get();
+		Optional<Users> user = this.userRepo.findByName(username);
+		if(user.isPresent()){
+			Users users = user.get();
+
+
 
 		JwtResponse jwtResponse = JwtResponse.builder().token(token).userRole(users.getRole()).build();
 		return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+		}
+		return new ResponseEntity<>("user is empty", HttpStatus.OK);
 	}
 
 	public void doAuthenticate(String name, String password) {
@@ -91,7 +89,7 @@ public class AuthController {
 
 	@PostMapping("register")
 	private ResponseEntity<?> createUser(@ModelAttribute UserDTO user) {
-		System.out.println(user.getName());
+
 		user.setPassword(encoder.encode(user.getPassword()));
 		String createUser = usersService.createUser(user);
 
