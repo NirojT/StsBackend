@@ -54,7 +54,8 @@ public class JwtAuthentictionFilter extends OncePerRequestFilter {
 		if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 			token = requestHeader.substring(7);
 
-//				 String[] split = requestHeader.split(" ");
+				  //token = requestHeader.split(" ")[0];
+
 //				System.out.println("spliting  "+ split[0]);
 //				System.out.println("spliting  1"+ split[1]);
 

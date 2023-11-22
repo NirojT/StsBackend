@@ -43,8 +43,8 @@ public class OrdersController {
 	@Autowired
 	private JwtHelper jwtHelper;
 
-//	@Autowired
-//	private SimpMessagingTemplate messagingTemplate;
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
 	@PostMapping("create")
 	public ResponseEntity<?> createOrders(@RequestBody OrderRequest orderRequest, HttpServletRequest request
@@ -71,9 +71,9 @@ public class OrdersController {
 				Boolean isSaved = ordersService.createOrders(orderRequest, username);
 
 				 // Send a WebSocket message when the order is created
-//		        if (isSaved) {
-//		            messagingTemplate.convertAndSend("/topic/orders", "New order created");
-//		        }
+		        if (isSaved) {
+		            messagingTemplate.convertAndSend("/topic/orders", "New order created");
+		        }
 				response.put("status", isSaved ? 200 : 400);
 				response.put("message", isSaved ? "Orders  saved successfully" : "Orders not saved");
 				return ResponseEntity.status(200).body(response);
