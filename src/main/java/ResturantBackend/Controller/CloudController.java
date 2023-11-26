@@ -3,7 +3,7 @@ package ResturantBackend.Controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import ResturantBackend.test.NepaliCalendarService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +23,7 @@ public class CloudController {
 	@Autowired
 	CloudImageUploadService cloudImageUploadService;
 
-	@Autowired
-	NepaliCalendarService s;
+
 
 	@Autowired
 	private JwtHelper jwtHelper;
@@ -67,9 +66,5 @@ public class CloudController {
 		}
 
 	}
-	@GetMapping("get-all")
-	public ResponseEntity<?> get(){
 
-		return ResponseEntity.status(200).body(s.getALl());
-	}
 }

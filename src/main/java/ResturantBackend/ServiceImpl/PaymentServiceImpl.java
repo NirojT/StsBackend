@@ -296,7 +296,14 @@ public class PaymentServiceImpl implements PaymentService {
 				String nepaliMonthPrefix = String.format("%04d/%02d", currentNepaliYear, month);
 
 				double totalAmt = payments.stream()
-						.filter(payment -> payment.getCreatedNepDate().startsWith(nepaliMonthPrefix))
+						.filter(payment -> {
+							boolean b=false;
+							if(payment.getCreatedNepDate()!=null){
+								 b = payment.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(Payment::getTotalPrice)
 						.sum();
 
@@ -323,7 +330,14 @@ public class PaymentServiceImpl implements PaymentService {
 				String nepaliMonthPrefix = String.format("%04d/%02d", currentNepaliYear, month);
 
 				double totalAmt = payments.stream()
-						.filter(payment -> payment.getCreatedNepDate().startsWith(nepaliMonthPrefix))
+						.filter(payment -> {
+							boolean b=false;
+							if(payment.getCreatedNepDate()!=null){
+								b = payment.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(Payment::getTotalPrice)
 						.sum();
 
@@ -356,7 +370,14 @@ public class PaymentServiceImpl implements PaymentService {
 				String nepaliMonthPrefix = String.format("%04d/%02d", currentNepaliYear, month);
 
 				double totalAmt = payments.stream()
-						.filter(payment -> payment.getCreatedNepDate().startsWith(nepaliMonthPrefix))
+						.filter(payment ->{
+							boolean b=false;
+							if(payment.getCreatedNepDate()!=null){
+								b = payment.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(Payment::getTotalPrice)
 						.sum();
 
@@ -409,8 +430,12 @@ public class PaymentServiceImpl implements PaymentService {
 
 						)
 						.filter(paymentDto1 -> {
-							String createdNepDate=paymentDto1.getCreatedNepDate();
-							return 	createdNepDate.startsWith(nepaliMonthPrefix);
+							boolean b=false;
+							if(paymentDto1.getCreatedNepDate()!=null){
+								b = paymentDto1.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
 						})
 						.collect(Collectors.toList());
 
