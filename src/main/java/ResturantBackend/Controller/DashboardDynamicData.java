@@ -195,7 +195,7 @@ public class DashboardDynamicData {
 			double yearlySalesReport = this.paymentService.getYearlySalesReport();
 
 			response.put("status", yearlySalesReport == 0 ? 400 : 200);
-			response.put("SalesReportAmt", yearlySalesReport == 0 ? "No sell in this year" : yearlySalesReport);
+			response.put("SalesReportAmt", yearlySalesReport == 0 ? 0.00 : yearlySalesReport);
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();

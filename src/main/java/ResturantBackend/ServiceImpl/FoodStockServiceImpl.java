@@ -272,12 +272,24 @@ public class FoodStockServiceImpl implements FoodStockService {
 
 
 
-				double foodExpense = foodStocks.stream().filter(item->item.getCreatedNepDate()
-						.startsWith(nepaliMonthPrefix))
+				double foodExpense = foodStocks.stream().filter(item->{
+							boolean b=false;
+							if(item.getCreatedNepDate()!=null){
+								b = item.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(FoodStock::getPrice).sum();
 
-				double drinkExpense = drinkStocks.stream().filter(item->item.getCreatedNepDate()
-								.startsWith(nepaliMonthPrefix))
+				double drinkExpense = drinkStocks.stream().filter(item->{
+							boolean b=false;
+							if(item.getCreatedNepDate()!=null){
+								b = item.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(DrinkStock::getPrice).sum();
 
 				monthlyExpense[month - 1] = foodExpense + drinkExpense;
@@ -309,12 +321,24 @@ public class FoodStockServiceImpl implements FoodStockService {
 
 
 
-				double foodExpense = foodStocks.stream().filter(item->item.getCreatedNepDate()
-								.startsWith(nepaliMonthPrefix))
+				double foodExpense = foodStocks.stream().filter(item->{
+							boolean b=false;
+							if(item.getCreatedNepDate()!=null){
+								b = item.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(FoodStock::getPrice).sum();
 
-				double drinkExpense = drinkStocks.stream().filter(item->item.getCreatedNepDate()
-								.startsWith(nepaliMonthPrefix))
+				double drinkExpense = drinkStocks.stream().filter(item->{
+							boolean b=false;
+							if(item.getCreatedNepDate()!=null){
+								b = item.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(DrinkStock::getPrice).sum();
 
 			double	totalAmt= foodExpense + drinkExpense;
@@ -345,12 +369,24 @@ public class FoodStockServiceImpl implements FoodStockService {
 
 				String nepaliMonthPrefix = String.format("%04d/%02d", currentNepaliYear, month);
 
-				double foodExpense = foodStocks.stream().filter(item->item.getCreatedNepDate()
-								.startsWith(nepaliMonthPrefix))
+				double foodExpense = foodStocks.stream().filter(item->{
+							boolean b=false;
+							if(item.getCreatedNepDate()!=null){
+								b = item.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(FoodStock::getPrice).sum();
 
-				double drinkExpense = drinkStocks.stream().filter(item->item.getCreatedNepDate()
-								.startsWith(nepaliMonthPrefix))
+				double drinkExpense = drinkStocks.stream().filter(item->{
+							boolean b=false;
+							if(item.getCreatedNepDate()!=null){
+								b = item.getCreatedNepDate().startsWith(nepaliMonthPrefix);
+							}
+
+							return b;
+						})
 						.mapToDouble(DrinkStock::getPrice).sum();
 
 				double	totalAmt= foodExpense + drinkExpense;
