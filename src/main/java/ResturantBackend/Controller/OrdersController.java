@@ -75,6 +75,7 @@ public class OrdersController {
 				 // Send a WebSocket message when the order is created
 		        if (isSaved) {
 		            messagingTemplate.convertAndSend("/group", "New order created");
+
 		        }
 				response.put("status", isSaved ? 200 : 400);
 				response.put("message", isSaved ? "Orders  saved successfully" : "Orders not saved");
@@ -102,7 +103,10 @@ public class OrdersController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Boolean isUpdated = this.ordersService.updateOrders(id, orderRequest);
+			if (isUpdated) {
+				messagingTemplate.convertAndSend("/group", "order updated");
 
+			}
 			response.put("status", isUpdated ? 200 : 400);
 			response.put("message", isUpdated ? "Orders updated successfully" : "Orders update failed");
 			return ResponseEntity.status(200).body(response);
@@ -178,9 +182,18 @@ public class OrdersController {
 	public ResponseEntity<?> updateOrderStatus(@PathVariable UUID id, @RequestParam String status) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			
+
 			
 			Boolean isUpdated = this.ordersService.updateStatus(id, status);
+			if (isUpdated) {
+			if(!status.isEmpty()){
+				messagingTemplate.convertAndSend("/group", status);
+			}
+
+
+
+
+			}
 			response.put("status", isUpdated ? 200 : 400);
 			response.put("message", isUpdated ? "Status updated successfully" : "Orders update failed");
 			return ResponseEntity.status(200).body(response);

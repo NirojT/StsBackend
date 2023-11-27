@@ -22,6 +22,7 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
 		config.enableSimpleBroker("/group","/user");
 
 		config.setUserDestinationPrefix("/user");
+
 	}
 
 
