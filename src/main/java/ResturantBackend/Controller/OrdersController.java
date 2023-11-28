@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import ResturantBackend.Entity.Orders;
+import ResturantBackend.ErrorHandlers.ResourceNotFound;
+import ResturantBackend.Reposioteries.OrdersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -41,6 +44,10 @@ public class OrdersController {
 	private OrdersService ordersService;
 
 	@Autowired
+	private OrdersRepo ordersRepo;
+
+
+	@Autowired
 	private JwtHelper jwtHelper;
 
 	@Autowired
@@ -74,7 +81,7 @@ public class OrdersController {
 
 				 // Send a WebSocket message when the order is created
 		        if (isSaved) {
-		            messagingTemplate.convertAndSend("/group", "New order created");
+		            messagingTemplate.convertAndSend("/group", "created");
 
 		        }
 				response.put("status", isSaved ? 200 : 400);
@@ -104,7 +111,7 @@ public class OrdersController {
 		try {
 			Boolean isUpdated = this.ordersService.updateOrders(id, orderRequest);
 			if (isUpdated) {
-				messagingTemplate.convertAndSend("/group", "order updated");
+				messagingTemplate.convertAndSend("/group", "updated");
 
 			}
 			response.put("status", isUpdated ? 200 : 400);
@@ -185,9 +192,11 @@ public class OrdersController {
 
 			
 			Boolean isUpdated = this.ordersService.updateStatus(id, status);
+			Orders orders = this.ordersRepo.findById(id).orElseThrow(() -> new ResourceNotFound("Order", "order id", id));
+
 			if (isUpdated) {
 			if(!status.isEmpty()){
-				messagingTemplate.convertAndSend("/group", status);
+				messagingTemplate.convertAndSend("/group", orders.getTableNo() +" "+ status);
 			}
 
 
