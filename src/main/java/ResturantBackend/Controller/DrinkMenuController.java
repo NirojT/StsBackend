@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,8 @@ import ResturantBackend.Services.DrinkMenuService;
 @RestController
 @RequestMapping("/api/drinks/menu/")
 
-@CrossOrigin(origins = { "http://127.0.0.1:5173/","http://192.168.0.107:5173/","http://192.168.16.104:5173/", "http://localhost:5173/",
+@CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://192.168.0.107:5173/", "http://192.168.16.104:5173/",
+		"http://localhost:5173/",
 		"https://cute-taiyaki-355152.netlify.app",
 		"http://192.168.0.116/",
 		"http://192.168.0.116",
@@ -34,6 +36,9 @@ public class DrinkMenuController {
 
 	@Autowired
 	private DrinkMenuService drinkMenuService;
+
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
 	@PostMapping("create")
 	public ResponseEntity<?> createDrinksMenu(@ModelAttribute DrinkMenuDto request) {
@@ -44,7 +49,9 @@ public class DrinkMenuController {
 			if (isSaved) {
 				response.put("status", 200);
 				response.put("message", "drinks added successfully");
+				messagingTemplate.convertAndSend("/group", "drink");
 				return ResponseEntity.status(200).body(response);
+
 			}
 			response.put("status", 400);
 			response.put("message", "drinks not added");
@@ -145,22 +152,24 @@ public class DrinkMenuController {
 		}
 
 	}
+
 	@PutMapping("visible/{id}")
 	public ResponseEntity<?> available(@PathVariable("id") UUID ids) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Boolean deleteMenuDrinks = this.drinkMenuService.isVisible(ids);
 			response.put("status", deleteMenuDrinks ? 200 : 400);
-			response.put("message", deleteMenuDrinks ? "drink menu displayed successfully" : "drink menu not displayed (:");
+			response.put("message",
+					deleteMenuDrinks ? "drink menu displayed successfully" : "drink menu not displayed (:");
 			return ResponseEntity.status(200).body(response);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.put("status", 500);
 			response.put("message", "something went wrong");
 			return ResponseEntity.status(500).body(response);
 		}
-		
+
 	}
 
 }

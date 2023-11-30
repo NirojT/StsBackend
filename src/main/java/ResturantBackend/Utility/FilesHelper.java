@@ -13,42 +13,37 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-
-
-
 @Service
-public class FilesHelper{
+public class FilesHelper {
 	// for file
 	private final Path fileStorageLocation;
-	public static  String configFilePath;
+	public static String configFilePath;
 
-
-	//for server url
-	//get ip address dynamically
+	// for server url
+	// get ip address dynamically
 	static InetAddress localHost;
 	static String ipAddress;
-	public  String SERVERURL;
-
+	public String SERVERURL;
 
 	@Autowired
 	public FilesHelper(Environment env) {
-		//for server
+		// for server
 		try {
 			localHost = InetAddress.getLocalHost();
 			ipAddress = localHost.getHostAddress();
 			// ipAddress=192.168.0.107
-			 SERVERURL = "http://"+ipAddress+":9000/uploads/";
-			//SERVERURL = "http://localhost:9000/uploads/";
+			// SERVERURL = "http://"+ipAddress+":9000/uploads/";
+			// SERVERURL = "http://localhost:9000/uploads/";
+			SERVERURL = "http://192.168.0.107:9000/uploads/";
 
 		} catch (Exception e) {
 
-		}
+		}	
 
-		//for file
+		// for file
 		String filePathString = "C:/Server/images";
 		this.fileStorageLocation = Paths.get(filePathString).toAbsolutePath().normalize();
-		configFilePath="file:///"+fileStorageLocation+"/";
-
+		configFilePath = "file:///" + fileStorageLocation + "/";
 
 		try {
 			Files.createDirectories(this.fileStorageLocation);
@@ -56,8 +51,6 @@ public class FilesHelper{
 			throw new RuntimeException(
 					"Could not create the directory where the uploaded files will be stored.", ex);
 		}
-
-
 
 	}
 
@@ -72,8 +65,7 @@ public class FilesHelper{
 
 	public String saveFile(MultipartFile file) {
 		// Normalize file name
-		String fileName =
-				new Date().getTime() + "-file." + getFileExtension(file.getOriginalFilename());
+		String fileName = new Date().getTime() + "-file." + getFileExtension(file.getOriginalFilename());
 
 		try {
 			// Check if the filename contains invalid characters
@@ -85,12 +77,12 @@ public class FilesHelper{
 			Path targetLocation = this.fileStorageLocation.resolve(fileName);
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-
-			return SERVERURL+ fileName;
+			return SERVERURL + fileName;
 		} catch (IOException ex) {
 			throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
 		}
 	}
+
 	public Boolean deleteExistingFile(String fileName) {
 		String uploadDir = "C:/Server/images";
 		String filePathString = fileName.replace(SERVERURL, "");

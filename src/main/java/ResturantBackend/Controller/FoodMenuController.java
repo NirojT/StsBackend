@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,17 +25,20 @@ import ResturantBackend.Services.FoodMenuService;
 
 @RestController
 @RequestMapping("/api/foods/menu/")
-@CrossOrigin(origins = { "http://127.0.0.1:5173/", 
+@CrossOrigin(origins = { "http://127.0.0.1:5173/",
 		"http://localhost:5173/", "http://192.168.0.102:5173/",
 		"http://192.168.0.107:5173/",
 		"http://192.168.16.104:5173/",
 		"http://192.168.0.116",
 		"https://cute-taiyaki-355152.netlify.app"
-		}, allowCredentials = "true")
+}, allowCredentials = "true")
 public class FoodMenuController {
 
 	@Autowired
 	private FoodMenuService foodMenuService;
+
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
 	@PostMapping("create")
 	public ResponseEntity<?> createFoodMenu(@ModelAttribute FoodMenuDto foodMenuDto) {
@@ -46,6 +50,7 @@ public class FoodMenuController {
 			if (isSaved) {
 				response.put("status", 200);
 				response.put("message", "food added successfully");
+				messagingTemplate.convertAndSend("/group", "food");
 				return ResponseEntity.status(200).body(response);
 			}
 			response.put("status", 400);
@@ -155,10 +160,11 @@ public class FoodMenuController {
 		}
 
 	}
+
 	@PutMapping("visible/{id}")
 	public ResponseEntity<?> available(@PathVariable("id") UUID ids) {
 		Map<String, Object> response = new HashMap<>();
-		
+
 		try {
 			Boolean deleteFoodMenu = this.foodMenuService.isVisible(ids);
 			if (deleteFoodMenu) {
@@ -169,12 +175,12 @@ public class FoodMenuController {
 			response.put("status", 400);
 			response.put("message", "FoodMenus not displayed (:");
 			return ResponseEntity.status(200).body(response);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
 
 }

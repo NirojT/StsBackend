@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequestMapping("/api/user/")
 @CrossOrigin(origins = { "http://127.0.0.1:5173/", "http://192.168.0.107:5173/", "http://192.168.16.104:5173/",
 		"http://localhost:5173/", "https://cute-taiyaki-355152.netlify.app",
-		"http://192.168.0.116/","http://192.168.0.124/","http://192.168.0.122/",
+		"http://192.168.0.116/", "http://192.168.0.124/", "http://192.168.0.107/",
 		"http://192.168.0.128:5173" }, allowCredentials = "true")
 public class AuthController {
 
@@ -50,7 +50,8 @@ public class AuthController {
 	@PostMapping("login")
 	public ResponseEntity<?> loginUser(@RequestBody JwtRequest jwtRequest) {
 		doAuthenticate(jwtRequest.getName(), jwtRequest.getPassword());
-		//UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getName());
+		// UserDetails userDetails =
+		// userDetailsService.loadUserByUsername(jwtRequest.getName());
 		String token = this.jwtHelper.generateToken(jwtRequest.getName());
 
 		String username = "";
@@ -59,13 +60,11 @@ public class AuthController {
 		}
 
 		Optional<Users> user = this.userRepo.findByName(username);
-		if(user.isPresent()){
+		if (user.isPresent()) {
 			Users users = user.get();
 
-
-
-		JwtResponse jwtResponse = JwtResponse.builder().token(token).userRole(users.getRole()).build();
-		return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+			JwtResponse jwtResponse = JwtResponse.builder().token(token).userRole(users.getRole()).build();
+			return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
 		}
 		return new ResponseEntity<>("user is empty", HttpStatus.OK);
 	}
