@@ -90,6 +90,7 @@ public class OrdersServiceImpl implements ResturantBackend.Services.OrdersServic
 					order.setName(foodMenu.getName());
 					order.setPrice(foodMenu.getPrice());
 					order.setType(foodMenu.getType());
+
 					order.setCategory(foodMenu.getCategory());
 					order.setDescription(foodMenu.getDescription());
 
