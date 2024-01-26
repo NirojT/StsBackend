@@ -19,7 +19,7 @@ public class Payment {
 	private UUID id;
 
 	private String billNo;
-
+	private String type;
 	private double totalPrice;
 	private double receivedPrice;
 	private double netPrice;

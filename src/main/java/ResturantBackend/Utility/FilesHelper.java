@@ -1,5 +1,6 @@
 package ResturantBackend.Utility;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
@@ -41,9 +42,10 @@ public class FilesHelper {
 		}	
 
 		// for file
-		String filePathString = "C:/Server/images";
+//		String filePathString = "C:/Server/images";
+		String filePathString = "C"+ File.separator+"Server"+File.separator+"images";
 		this.fileStorageLocation = Paths.get(filePathString).toAbsolutePath().normalize();
-		configFilePath = "file:///" + fileStorageLocation + "/";
+		configFilePath = "file:///" + fileStorageLocation + File.separator;
 
 		try {
 			Files.createDirectories(this.fileStorageLocation);
