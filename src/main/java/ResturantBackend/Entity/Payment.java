@@ -20,6 +20,7 @@ public class Payment {
 
 	private String billNo;
 	private String type;
+	private String creditName;
 	private double totalPrice;
 	private double receivedPrice;
 	private double netPrice;

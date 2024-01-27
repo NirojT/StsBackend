@@ -13,6 +13,7 @@ public class PaymentDTO {
     private UUID id;
     private String tableNo;
     private String type;
+    private String creditName;
 
     private String billNo;
     private List<AddOrderDto> items;

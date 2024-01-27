@@ -449,4 +449,20 @@ public class PaymentServiceImpl implements PaymentService {
 		}
 	}
 
+	@Override
+	public Boolean clearCredits(UUID id) {
+		try {
+			Payment payment = this.paymentRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
+		 	payment.setType("Paying");
+
+paymentRepo.save(payment);
+
+			return    true  ;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 }

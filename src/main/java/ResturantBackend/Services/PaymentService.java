@@ -31,4 +31,5 @@ public interface PaymentService {
 
 	List<List<PaymentDTO>> getMonthlyPaymentWholeYear();
 
+    Boolean clearCredits(UUID id);
 }
