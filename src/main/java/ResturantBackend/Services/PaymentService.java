@@ -1,9 +1,9 @@
 package ResturantBackend.Services;
 
+import ResturantBackend.Dto.PaymentDTO;
+
 import java.util.List;
 import java.util.UUID;
-
-import ResturantBackend.Dto.PaymentDTO;
 
 public interface PaymentService {
 
@@ -32,4 +32,6 @@ public interface PaymentService {
 	List<List<PaymentDTO>> getMonthlyPaymentWholeYear();
 
     Boolean clearCredits(UUID id);
+
+    Boolean updateAdvanceAmt(UUID id, double dueAmt);
 }

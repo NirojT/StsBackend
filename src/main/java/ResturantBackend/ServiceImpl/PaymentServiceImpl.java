@@ -1,20 +1,5 @@
 package ResturantBackend.ServiceImpl;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.YearMonth;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import ResturantBackend.Utility.*;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
-import ResturantBackend.ResturantApplication;
 import ResturantBackend.Dto.PaymentDTO;
 import ResturantBackend.Entity.Orders;
 import ResturantBackend.Entity.Payment;
@@ -23,8 +8,20 @@ import ResturantBackend.ErrorHandlers.ResourceNotFound;
 import ResturantBackend.Reposioteries.OrdersRepo;
 import ResturantBackend.Reposioteries.PaymentRepo;
 import ResturantBackend.Reposioteries.TableRepo;
+import ResturantBackend.ResturantApplication;
 import ResturantBackend.Services.OrdersService;
 import ResturantBackend.Services.PaymentService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -455,6 +452,7 @@ public class PaymentServiceImpl implements PaymentService {
 			Payment payment = this.paymentRepo.findById(id)
 					.orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
 		 	payment.setType("Paying");
+			payment.setAdvanceAmt(payment.getTotalPrice());
 
 paymentRepo.save(payment);
 
@@ -465,4 +463,28 @@ paymentRepo.save(payment);
 		}
 	}
 
-}
+	@Override
+	public Boolean updateAdvanceAmt(UUID id, double dueAmt) {
+		try {
+			Payment payment = this.paymentRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFound("payment", "payment id", id));
+
+		payment.setAdvanceAmt(payment.getAdvanceAmt()+dueAmt);
+
+
+			Payment savedPayment = paymentRepo.save(payment);
+
+			if(savedPayment.getTotalPrice()==savedPayment.getAdvanceAmt()){
+				System.out.println("__________________________________us");
+				payment.setType("Paying");
+				paymentRepo.save(payment);
+			}
+
+
+			return    true  ;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+}}

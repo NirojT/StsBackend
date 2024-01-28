@@ -1,18 +1,15 @@
 package ResturantBackend.Controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import ResturantBackend.Entity.Orders;
-import ResturantBackend.ErrorHandlers.ResourceNotFound;
+import ResturantBackend.Dto.PaymentDTO;
+import ResturantBackend.Services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ResturantBackend.Dto.PaymentDTO;
-import ResturantBackend.Services.PaymentService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/payment/")
@@ -152,6 +149,25 @@ public class PaymentController {
 
 			response.put("status", Boolean.TRUE.equals(isCleared) ? 200 : 400);
 			response.put("message", isCleared ? "credit cleared successfully" : "credit clearefailed");
+			return ResponseEntity.status(200).body(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", 500);
+			response.put("message", "something went wrong...:( ");
+			return ResponseEntity.status(200).body(response);
+		}
+	}
+
+	@PatchMapping("advanceAmt/{id}")
+	public ResponseEntity<?> updateAdvanceAmt(@PathVariable UUID id ,@RequestParam double dueAmt  ) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			System.out.println(dueAmt);
+
+			Boolean isCleared = this.paymentService.updateAdvanceAmt(id,dueAmt);
+
+			response.put("status", Boolean.TRUE.equals(isCleared) ? 200 : 400);
+			response.put("message", isCleared ? "due amt cleared successfully" : "due amt cleare failed");
 			return ResponseEntity.status(200).body(response);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,11 +1,11 @@
 package ResturantBackend.Dto;
 
+import ResturantBackend.Entity.Orders;
+import lombok.Data;
+
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import ResturantBackend.Entity.Orders;
-import lombok.Data;
 
 @Data
 public class PaymentDTO {
@@ -14,7 +14,8 @@ public class PaymentDTO {
     private String tableNo;
     private String type;
     private String creditName;
-
+    private String creditPhoneNo;
+    private double advanceAmt;
     private String billNo;
     private List<AddOrderDto> items;
     private double totalPrice;
